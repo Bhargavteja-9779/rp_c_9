@@ -1,0 +1,56 @@
+
+== JMR&T (2024-) query 'machine learning prediction alloy': total relevance hits 2582; top 12:
+   [2026, 3] 10.1016/j.jmrt.2025.12.088 | Machine learning enabled prediction of high temperature mechanical behavior in additively manufactured AlSi9Cu3 alloy
+   [2026, 9] 10.1016/j.jmrt.2026.08.107 | Machine learning for titanium alloy development: Composition design, process optimization, microstructure informatics, a
+   [2026, 3] 10.1016/j.jmrt.2026.02.150 | Tribological behavior of Sr and Yb modified AZ91 magnesium alloy using machine learning prediction and multi-objective o
+   [2025, 11] 10.1016/j.jmrt.2025.11.174 | Towards intelligent processing: Machine learning-based prediction of flow curves and hot workability maps for Ti71Fe25.1
+   [2026, 11] 10.1016/j.jmrt.2026.11.072 | Machine learning–assisted prediction of the compressive yield strength in a heat-treated CoCrFeMnNi high-entropy alloy
+   [2025, 5] 10.1016/j.jmrt.2025.04.328 | Machine-learning-driven prediction of flow curves and development of processing maps for hot-deformed Ni–Cu–Co–Ti–Ta all
+   [2024, 9] 10.1016/j.jmrt.2024.08.075 | Physics-informed transfer learning model for fatigue life prediction of IN718 alloy
+   [2024, 3] 10.1016/j.jmrt.2024.01.145 | Unraveling phase prediction in high entropy alloys: A synergy of machine learning, deep learning, and ThermoCalc, valida
+   [2025, 5] 10.1016/j.jmrt.2025.04.157 | Machine learning-based multiphysics model for corrosion fatigue crack propagation in aluminum alloy
+   [2024, 9] 10.1016/j.jmrt.2024.08.068 | Investigating nanostructure-property relationship of WTaVCr high-entropy alloy via machine learning optimized reactive p
+   [2024, 11] 10.1016/j.jmrt.2024.10.075 | Laser powder bed fusion process optimization of CoCrMo alloy assisted by machine-learning
+   [2026, 3] 10.1016/j.jmrt.2026.02.066 | Machine learning based phase-field simulation framework for multi-component alloy solidification
+
+== JMR&T (2024-) query 'uncertainty quantification machine learning': total relevance hits 172; top 12:
+   [2024, 3] 10.1016/j.jmrt.2024.01.145 | Unraveling phase prediction in high entropy alloys: A synergy of machine learning, deep learning, and ThermoCalc, valida
+   [2025, 5] 10.1016/j.jmrt.2025.05.009 | Predicting the high-strain-rate deformation behavior and constructing processing maps of 304L stainless steel through ma
+   [2024, 3] 10.1016/j.jmrt.2024.01.139 | Predicting gold accessibility from mineralogical characterization using machine learning algorithms
+   [2024, 3] 10.1016/j.jmrt.2024.01.119 | Machine learning guided constitutive model and processing map for Fe2Ni2CrAl1.2 multi-principle element alloys
+   [2024, 11] 10.1016/j.jmrt.2024.10.241 | Thermodynamic calculation-assisted design of 500 MPa high performance steel by machine learning
+   [2024, 11] 10.1016/j.jmrt.2024.10.142 | Machine learning-based prediction of FeNi nanoparticle magnetization
+   [2026, 3] 10.1016/j.jmrt.2025.12.088 | Machine learning enabled prediction of high temperature mechanical behavior in additively manufactured AlSi9Cu3 alloy
+   [2026, 7] 10.1016/j.jmrt.2026.07.213 | Crystal plasticity-informed machine learning prediction of stress hotspots in GH4169 superalloy
+   [2026, 1] 10.1016/j.jmrt.2025.12.203 | Machine learning potentials for refractory high-entropy alloys applied to atomistic modeling of dislocation slip behavio
+   [2026, 11] 10.1016/j.jmrt.2026.10.175 | Biomedical titanium alloys: Advances in composition design, additive manufacturing, implant architecture, and machine le
+   [2024, 11] 10.1016/j.jmrt.2024.10.034 | Machine-learning synergy in high-entropy alloys: A review
+   [2025, 5] 10.1016/j.jmrt.2025.04.157 | Machine learning-based multiphysics model for corrosion fatigue crack propagation in aluminum alloy
+
+== JMR&T (2024-) query 'high entropy alloy machine learning hardness': total relevance hits 3653; top 12:
+   [2024, 9] 10.1016/j.jmrt.2024.08.068 | Investigating nanostructure-property relationship of WTaVCr high-entropy alloy via machine learning optimized reactive p
+   [2025, 5] 10.1016/j.jmrt.2025.05.072 | A machine learning approach to predict coefficient of friction of laser cladding high-entropy alloy coatings
+   [2024, 5] 10.1016/j.jmrt.2024.03.164 | Enhancing flow stress predictions in CoCrFeNiV high entropy alloy with conventional and machine learning techniques
+   [2026, 11] 10.1016/j.jmrt.2026.09.100 | Effect of Ti alloying on the microstructure, hardness, and wear resistance of the Fe15Cr15Ni40Al15Mn15 high-entropy allo
+   [2026, 11] 10.1016/j.jmrt.2026.10.186 | Synergistic control of wear resistance by hardness and debris retention in L-DED dual-scale TiC/(Ti,Si)-containing reinf
+   [2026, 11] 10.1016/j.jmrt.2026.11.072 | Machine learning–assisted prediction of the compressive yield strength in a heat-treated CoCrFeMnNi high-entropy alloy
+   [2026, 11] 10.1016/j.jmrt.2026.09.202 | Effect of Zn addition on the phase constitution, microstructure, hardness, and wear behavior of a TiMoVWCr refractory hi
+   [2024, 3] 10.1016/j.jmrt.2024.01.145 | Unraveling phase prediction in high entropy alloys: A synergy of machine learning, deep learning, and ThermoCalc, valida
+   [2026, 9] 10.1016/j.jmrt.2026.07.263 | High entropy alloy core effects and alloy design strategies
+   [2024, 11] 10.1016/j.jmrt.2024.10.034 | Machine-learning synergy in high-entropy alloys: A review
+   [2025, 5] 10.1016/j.jmrt.2025.04.163 | Intelligent prediction and oriented design of high-hardness high-entropy ceramics
+   [2026, 1] 10.1016/j.jmrt.2025.12.203 | Machine learning potentials for refractory high-entropy alloys applied to atomistic modeling of dislocation slip behavio
+
+== JMR&T (2024-) query 'conformal prediction': total relevance hits 144; top 12:
+   [2025, 5] 10.1016/j.jmrt.2025.04.316 | A novel bipolar pulse electrochemical polishing approach for ultra-precision conformal polishing of microlens arrays
+   [2026, 5] 10.1016/j.jmrt.2026.05.233 | Synergistic processing of fused silica by atmospheric pressure microwave plasma etching and small tool conformal polishi
+   [2025, 11] 10.1016/j.jmrt.2025.11.239 | Finite element prediction of sintering deformation in 3D-printed porcelain filament
+   [2026, 5] 10.1016/j.jmrt.2026.03.292 | CNN-based prediction of compressive strength in porous Ti6Al4V alloy from micro-CT images
+   [2026, 3] 10.1016/j.jmrt.2026.01.199 | Improved prediction of mechanical properties using patterned peening with direct energy measurement in 304 stainless ste
+   [2026, 9] 10.1016/j.jmrt.2026.08.097 | Fluidity of cast magnesium alloys: Testing, mechanism, factor, and prediction
+   [2024, 11] 10.1016/j.jmrt.2024.11.133 | Multi-scale prediction of effective conductivity for carbon nanofiber polymer composites
+   [2025, 11] 10.1016/j.jmrt.2025.10.054 | Heterogeneous gradient modeling and experimental verification: Enhancing prediction accuracy for metal mechanical proper
+   [2024, 5] 10.1016/j.jmrt.2024.04.157 | Hybrid modeling prediction of residual stresses in turned Ti6Al4V considering frictional contact
+   [2024, 11] 10.1016/j.jmrt.2024.10.142 | Machine learning-based prediction of FeNi nanoparticle magnetization
+   [2026, 7] 10.1016/j.jmrt.2026.07.213 | Crystal plasticity-informed machine learning prediction of stress hotspots in GH4169 superalloy
+   [2026, 3] 10.1016/j.jmrt.2025.12.088 | Machine learning enabled prediction of high temperature mechanical behavior in additively manufactured AlSi9Cu3 alloy

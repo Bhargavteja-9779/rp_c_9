@@ -1,0 +1,33 @@
+journal,pubmed_count,sampled,n_with_dates,median_days_received_to_accepted,q1,q3,frac_le_72d
+Bioinformatics (OUP),2675,600,561,139,99.0,188.0,0.096
+Briefings in Bioinformatics (OUP),1002,600,595,127,94.0,173.0,0.113
+JAMIA (OUP),367,367,357,122,87.5,161.0,0.157
+GigaScience (OUP),113,113,110,196.0,130.75,246.25,0.118
+Bioinformatics Advances (OUP),488,488,475,127,94.0,163.0,0.133
+Computers in Biology and Medicine (Elsevier),1516,600,588,141.0,84.25,235.0,0.173
+Computer Methods and Programs in Biomedicine (Elsevier),767,600,600,170.5,125.0,229.0,0.032
+Artificial Intelligence in Medicine (Elsevier),287,287,287,278,168.0,381.0,0.01
+Journal of Biomedical Informatics (Elsevier),269,269,269,147,113.0,187.0,0.033
+Neural Networks (Elsevier),2264,600,600,219.0,163.0,288.0,0.008
+Medical Image Analysis (Elsevier),674,600,599,240,168.0,325.0,0.005
+Heliyon (Elsevier),354,354,0,,,,
+IEEE J Biomed Health Inform (IEEE),1868,600,0,,,,
+IEEE Trans Neural Syst Rehabil Eng (IEEE),388,388,0,,,,
+IEEE Trans Med Imaging (IEEE),684,600,0,,,,
+IEEE Trans Neural Netw Learn Syst (IEEE),1439,600,0,,,,
+IEEE Trans Biomed Eng (IEEE),791,600,0,,,,
+J Neural Eng (IOP),482,482,471,141,110.0,194.0,0.064
+Physiological Measurement (IOP),238,238,227,128,99.0,174.0,0.093
+Comput Struct Biotechnol J (Elsevier),603,600,595,92,66.0,118.0,0.316
+Patterns (Cell Press),0,0,0,,,,
+Biomed Signal Process Control (Elsevier),12,12,0,,,,
+Expert Syst Appl (Elsevier),4,4,0,,,,
+Knowledge-Based Systems (Elsevier),2,2,0,,,,
+Information Sciences (Elsevier),0,0,0,,,,
+Pattern Recognition (Elsevier),14,14,0,,,,
+Eng Appl Artif Intell (Elsevier),6,6,0,,,,
+Applied Soft Computing (Elsevier),0,0,0,,,,
+Results in Engineering (Elsevier),2,2,1,,,,
+IEEE Trans Cybern (IEEE),900,600,0,,,,
+Information Fusion (Elsevier),1,1,0,,,,
+Biosensors (MDPI - reference only),1656,600,594,39.0,30.75,50.0,0.929

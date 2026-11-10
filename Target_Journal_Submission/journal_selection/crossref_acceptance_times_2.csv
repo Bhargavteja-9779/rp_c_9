@@ -1,0 +1,35 @@
+journal,issn,n_records,n_with_dates,median_days_received_to_accepted,q1,q3,frac_le_72d
+Int J Intelligent Systems (Wiley),1098-111X,142,142,161.5,118.75,221.0,0.056
+CAAI Trans Intell Technol (Wiley/IET),2468-2322,178,178,175.5,113.5,250.75,0.084
+IET Image Processing,1751-9667,243,242,145.5,105.75,218.75,0.087
+Expert Systems (Wiley),1468-0394,429,390,165.5,105.5,262.25,0.11
+Int J Computational Intelligence Systems (Springer),1875-6883,796,786,137.0,91.0,199.25,0.14
+Journal of Engineering Design (T&F),1466-1837,230,219,173,114.0,246.0,0.119
+Connection Science (T&F),1360-0494,62,62,202.5,103.75,300.5,0.097
+Applied Artificial Intelligence (T&F),1087-6545,114,39,180,100.0,213.0,0.077
+Journal of Experimental & Theoretical AI (T&F),1362-3079,36,35,418,250.0,754.0,0.0
+Int J Production Research (T&F),1366-588X,811,769,219,158.5,297.0,0.016
+Alexandria Eng J (Elsevier),1110-0168,1000,0,,,,
+Results in Engineering (Elsevier),2590-1230,1000,0,,,,
+EURASIP J Adv Signal Process (Springer),1687-6180,64,63,135,84.0,217.0,0.19
+J Cheminformatics,1758-2946,0,0,,,,
+Discover Artificial Intelligence (Springer),2731-0809,1000,994,132.0,97.0,176.0,0.086
+Cybersecurity (Springer),2523-3246,343,342,131.0,92.75,177.25,0.123
+J Intelligent Information Systems (Springer),1573-7675,150,148,122.0,92.5,165.0,0.081
+Human-centric Computing and Information Sciences,2192-1962,0,0,,,,
+Visual Computing for Industry (Springer),2524-4442,45,45,166,112.5,219.5,0.044
+Mathematics (MDPI ref),2227-7390,1000,0,,,,
+Engineering with Computers (Springer),1435-5663,298,295,147,100.0,205.0,0.102
+Journal of Computational Design and Engineering (OUP),2288-5048,196,0,,,,
+Energy Informatics (Springer),2520-8942,182,177,69,55.0,89.0,0.548
+Reliability Engineering & System Safety (Elsevier),0951-8320,1000,0,,,,
+Journal of Manufacturing Systems (Elsevier),0278-6125,485,0,,,,
+Advanced Engineering Informatics (Elsevier),1474-0346,1000,0,,,,
+Int J Electrical Power & Energy Systems (Elsevier),0142-0615,1000,0,,,,
+Protection and Control of Modern Power Systems (Springer),2367-0983,122,0,,,,
+Journal of Modern Power Systems and Clean Energy (IEEE/SGEPRI),2196-5420,0,0,,,,
+Smart Learning Environments (Springer),2196-7091,90,87,201,131.0,274.0,0.092
+Int J Educational Technology in Higher Education (Springer),2365-9440,114,107,162,92.0,217.0,0.075
+Earth Science Informatics (Springer),1865-0481,409,401,129,94.5,179.5,0.087
+Environmental Sciences Europe (Springer),2190-4715,432,428,117.0,89.0,158.75,0.119
+Journal of Hydrology (Elsevier),0022-1694,1000,0,,,,

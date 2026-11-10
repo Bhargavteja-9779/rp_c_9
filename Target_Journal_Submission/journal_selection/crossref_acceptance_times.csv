@@ -1,0 +1,21 @@
+journal,issn,n_records,n_with_dates,median_days_received_to_accepted,q1,q3,frac_le_72d
+Journal of Big Data (Springer),2196-1115,407,403,224,163.0,342.0,0.017
+Complex & Intelligent Systems (Springer),2198-6053,649,644,147.0,103.0,222.75,0.068
+Journal of Cheminformatics (Springer/BMC),1758-2946,313,303,137,107.0,176.0,0.05
+Artificial Intelligence Review (Springer),1573-7462,539,372,194.0,139.25,276.75,0.035
+Scientific Reports (Nature),2045-2322,1000,981,143,99.0,203.0,0.106
+"J. King Saud Univ. CIS (Springer, 2025-)",1319-1578,1000,996,77.0,57.0,103.0,0.455
+Neural Computing and Applications (Springer),1433-3058,1000,981,264,175.0,381.0,0.014
+Journal of Cloud Computing (Springer),2192-113X,261,260,153.0,74.75,254.5,0.238
+npj Digital Medicine (Nature),2398-6352,1000,988,145.0,101.0,207.0,0.126
+Scientific Data (Nature),2052-4463,1000,972,148.0,106.0,211.0,0.076
+BMC Bioinformatics,1471-2105,593,587,137,97.0,210.0,0.121
+BMC Medical Informatics and Decision Making,1472-6947,923,914,170.0,105.75,321.75,0.093
+Cognitive Computation (Springer),1866-9964,207,207,263,168.0,397.0,0.053
+Journal of Intelligent Manufacturing (Springer),1572-8145,398,394,160.5,121.0,217.0,0.058
+Data Mining and Knowledge Discovery (Springer),1573-756X,183,179,258,153.0,388.0,0.078
+Machine Learning (Springer),1573-0565,400,392,201.0,146.25,306.5,0.059
+Applied Intelligence (Springer),1573-7497,994,712,239.0,171.25,336.75,0.014
+International Journal of Machine Learning and Cybernetics,1868-808X,707,703,285,238.0,317.0,0.01
+Communications Engineering (Nature),2731-3395,401,385,212,160.0,284.5,0.029
+Journal of Cheminformatics,1758-2946,313,303,137,107.0,176.0,0.05
