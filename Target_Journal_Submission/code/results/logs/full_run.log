@@ -1,0 +1,18 @@
+=== stage data ===
+=== stage data done in 0s ===
+=== stage main ===
+  main mpea_hv random seed=0 wall=25s (this call 25s)
+  main mpea_hv random seed=1 wall=24s (this call 24s)
+  main mpea_hv random seed=2 wall=25s (this call 26s)
+  main mpea_hv random seed=3 wall=27s (this call 27s)
+  main mpea_hv random seed=4 wall=26s (this call 26s)
+  main mpea_hv random seed=5 wall=25s (this call 25s)
+  main mpea_hv random seed=6 wall=25s (this call 26s)
+  main mpea_hv random seed=7 wall=25s (this call 25s)
+  main mpea_hv random seed=8 wall=28s (this call 28s)
+  main mpea_hv random seed=9 wall=28s (this call 28s)
+  main mpea_hv system seed=0 wall=26s (this call 26s)
+  main mpea_hv system seed=1 wall=27s (this call 27s)
+  main mpea_hv system seed=2 wall=26s (this call 26s)
+  main mpea_hv system seed=3 wall=25s (this call 25s)
+  main mpea_hv system seed=4 wall=26s (this call 26s)
