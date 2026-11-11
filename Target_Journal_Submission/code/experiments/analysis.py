@@ -232,7 +232,7 @@ def fig_coverage(cm, out):
     h += [Line2D([], [], color=INK, lw=1.2, label="Mean over tasks"), Line2D([], [], color=C_RED, ls="--", label="Nominal 0.90")]
     fig.legend(handles=h, loc="upper center", ncol=3, bbox_to_anchor=(0.5, -0.02), fontsize=7)
     fig.text(0.5, -0.19, "Each marker is one dataset (mean over 10 outer splits). FCP-W under cluster holdout: "
-             "intervals infinite whenever fewer than 9 training families (Eq. 9).", ha="center", color=INK2, fontsize=6.5)
+             "intervals infinite whenever fewer than 9 training families (Eq. 10).", ha="center", color=INK2, fontsize=6.5)
     _save(fig, out, "fig3_coverage_by_protocol")
 
 
@@ -446,7 +446,7 @@ def fig_robust(out):
     if not p.exists():
         return
     d = pd.read_csv(p)
-    d = d[d.alpha == 0.1]
+    d = d[(d.alpha == 0.1) & (d.method != "GP")]  # GP was dropped from this experiment for cost; early cached runs ignored
     g = d.groupby(["condition", "method"]).agg(coverage=("coverage", "mean"),
                                                 width=("width_sd", lambda x: x.replace(np.inf, np.nan).mean())).reset_index()
     g.to_csv(out / "tables" / "table_robustness.csv", index=False); _md(g, out / "tables" / "table_robustness.md")
@@ -585,6 +585,23 @@ def basemodel_analysis(df_main, out):
     _md(pd.DataFrame(rows), out / "tables" / "table_basemodel_tests.md", 4)
 
 
+def randfolds_analysis(df_main, out):
+    p = out / "randfolds_results.csv"
+    if not p.exists():
+        return
+    r = pd.read_csv(p); r = r[r.alpha == 0.1]
+    m = df_main[(df_main.alpha == 0.1) & (df_main.protocol == "cluster") & df_main.method.isin(r.method.unique())]
+    rows = []
+    for name, d in [("balanced (main)", m), ("random", r)]:
+        c = d.groupby(["task", "method"]).agg(cov=("coverage", "mean"), sd=("coverage", "std"),
+                                              isc=("interval_score_sd", "mean")).reset_index()
+        for meth, g in c.groupby("method"):
+            rows.append({"assignment": name, "method": meth, "mean_coverage": g["cov"].mean(), "min_cell": g["cov"].min(),
+                         "mean_seed_sd": g["sd"].mean(), "mean_interval_score_sd": g["isc"].mean()})
+    t = pd.DataFrame(rows).sort_values(["method", "assignment"])
+    t.to_csv(out / "tables" / "table_randfolds.csv", index=False); _md(t, out / "tables" / "table_randfolds.md")
+
+
 def run(cfg, out):
     out = Path(out)
     _style()
@@ -601,6 +618,7 @@ def run(cfg, out):
     fig_ablation(summ, out); fig_alpha(df, out); fig_parity(out, cfg); error_analysis(out, cfg)
     fig_robust(out); fig_sens(out); fig_eff(out, cm)
     basemodel_analysis(df, out)
+    randfolds_analysis(df, out)
     for name in ["generalization_results.csv"]:
         p = out / name
         if p.exists():

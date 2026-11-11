@@ -175,29 +175,30 @@ def method(V):
               "*only* the training part *D*_{−k} of fold *k*. If fewer than ten alloys have FOOB residuals, σ_{k} ≡ 1. The "
               "non-negativity constraints encode a physical prior: larger model disagreement or greater compositional distance "
               "should never *narrow* an interval. Because the scale model never sees the labels of fold *k*, the normalized score"),
-        ("eq", [{"sub": ["S", "i"]}, " = ", {"frac": [["|", {"sub": ["y", "i"]}, " − ", {"sub": ["μ", "k(i)"]}, "(", {"sub": ["x", "i"]}, ")|"],
-                                                     [{"sub": ["σ", "k(i)"]}, "(", {"sub": ["x", "i"]}, ")"]]}]),
+        ("eq", [{"sub": ["S", "i"]}, " = ", {"abs": [{"sub": ["y", "i"]}, " − ", {"sub": ["μ", "k(i)"]}, "(", {"sub": ["x", "i"]}, ")"]}, " / ",
+                {"sub": ["σ", "k(i)"]}, "(", {"sub": ["x", "i"]}, ")"]),
         ("p", "of a calibration alloy *i* in fold *k*(*i*) is computed exactly as a test score would be."),
         ("h2", "4.4. Family-grouped CV+ interval"),
         ("p", "The training families are partitioned at random into *K* folds. No family is split across folds. For each fold, "
               "the ensemble, novelty scorer and scale model are fitted on the other *K* − 1 folds, and the scores of Eq. (5) are "
               "computed on the held-out families. A new alloy then receives the CV+ interval [@barber2021], with weights:"),
-        ("eq", ["Ĉ(x) = ", {"brack": [{"sup": [{"sub": ["Q̂", "α"]}, "−"]}, {"curly": [{"sub": ["μ", "k(i)"]}, "(x) − ", {"sub": ["S", "i"]}, " ",
-                                                                                  {"sub": ["σ", "k(i)"]}, "(x)"]}, ",  ",
-                                         {"sup": [{"sub": ["Q̂", "1−α"]}, "+"]}, {"curly": [{"sub": ["μ", "k(i)"]}, "(x) + ", {"sub": ["S", "i"]}, " ",
-                                                                                    {"sub": ["σ", "k(i)"]}, "(x)"]}]}]),
-        ("p", "where the weighted upper quantile of values *v*_{i} with weights *w*_{i} is"),
-        ("eq", [{"sup": [{"sub": ["Q̂", "β"]}, "+"]}, " = inf", {"curly": ["t : ", {"frac": [["∑ ", {"sub": ["w", "i"]}, " 1{", {"sub": ["v", "i"]}, " ≤ t}"],
-                                                                                       ["∑ ", {"sub": ["w", "i"]}, " + ", {"sub": ["w", "∞"]}]]}, " ≥ β"]}]),
-        ("p", "and Q̂^{−}_{α} is the corresponding lower quantile, with the point mass *w*_{∞} placed at −∞. Two weighting "
+        ("eq", ["L(x) = ", {"subsup": ["Q", "α", "lo"]}, {"brack": [{"sub": ["μ", "k(i)"]}, "(x) − ", {"sub": ["S", "i"]}, " ",
+                                                                  {"sub": ["σ", "k(i)"]}, "(x)"]}]),
+        ("eq", ["U(x) = ", {"subsup": ["Q", "1−α", "hi"]}, {"brack": [{"sub": ["μ", "k(i)"]}, "(x) + ", {"sub": ["S", "i"]}, " ",
+                                                                    {"sub": ["σ", "k(i)"]}, "(x)"]}]),
+        ("p", "so that Ĉ(*x*) = [*L*(*x*), *U*(*x*)]. Here the brackets denote the multiset of *n* values, one per training alloy "
+              "*i*, and the weighted upper quantile of values *v*_{i} with weights *w*_{i} is"),
+        ("eq", [{"subsup": ["Q", "β", "hi"]}, " = inf", {"curly": ["t : ∑ ", {"sub": ["w", "i"]}, " 1[", {"sub": ["v", "i"]}, " ≤ t] ≥ β ",
+                                                                  {"paren": ["∑ ", {"sub": ["w", "i"]}, " + ", {"sub": ["w", "∞"]}]}]}]),
+        ("p", "where the sum runs over the training alloys and the extra mass *w*_{∞} sits at +∞. *Q*^{lo}_{α} is the corresponding lower quantile, with *w*_{∞} placed at −∞. Two weighting "
               "schemes define the two estimands:"),
-        ("eq", ["FCP: ", {"sub": ["w", "i"]}, " = 1;     FCP-W: ", {"sub": ["w", "i"]}, " = ", {"frac": [["1"], [{"sub": ["n", {"sub": ["g", "i"]}]}]]},
+        ("eq", ["FCP: ", {"sub": ["w", "i"]}, " = 1;     FCP-W: ", {"sub": ["w", "i"]}, " = ", {"frac": [["1"], [{"sub": ["n", "g(i)"]}]]},
                 ";     ", {"sub": ["w", "∞"]}, " = 1"]),
-        ("p", "where *n*_{g} is the number of training alloys of family *g*. With unit weights, Eq. (6) is the normalized CV+ "
+        ("p", "where *n*_{g} is the number of training alloys of family *g*. With unit weights, Eqs. (6)–(7) give the normalized CV+ "
               "interval with family-grouped folds, and it targets alloy-level coverage on new families. With weights 1/*n*_{g}, "
               "every training family carries unit mass and the test alloy is treated as one new family. This is the pooled "
               "construction of Dunn et al. [@dunn2023], and it targets family-level coverage. A finite-sample consequence is "
-              "that the upper quantile of Eq. (7) is finite only if *G*/(*G* + 1) ≥ 1 − α, that is"),
+              "that the upper quantile of Eq. (8) is finite only if *G*/(*G* + 1) ≥ 1 − α, that is"),
         ("eq", ["G ≥ ", {"frac": [["1 − α"], ["α"]]}, "    (G ≥ 9 for α = 0.1)"]),
         ("p", "With fewer training families, FCP-W correctly returns an unbounded interval: so few families cannot certify a "
               "90% family-level statement. We report this case explicitly rather than hiding it. We make no claim of a new "

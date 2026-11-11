@@ -148,7 +148,8 @@ def run_protocol(task, protocol, seed, cfg, inner_family=None, n_jobs=4, train_f
     if label_noise > 0:  # robustness: Gaussian noise on training AND test labels as a fraction of target SD
         task["y"] = y_orig + rng.normal(0, label_noise * y_orig.std(), size=len(y_orig))
     groups = outer_groups(task, protocol)
-    folds = C.assign_folds(len(groups), cfg["outer_folds"], groups, seed=seed)
+    folds = C.assign_folds(len(groups), cfg["outer_folds"], groups, seed=seed,
+                           balanced=cfg.get("outer_assign", "balanced") == "balanced")
     jobs = []
     for k in range(cfg["outer_folds"]):
         tr, te = np.where(folds != k)[0], np.where(folds == k)[0]

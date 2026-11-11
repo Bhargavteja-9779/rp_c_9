@@ -1,0 +1,5 @@
+Random-split conformal 90% intervals cover only 72–87% of unseen alloy families
+Family-grouped CV+ calibration restores nominal coverage on new alloy families
+Leakage-free scale from ensemble spread and novelty adapts the interval width
+Benchmark: 6 datasets, 3 shift protocols, 17 interval methods, 10 seeds
+Remaining misses concentrate in alloy families with extreme property values

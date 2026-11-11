@@ -20,7 +20,7 @@ robustness:
   seeds: [0, 1, 2, 3, 4]
   label_noise: [0.1, 0.25]
   train_fraction: [0.5]
-  methods: [SCP, CV+, CQR, WCP, GSCP, GCV+, FCP, FCP-W, GP, RF-z]
+  methods: [SCP, CV+, CQR, WCP, GSCP, GCV+, FCP, FCP-W, RF-z]   # GP excluded (cost; not relevant to RQ4)
 sensitivity:
   tasks: [mpea_hv, mpea_ys, steel_ys]
   seeds: [0, 1, 2, 3, 4]

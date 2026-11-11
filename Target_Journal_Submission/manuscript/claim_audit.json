@@ -1,0 +1,126 @@
+[
+ {
+  "claim": "abstract has 206 words (<= 250)",
+  "holds": true
+ },
+ {
+  "claim": "highlight <= 85 characters: Random-split conformal 90% intervals cover only 72–87% of unseen alloy families (79)",
+  "holds": true
+ },
+ {
+  "claim": "highlight <= 85 characters: Family-grouped CV+ calibration restores nominal coverage on new alloy families (78)",
+  "holds": true
+ },
+ {
+  "claim": "highlight <= 85 characters: Leakage-free scale from ensemble spread and novelty adapts the interval width (77)",
+  "holds": true
+ },
+ {
+  "claim": "highlight <= 85 characters: Benchmark: 6 datasets, 3 shift protocols, 17 interval methods, 10 seeds (71)",
+  "holds": true
+ },
+ {
+  "claim": "highlight <= 85 characters: Remaining misses concentrate in alloy families with extreme property values (75)",
+  "holds": true
+ },
+ {
+  "claim": "point accuracy (R2) is lower under cluster holdout than random for every task",
+  "holds": true
+ },
+ {
+  "claim": "SCP near nominal in random protocol",
+  "holds": true
+ },
+ {
+  "claim": "SCP under-covers under shift",
+  "holds": true
+ },
+ {
+  "claim": "CV+ near nominal in random protocol",
+  "holds": true
+ },
+ {
+  "claim": "CV+ under-covers under shift",
+  "holds": true
+ },
+ {
+  "claim": "CQR near nominal in random protocol",
+  "holds": true
+ },
+ {
+  "claim": "CQR under-covers under shift",
+  "holds": true
+ },
+ {
+  "claim": "H1 significant for all four random-calibrated methods",
+  "holds": true
+ },
+ {
+  "claim": "FCP shortfall significantly smaller than all baselines except RF-z",
+  "holds": true
+ },
+ {
+  "claim": "FCP vs RF-z shortfall not significant",
+  "holds": true
+ },
+ {
+  "claim": "FCP interval score significantly better than six baselines",
+  "holds": true
+ },
+ {
+  "claim": "RF-z interval score lower than FCP but not significant",
+  "holds": true
+ },
+ {
+  "claim": "FCP mean coverage >= 0.9 under both shifts",
+  "holds": true
+ },
+ {
+  "claim": "rank-biserial = -1 for six baselines",
+  "holds": true
+ },
+ {
+  "claim": "RF-z over-covers in-distribution",
+  "holds": true
+ },
+ {
+  "claim": "RF-z reaches 0.98 in a dataset",
+  "holds": true
+ },
+ {
+  "claim": "grouping drives coverage",
+  "holds": true
+ },
+ {
+  "claim": "spread improves IS cluster",
+  "holds": true
+ },
+ {
+  "claim": "spread improves IS system",
+  "holds": true
+ },
+ {
+  "claim": "novelty worsens IS cluster",
+  "holds": true
+ },
+ {
+  "claim": "novelty raises high-novelty coverage",
+  "holds": true
+ },
+ {
+  "claim": "normalisation without grouping under-covers",
+  "holds": true
+ },
+ {
+  "claim": "target extremity negatively associated with family coverage in >= 4 tasks for FCP",
+  "holds": true
+ },
+ {
+  "claim": "FCP improves coverage for extreme-property families relative to SCP",
+  "holds": true
+ },
+ {
+  "claim": "extreme-property families remain under-covered by FCP",
+  "holds": true
+ }
+]

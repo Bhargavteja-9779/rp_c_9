@@ -47,9 +47,11 @@ def weighted_lower(V, w, w_inf, level):
     return -weighted_upper(-V, w, w_inf, 1 - level)
 
 
-def assign_folds(n, K, groups=None, seed=0):
-    """Random fold assignment. If groups is given, whole groups are assigned (greedy size balancing after a seeded
-    shuffle), so no family is split across folds."""
+def assign_folds(n, K, groups=None, seed=0, balanced=True):
+    """Random fold assignment. If groups is given, whole groups are assigned, so no family is split across folds.
+    balanced=True : greedy size balancing after a seeded shuffle (deterministic when all group sizes differ, e.g.
+                    10 composition clusters -> identical partition for every seed).
+    balanced=False: seeded random permutation of groups dealt round-robin (equal number of groups per fold)."""
     rng = np.random.default_rng(seed)
     folds = np.empty(n, dtype=int)
     if groups is None:
@@ -58,6 +60,10 @@ def assign_folds(n, K, groups=None, seed=0):
         return folds
     groups = np.asarray(groups)
     fams, counts = np.unique(groups, return_counts=True)
+    if not balanced:
+        perm = rng.permutation(len(fams))
+        fam_fold = {fams[j]: r % K for r, j in enumerate(perm)}
+        return np.array([fam_fold[g] for g in groups])
     order = rng.permutation(len(fams))
     # shuffle, then largest-first greedy (ties broken by the shuffle) to balance fold sizes
     order = order[np.argsort(-counts[order], kind="stable")]

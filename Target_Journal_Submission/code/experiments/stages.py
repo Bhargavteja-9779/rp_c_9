@@ -143,6 +143,20 @@ def basemodel(cfg, out, n_jobs):
     _save_rows(rows, out / "basemodel_results.csv")
 
 
+def randfolds(cfg, out, n_jobs):
+    """Statistics check: cluster protocol with fully random (unbalanced) assignment of clusters to outer folds, so
+    that every seed uses a different outer partition (the balanced assignment is identical across seeds)."""
+    c2 = copy.deepcopy(cfg); c2["outer_assign"] = "random"
+    c2["methods"] = ["SCP", "CV+", "CQR", "WCP", "RF-z", "GSCP", "GCV+", "GCV+[spread]", "FCP", "FCP-W"]  # GP omitted (cost)
+    jobs = [(t, "cluster", s) for t in cfg["tasks"] for s in cfg["seeds"]]
+    from joblib import Parallel, delayed
+    Parallel(n_jobs=n_jobs)(delayed(_one)("randfolds", t, p, s, c2, "random_assign", {}) for t, p, s in jobs)
+    rows = []
+    for t, p, s in jobs:
+        rows += [dict(x, assignment="random") for x in R.metrics_rows(R.run_one("randfolds", t, p, s, c2, variant="random_assign"))]
+    _save_rows(rows, out / "randfolds_results.csv")
+
+
 def efficiency(cfg, out, n_jobs):
     """Wall time and peak resident memory of each method for one outer fold (separate processes)."""
     rows = []

@@ -40,12 +40,14 @@ function mathItems(items) {
     else if (it.subsup) out.push(new MathSubSuperScript({ children: mathItems(asArr(it.subsup[0])), subScript: mathItems(asArr(it.subsup[1])), superScript: mathItems(asArr(it.subsup[2])) }));
     else if (it.frac) out.push(new MathFraction({ numerator: mathItems(asArr(it.frac[0])), denominator: mathItems(asArr(it.frac[1])) }));
     else if (it.paren) out.push(new MathRoundBrackets({ children: mathItems(asArr(it.paren)) }));
+    else if (it.abs) out.push(new MathRoundBrackets({ children: [new MathRun(ABS_SENTINEL), ...mathItems(asArr(it.abs))] }));
     else if (it.brack) out.push(new MathSquareBrackets({ children: mathItems(asArr(it.brack)) }));
     else if (it.curly) out.push(new MathCurlyBrackets({ children: mathItems(asArr(it.curly)) }));
   }
   return out;
 }
 const asArr = (x) => (Array.isArray(x) ? x : [x]);
+const ABS_SENTINEL = "\u2063"; // invisible separator; replaced by |...| delimiter properties after packing
 
 // ---------------------------------------------------------------- blocks
 const P = (children, opt = {}) => new Paragraph({
@@ -158,4 +160,15 @@ const doc = new Document({
     children,
   }],
 });
-Packer.toBuffer(doc).then((buf) => { fs.writeFileSync(OUT, buf); console.log("wrote", OUT); });
+Packer.toBuffer(doc).then(async (buf) => {
+  // post-process: turn sentinel-marked round-bracket delimiters into absolute-value delimiters (|...|)
+  const JSZip = require(require.resolve("jszip", { paths: [path.dirname(require.resolve("docx"))] }));
+  const zip = await JSZip.loadAsync(buf);
+  let xml = await zip.file("word/document.xml").async("string");
+  const re = new RegExp('<m:d><m:dPr/><m:e><m:r><m:t>' + ABS_SENTINEL + '</m:t></m:r>', "g");
+  const n = (xml.match(re) || []).length;
+  xml = xml.replace(re, '<m:d><m:dPr><m:begChr m:val="|"/><m:endChr m:val="|"/></m:dPr><m:e>');
+  zip.file("word/document.xml", xml);
+  const out = await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" });
+  fs.writeFileSync(OUT, out); console.log("wrote", OUT, "abs delimiters:", n);
+});
