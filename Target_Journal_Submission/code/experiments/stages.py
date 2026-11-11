@@ -157,6 +157,18 @@ def randfolds(cfg, out, n_jobs):
     _save_rows(rows, out / "randfolds_results.csv")
 
 
+def mondrian(cfg, out, n_jobs):
+    """Reviewer-2 request: Mondrian (novelty-tertile) split conformal with random calibration, all tasks/protocols/seeds."""
+    c2 = copy.deepcopy(cfg); c2["methods"] = ["SCP", "MCP"]
+    jobs = [(t, p, s) for t in cfg["tasks"] for p in cfg["protocols"] for s in cfg["seeds"]]
+    from joblib import Parallel, delayed
+    Parallel(n_jobs=n_jobs)(delayed(_one)("mondrian", t, p, s, c2, "mcp", {}) for t, p, s in jobs)
+    rows = []
+    for t, p, s in jobs:
+        rows += R.metrics_rows(R.run_one("mondrian", t, p, s, c2, variant="mcp"))
+    _save_rows(rows, out / "mondrian_results.csv")
+
+
 def efficiency(cfg, out, n_jobs):
     """Wall time and peak resident memory of each method for one outer fold (separate processes)."""
     rows = []

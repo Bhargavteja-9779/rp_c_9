@@ -74,7 +74,7 @@ def _fold_job(task, protocol, seed, k, tr, te, cfg, inner_family):
             out["lo"][("Ens-z", a)], out["hi"][("Ens-z", a)] = C.gaussian_interval(mu, sd, a)
     # random split (75/25 rows)
     rng = np.random.default_rng(rs)
-    if want("SCP") or want("WCP") or want("CQR"):
+    if want("SCP") or want("WCP") or want("CQR") or want("MCP"):
         tt = time.perf_counter()
         perm = rng.permutation(len(ytr))
         ncal = int(round(0.25 * len(ytr)))
@@ -84,6 +84,20 @@ def _fold_job(task, protocol, seed, k, tr, te, cfg, inner_family):
         for a in alphas:
             out["lo"][("SCP", a)], out["hi"][("SCP", a)] = C.split_conformal(mcal, ytr[ca], mte, a)
         out["time"]["SCP"] = time.perf_counter() - tt
+        if want("MCP"):  # Mondrian split conformal: separate quantiles within novelty tertiles (random calibration split)
+            tt = time.perf_counter()
+            nvm = NoveltyScorer(cfg["novelty_pcs"], cfg["novelty_k"]).fit(Xtr[pr], gtr[pr])
+            dc, dt = nvm.score(Xtr[ca]), nvm.score(Xte)
+            e1, e2 = np.quantile(dc, [1 / 3, 2 / 3])
+            bc, bt = np.digitize(dc, [e1, e2]), np.digitize(dt, [e1, e2])
+            for a in alphas:
+                lo_, hi_ = np.empty(len(mte)), np.empty(len(mte))
+                for b in range(3):
+                    cm_, tm_ = bc == b, bt == b
+                    if tm_.any():
+                        lo_[tm_], hi_[tm_] = C.split_conformal(mcal[cm_], ytr[ca][cm_], mte[tm_], a)
+                out["lo"][("MCP", a)], out["hi"][("MCP", a)] = lo_, hi_
+            out["time"]["MCP"] = out["time"]["SCP"] + time.perf_counter() - tt
         if want("WCP"):
             tt = time.perf_counter()
             nv = NoveltyScorer(cfg["novelty_pcs"], cfg["novelty_k"]).fit(Xtr[pr], gtr[pr])

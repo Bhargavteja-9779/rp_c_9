@@ -50,3 +50,5 @@ Molecular Property Prediction",Journal of Chemical Information and Modeling,60,8
 10.48550/arXiv.1904.06019,NOT FOUND: HTTP Error 404: Not Found,,,,,,,,,
 10.48550/arXiv.1905.03222,NOT FOUND: HTTP Error 404: Not Found,,,,,,,,,
 10.1038/s41524-025-01808-x,verified,"Segal, Nofit; Netanyahu, Aviv; Greenman, Kevin P.; Agrawal, Pulkit; Gómez-Bombarelli, Rafael",5,2025,Known Unknowns: Out-of-Distribution Property Prediction in Materials and Molecules,npj Computational Materials,11,1,345,journal-article
+10.1186/s13321-021-00511-5,verified,"Morger, Andrea; Svensson, Fredrik; Arvidsson McShane, Staffan; Gauraha, Niharika; Norinder, Ulf; Spjuth, Ola; Volkamer, Andrea",7,2021,Assessing the calibration in toxicological in vitro models with conformal prediction,Journal of Cheminformatics,13,1,35,journal-article
+10.1038/s41598-022-09309-3,verified,"Morger, Andrea; Garcia de Lomana, Marina; Norinder, Ulf; Svensson, Fredrik; Kirchmair, Johannes; Mathea, Miriam; Volkamer, Andrea",7,2022,Studying and mitigating the effects of data drifts on ML model performance at the example of chemical toxicity data,Scientific Reports,12,1,7244,journal-article

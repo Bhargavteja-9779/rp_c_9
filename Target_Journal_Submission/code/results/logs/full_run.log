@@ -909,3 +909,7 @@
   robust steel_ys system seed=3 noise0.25 wall=48s (call 48s)
   robust steel_ys system seed=4 noise0.1 wall=35s (call 35s)
   robust steel_ys system seed=4 noise0.25 wall=36s (call 36s)
+  robust superhard_k system seed=0 noise0.25 wall=189s (call 189s)
+  robust superhard_k system seed=0 noise0.1 wall=192s (call 192s)
+  robust superhard_k system seed=1 noise0.1 wall=188s (call 188s)
+  robust superhard_k system seed=1 noise0.25 wall=191s (call 191s)

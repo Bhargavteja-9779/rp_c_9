@@ -635,6 +635,21 @@ def screening_analysis(out, cfg):
     tot.to_csv(out / "tables" / "table_screening_pooled.csv", index=False); _md(tot, out / "tables" / "table_screening_pooled.md")
 
 
+def mondrian_analysis(df_main, out):
+    p = out / "mondrian_results.csv"
+    if not p.exists():
+        return
+    m = pd.read_csv(p); m = m[(m.alpha == 0.1) & (m.method == "MCP")]
+    f = df_main[(df_main.alpha == 0.1) & df_main.method.isin(["SCP", "FCP"])]
+    allr = pd.concat([m, f])
+    c = allr.groupby(["task", "protocol", "method"]).agg(coverage=("coverage", "mean"), isc=("interval_score_sd", "mean"),
+                                                         hi=("cov_novelty_high", "mean"), lo=("cov_novelty_low", "mean")).reset_index()
+    t = c.groupby(["protocol", "method"]).agg(mean_coverage=("coverage", "mean"), min_cell=("coverage", "min"),
+                                              mean_interval_score_sd=("isc", "mean"), cov_high_novelty=("hi", "mean"),
+                                              cov_low_novelty=("lo", "mean")).reset_index()
+    t.to_csv(out / "tables" / "table_mondrian.csv", index=False); _md(t, out / "tables" / "table_mondrian.md")
+
+
 def run(cfg, out):
     out = Path(out)
     _style()
@@ -653,6 +668,7 @@ def run(cfg, out):
     basemodel_analysis(df, out)
     randfolds_analysis(df, out)
     screening_analysis(out, cfg)
+    mondrian_analysis(df, out)
     for name in ["generalization_results.csv"]:
         p = out / name
         if p.exists():

@@ -14,7 +14,8 @@ CITE_KEYS = {
     "lookman2019": "10.1038/s41524-019-0153-8", "miracle2017": "10.1016/j.actamat.2016.08.081", "xiong2020": "10.1016/j.commatsci.2019.109203",
     "hirschfeld2020": "10.1021/acs.jcim.0c00502", "bhattacharyya2026": "10.1214/26-EJS2506", "gibbs2025": "10.1093/jrsssb/qkaf008",
     "fannjiang2022": "10.1073/pnas.2204569119", "johansson2014": "10.1007/s10994-014-5453-0", "vovk2015": "10.1007/s10472-013-9368-4",
-    "segal2025": "10.1038/s41524-025-01808-x",
+    "segal2025": "10.1038/s41524-025-01808-x", "morger2021": "10.1186/s13321-021-00511-5",
+    "morger2022": "10.1038/s41598-022-09309-3",
 }
 MANUAL = {
     "romano2019": "Y. Romano, E. Patterson, E.J. Candès, Conformalized quantile regression, in: Advances in Neural Information "
@@ -63,7 +64,10 @@ def intro(V):
               "fitted only on family-out-of-bag residuals, so calibration labels are never reused. A family-weighted variant "
               "(FCP-W) targets equal coverage across families instead of across alloys. We evaluate both against eight "
               "established interval methods on six public datasets, under three split protocols of increasing extrapolation "
-              "difficulty."),
+              "difficulty. None of the ingredients is new on its own: grouped cross-validation, CV+, normalized scores and "
+              "hierarchical exchangeability are all established. What this work adds is their combination for the alloy-family "
+              "deployment shift, an explicit statement of what is (and is not) guaranteed, a scale model that cannot leak "
+              "calibration labels, and evidence across datasets of how large the problem is and which component solves it."),
         ("p", "The contributions are:"),
         ("bullets", [
             "A calibration procedure, FCP / FCP-W, whose calibration step reproduces the deployment shift of alloy design "
@@ -100,7 +104,13 @@ def related(V):
               "of a single dataset. For polymers, Akdoğan [@akdogan2026] and Han et al. [@han2026] evaluated split conformal "
               "prediction under scaffold, cluster and class holdouts. Han et al. reported that coverage fell from 0.899 under "
               "random splits to 0.683 under class holdout, and that a similarity-based applicability gate gave little "
-              "protection. Neither study proposed a calibration procedure that restores coverage under the holdout."),
+              "protection. Neither study proposed a calibration procedure that restores coverage under the holdout. The closest "
+              "precedent is in cheminformatics. Morger et al. [@morger2021;@morger2022] observed that conformal predictors for "
+              "toxicity lost validity on temporally later or external data, and that exchanging the calibration set for data "
+              "resembling the new domain restored validity without retraining. That remedy requires *labelled* data from the "
+              "shifted domain. In alloy discovery such data do not exist until the new family has been synthesized and tested. "
+              "The approach studied here instead constructs the shift *inside* the training data, by calibrating on whole "
+              "held-out families."),
         ("h2", "2.3. Conformal prediction beyond exchangeability"),
         ("p", "Statistical work offers several routes beyond exchangeability. Weighted conformal prediction reweights "
               "calibration scores by an estimated density ratio under covariate shift [@tibshirani2019;@fannjiang2022]. Bounds "
@@ -256,9 +266,13 @@ def setup(V):
         ("p", "All methods share the same family-bagged LightGBM base learner (Section 4.2), so differences reflect "
               "calibration rather than accuracy, except for the GP and random-forest baselines, which have their own models. "
               "Random-calibrated conformal baselines: split conformal prediction (**SCP**, 75/25 random split [@lei2018]); "
-              "CV+ with random folds (**CV+** [@barber2021]); conformalized quantile regression with LightGBM quantile models "
+              "CV+ with random folds (**CV+** [@barber2021]); normalized CV+ with random folds (**NCV+**, the conformal analogue of recalibrating ensemble "
+              "uncertainties on randomly held-out data [@palmer2022], and of the normalized method of [@boruah2026]); "
+              "conformalized quantile regression with LightGBM quantile models "
               "(**CQR** [@romano2019]); and weighted split conformal prediction with a logistic-regression density-ratio "
-              "estimate between calibration and test features (**WCP** [@tibshirani2019]). Model-based intervals: a GP with an "
+              "estimate between calibration and test features (**WCP** [@tibshirani2019]); and Mondrian split conformal prediction "
+              "with separate calibration quantiles in tertiles of compositional novelty (**MCP** [@vovk2005], Section 9). "
+              "Model-based intervals: a GP with an "
               "automatic-relevance-determination RBF kernel plus white noise on 16 principal components (**GP** "
               f"[@rasmussen2006], at most {V['gp_max']} training alloys); random-forest tree spread [@breiman2001] (**RF-z**, "
               "μ ± *z*·*s*); and the base ensemble's member spread (**Ens-z**). Family-calibrated baseline: split conformal "

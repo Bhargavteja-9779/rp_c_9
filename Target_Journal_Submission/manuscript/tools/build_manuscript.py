@@ -420,6 +420,8 @@ def discussion(V):
                   "is reproduced here for alloys and inorganic compounds, across six datasets and two kinds of family shift. "
                   "Normalized scores, which restore label-conditional coverage under random splits in steels [@boruah2026], do not "
                   "restore coverage under family shift unless the calibration folds are grouped (NCV+ vs FCP, Section 8). "
+                  "Recalibration with labelled data from the new domain [@morger2021;@morger2022] is effective when such data "
+                  "exist; FCP is the corresponding remedy *before* any alloy of the new family has been measured. "
                   "Density-ratio weighting [@tibshirani2019] is unsuitable when the test family lies outside the support of the "
                   "calibration data, as is typical of alloy discovery. The family-level construction follows the hierarchical view "
                   "of Dunn et al. [@dunn2023], adapted to cross-fitting, normalized scores and a leakage-free scale model."),
@@ -498,8 +500,8 @@ def declarations(V):
                   "datasets for making their data public."),
             ("h1", "Funding"),
             ("p", "[To be completed by the authors.]")]
-TITLE = ("Prediction intervals that remain valid for unseen alloy families: family-calibrated conformal prediction "
-         "for machine-learned alloy properties")
+TITLE = ("Prediction intervals for alloys from unseen families: family-calibrated conformal prediction for "
+         "machine-learned alloy properties")
 
 
 def abstract(V):
