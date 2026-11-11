@@ -9,6 +9,7 @@ n_members: 3
 family_frac: 0.7
 novelty_k: 5
 novelty_pcs: 16
+clip_scale: true
 gp_max_train: 300
 k_clusters: 10
 supercon_max_rows: 1500

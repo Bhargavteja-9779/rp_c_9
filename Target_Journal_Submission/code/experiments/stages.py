@@ -33,11 +33,22 @@ def data(cfg, out, n_jobs):
 
 def main(cfg, out, n_jobs):
     """RQ1-RQ3: coverage/efficiency of all methods under random, chemical-system and cluster extrapolation."""
+    from fcp.evaluation.protocol import CV_VARIANTS
     jobs = [(t, p, s) for t in cfg["tasks"] for p in cfg["protocols"] for s in cfg["seeds"]]
-    _parallel_runs("main", jobs, cfg, n_jobs)
+    # (a) non-CV+ methods (baselines). Runs cached before the v2 revision also contain v1 CV+ variants; those rows
+    #     are relabelled '<name> (v1)' and reported only in the iteration log.
+    c_base = copy.deepcopy(cfg); c_base["methods"] = ["Ens-z", "SCP", "WCP", "CQR", "GSCP", "GP", "RF-z"]
+    _parallel_runs("main", jobs, c_base, n_jobs)
+    # (b) all CV+ variants with the v2 scale model, for every task / protocol / seed
+    c_cv = copy.deepcopy(cfg); c_cv["methods"] = list(CV_VARIANTS)
+    _parallel_runs("main", jobs, c_cv, n_jobs, variant="cvplus_v2")
     rows = []
     for t, p, s in jobs:
-        rows += R.metrics_rows(R.run_one("main", t, p, s, cfg))
+        for x in R.metrics_rows(R.run_one("main", t, p, s, c_base)):
+            if x["method"] in CV_VARIANTS:
+                x["method"] = x["method"] + " (v1)"
+            rows.append(x)
+        rows += R.metrics_rows(R.run_one("main", t, p, s, c_cv, variant="cvplus_v2"))
     _save_rows(rows, out / "raw_results.csv")
 
 

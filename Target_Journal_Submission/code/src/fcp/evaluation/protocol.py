@@ -113,7 +113,7 @@ def _fold_job(task, protocol, seed, k, tr, te, cfg, inner_family):
             continue
         tt = time.perf_counter()
         cf = C.CrossFit(K=cfg["K"], grouped=grouped, novelty_k=cfg["novelty_k"], novelty_pcs=cfg["novelty_pcs"],
-                        seed=rs, **kw).fit(Xtr, ytr, gtr, Xte)
+                        seed=rs, clip_scale=cfg.get("clip_scale", False), **kw).fit(Xtr, ytr, gtr, Xte)
         fit_t = time.perf_counter() - tt
         for n in names:
             _, mode, wts = CV_VARIANTS[n]

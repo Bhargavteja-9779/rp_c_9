@@ -111,12 +111,18 @@ class NoveltyScorer:
 
 
 class ScaleModel:
-    """sigma(x) = exp(a + b*log s + c*log d), b,c >= 0. mode in {'none','spread','novelty','both'}."""
+    """sigma(x) = exp(a + b*log s + c*log d), b,c >= 0. mode in {'none','spread','novelty','both'}.
+    clip=True (v2): log s and log d are clamped to the range observed in the fitting data before prediction, so the
+    log-linear scale is never extrapolated (v1, clip=False, produced a few unbounded intervals for extreme novelty)."""
 
-    def __init__(self, mode="both"):
-        self.mode = mode
+    def __init__(self, mode="both", clip=False):
+        self.mode, self.clip = mode, clip
 
     def _design(self, s, d):
+        s = np.asarray(s, float); d = np.asarray(d, float)
+        if self.clip and getattr(self, "lims_", None) is not None:
+            (s0, s1), (d0, d1) = self.lims_
+            s = np.clip(s, s0, s1); d = np.clip(d, d0, d1)
         cols = [np.ones_like(s)]
         if self.mode in ("spread", "both"):
             cols.append(np.log(np.maximum(s, EPS)))
@@ -128,7 +134,10 @@ class ScaleModel:
         if self.mode == "none":
             return self
         ok = np.isfinite(abs_resid) & np.isfinite(s) & np.isfinite(d) & (s > 0)
+        self.lims_ = None
         A = self._design(s[ok], d[ok])
+        if ok.any():
+            self.lims_ = ((s[ok].min(), s[ok].max()), (d[ok].min(), d[ok].max()))
         t = np.log(abs_resid[ok] + 1e-6 * (np.median(abs_resid[ok]) + EPS))
         lb = np.r_[-np.inf, np.zeros(A.shape[1] - 1)]
         self.fallback_ = ok.sum() <= max(10, A.shape[1] + 2)

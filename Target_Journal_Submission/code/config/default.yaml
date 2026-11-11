@@ -9,6 +9,7 @@ n_members: 6         # family-bagged ensemble members
 family_frac: 0.7     # fraction of families seen by each member
 novelty_k: 5
 novelty_pcs: 16
+clip_scale: true    # v2 (Phase-19 revision): clamp scale-model inputs to their fitting range
 gp_max_train: 800
 k_clusters: 10
 supercon_max_rows: 4000   # computational budget: whole chemical systems sampled (seed 0) until this size

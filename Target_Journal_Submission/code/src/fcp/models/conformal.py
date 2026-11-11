@@ -77,8 +77,8 @@ class CrossFit:
     """Fits the K fold models once; intervals for any (sigma mode, weighting, alpha) are then derived cheaply."""
 
     def __init__(self, K=5, grouped=True, n_members=8, family_frac=0.7, lgbm_params=None, novelty_k=5,
-                 novelty_pcs=16, seed=0):
-        self.K, self.grouped = K, grouped
+                 novelty_pcs=16, seed=0, clip_scale=False):
+        self.K, self.grouped, self.clip = K, grouped, clip_scale
         self.kw = dict(n_members=n_members, family_frac=family_frac, lgbm_params=lgbm_params)
         self.nk, self.npc, self.seed = novelty_k, novelty_pcs, seed
 
@@ -101,7 +101,7 @@ class CrossFit:
             fd = nov.foob_score()
             r = np.abs(y[tr] - fmu)
             for m in SIGMA_MODES:
-                self.scale_models[m].append(ScaleModel(m).fit(r, fsd, fd))
+                self.scale_models[m].append(ScaleModel(m, clip=self.clip).fit(r, fsd, fd))
             mu, sd = base.predict(X[ca])
             self.cal["mu"][ca], self.cal["s"][ca], self.cal["d"][ca] = mu, sd, nov.score(X[ca])
             tmu, tsd = base.predict(X_test)
