@@ -453,9 +453,17 @@ def discussion(V):
                   "Density-ratio weighting [@tibshirani2019] is unsuitable when the test family lies outside the support of the "
                   "calibration data, as is typical of alloy discovery. The family-level construction follows the hierarchical view "
                   "of Dunn et al. [@dunn2023], adapted to cross-fitting, normalized scores and a leakage-free scale model."),
+            ("p", "**Is the extra cost worth it?** FCP costs about as much as CV+ and a few times as much as split conformal "
+                  "prediction (Section 10). The cheapest family-calibrated alternative, GSCP, came close to FCP when many families "
+                  f"were available (unseen systems: {g('system', 'GSCP'):.3f} vs {g('system', 'FCP'):.3f}). It failed when only a "
+                  f"few families existed (unseen clusters: {g('cluster', 'GSCP'):.3f} vs {g('cluster', 'FCP'):.3f}), because a single "
+                  "calibration split then contains only one or two families. Because FCP uses every family once for calibration, "
+                  "its benefit grows as the number of families shrinks, which is exactly the situation of a new alloy class with "
+                  "few explored systems. For databases with hundreds of families and tight compute budgets, GSCP is a defensible "
+                  "and cheaper choice."),
             ("p", "**Practical recommendation.** For screening alloys from unexplored families, (i) define families from "
-                  "composition before modelling; (ii) calibrate with family-grouped folds (FCP), or at minimum with a family-held-out "
-                  "calibration split (GSCP) when data are plentiful; (iii) report the coverage obtained under a family-holdout "
+                  "composition before modelling; (ii) calibrate with family-grouped folds (FCP), or with a family-held-out "
+                  "calibration split (GSCP) when many families and little compute are available; (iii) report the coverage obtained under a family-holdout "
                   "evaluation, not under random cross-validation; and (iv) treat alloys with predicted properties far outside the "
                   "training range with extra caution, because that is where the remaining misses concentrate (Section 11)."),
             ]
@@ -478,6 +486,9 @@ def limitations(V):
                 "thermomechanical-history descriptors, which govern many mechanical properties, were not available.",
                 "Superconductor data were subsampled to about 4,000 compounds by whole chemical systems to fit the computational "
                 "budget (4 CPU cores). Results for the full set may differ quantitatively.",
+                "Energy consumption was not measured. All runs used CPUs only, and per-fold costs are reported as wall time. "
+                "Interval formation scales as O(*n* log *n*) per test alloy, which was negligible here but would call for an "
+                "approximation (e.g. a pooled quantile of normalized scores) for databases with 10^{5} or more alloys.",
                 "Hyper-parameters were fixed defaults and were not tuned per dataset. Tuning would raise point accuracy for every "
                 "method alike and is unlikely to change the calibration comparison, but this was not tested.",
             ])]
@@ -675,6 +686,32 @@ def number_refs(blocks):
 
 
 NUMBERING = {}
+
+
+def SENS_HOOK(V):
+    E = []
+    se = V["sensitivity"]
+    if se is not None:
+        d = se[(se.alpha == 0.1) & (se.method == "FCP")]
+        g = d.groupby(["parameter", "value"]).agg(cov=("coverage", "mean"), isc=("interval_score_sd", "mean"))
+        base = V["df"]; base = base[(base.alpha == 0.1) & (base.method == "FCP") & (base.protocol == "system") &
+                                    base.task.isin(d.task.unique()) & base.seed.isin(d.seed.unique())]
+        b_cov, b_is = base.coverage.mean(), base.interval_score_sd.mean()
+        claim(g["cov"].min() >= 0.9, "FCP coverage >= 0.9 for all sensitivity settings")
+        E += [("h2", "9.4. Sensitivity to FCP's settings"),
+              ("p", "Each of FCP's four settings was varied one at a time around its default on the three alloy tasks "
+                    "(unseen-system protocol, five seeds; Fig. {{fig:sens}}): *K* ∈ {3, 10}, *M* ∈ {3, 12}, φ ∈ {0.5, 0.9} and "
+                    f"*k*_{{nn}} ∈ {{1, 15}}. Coverage ranged from {g['cov'].min():.3f} to {g['cov'].max():.3f}, against "
+                    f"{b_cov:.3f} at the defaults, so no setting broke validity. The interval score ranged from "
+                    f"{g['isc'].min():.2f} to {g['isc'].max():.2f} ({b_is:.2f} at the defaults). More folds (*K* = 10) and more "
+                    "members (*M* = 12) gave slightly sharper intervals at proportionally higher cost, because each fold model then "
+                    "sees more families or the ensemble spread is estimated more precisely. FCP therefore needs no tuning to be "
+                    "valid, and the defaults are a reasonable cost–efficiency compromise."),
+              ("fig", ("fig10_sensitivity", "Fig. {{fig:sens}}. Coverage of FCP and FCP-W under one-factor-at-a-time variation "
+                       "of the number of folds K, ensemble members M, family fraction φ and k_nn (three alloy tasks, unseen-system "
+                       "protocol, five seeds)."))]
+    E += EXTRA_HOOK(V) if "EXTRA_HOOK" in globals() else []
+    return E
 
 
 def screening(V):

@@ -484,21 +484,37 @@ def fig_sens(out):
     if not p.exists():
         return
     d = pd.read_csv(p); d = d[d.alpha == 0.1]
-    g = d.groupby(["parameter", "value", "method"]).agg(coverage=("coverage", "mean"),
-                                                         width=("width_sd", "mean"),
+    g = d.groupby(["parameter", "value", "method"]).agg(coverage=("coverage", "mean"), width=("width_sd", "mean"),
                                                          interval_score=("interval_score_sd", "mean")).reset_index()
+    # defaults from the main experiment on the same tasks and seeds
+    m = pd.read_csv(out / "raw_results.csv")
+    m = m[(m.alpha == 0.1) & (m.protocol == "system") & m.task.isin(d.task.unique()) & m.seed.isin(d.seed.unique())]
+    defaults = {"K": 5, "n_members": 6, "family_frac": 0.7, "novelty_k": 5}
+    rows = []
+    for par, v in defaults.items():
+        for meth in ["FCP", "FCP-W"]:
+            x = m[m.method == meth]
+            rows.append({"parameter": par, "value": v, "method": meth, "coverage": x.coverage.mean(),
+                         "width": x.width_sd.mean(), "interval_score": x.interval_score_sd.mean(), "default": True})
+    g["default"] = False
+    g = pd.concat([g, pd.DataFrame(rows)]).sort_values(["parameter", "method", "value"])
     g.to_csv(out / "tables" / "table_sensitivity.csv", index=False); _md(g, out / "tables" / "table_sensitivity.md")
-    pars = list(g.parameter.unique())
-    fig, axes = plt.subplots(1, len(pars), figsize=(7.2, 2.4), sharey=True)
+    names = {"K": "Folds K", "n_members": "Members M", "family_frac": "Family fraction φ", "novelty_k": "Neighbours k_nn"}
+    pars = [p_ for p_ in ["K", "n_members", "family_frac", "novelty_k"] if p_ in g.parameter.unique()]
+    fig, axes = plt.subplots(1, len(pars), figsize=(7.2, 2.5), sharey=True)
     axes = np.atleast_1d(axes)
     for ax, par in zip(axes, pars):
-        for m, c in [("FCP", C_BLUE), ("FCP-W", C_AQUA)]:
-            s = g[(g.parameter == par) & (g.method == m)].sort_values("value")
-            ax.plot(s.value.astype(str), s.coverage, marker="o", color=c, lw=2, ms=4, label=m)
-        ax.axhline(0.9, color=C_RED, ls="--", lw=1); ax.set_title(par)
-    axes[0].set_ylabel("Coverage (system holdout)"); axes[0].legend(fontsize=6.5)
-    fig.text(0.5, -0.05, "Defaults: K=5, n_members=6, family_frac=0.7, novelty_k=5 (results at defaults in Table 3).",
-             ha="center", fontsize=6.5, color=INK2)
+        for meth, c in [("FCP", C_BLUE), ("FCP-W", C_AQUA)]:
+            s_ = g[(g.parameter == par) & (g.method == meth)].sort_values("value")
+            xs = np.arange(len(s_))
+            ax.plot(xs, s_.coverage, marker="o", color=c, lw=2, ms=4, label=meth)
+            dm = s_["default"].values.astype(bool)
+            ax.scatter(xs[dm], s_.coverage.values[dm], s=60, facecolors="none", edgecolors=INK, linewidths=1, zorder=4)
+            ax.set_xticks(xs); ax.set_xticklabels([f"{v:g}" for v in s_.value])
+        ax.axhline(0.9, color=C_RED, ls="--", lw=1); ax.set_title(names[par]); ax.set_ylim(0.88, 0.97)
+    axes[0].set_ylabel("Coverage (unseen systems)"); axes[0].legend(fontsize=6.5, loc="lower left")
+    fig.text(0.5, -0.06, "Circled points: pre-specified defaults (main experiment, same tasks and seeds).", ha="center",
+             fontsize=6.5, color=INK2)
     _save(fig, out, "fig10_sensitivity")
 
 

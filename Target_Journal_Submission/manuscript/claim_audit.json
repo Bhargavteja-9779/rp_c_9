@@ -176,6 +176,10 @@
   "holds": true
  },
  {
+  "claim": "FCP coverage >= 0.9 for all sensitivity settings",
+  "holds": true
+ },
+ {
   "claim": "FCP cost within 10% of random-fold CV+",
   "holds": true
  },
