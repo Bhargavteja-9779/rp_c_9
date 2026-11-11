@@ -27,6 +27,15 @@ def claim(cond, text):
         raise AssertionError("Claim not supported by results: " + text)
 
 
+RC = ["SCP", "CV+", "CQR", "WCP"]  # random-calibrated conformal methods (defines every reported range)
+
+
+def rc_range(V, prot, pct=True):
+    v = [V["g"](prot, m) for m in RC]
+    lo, hi = min(v), max(v)
+    return f"{lo * 100:.0f}–{hi * 100:.0f}%" if pct else f"{lo:.2f}–{hi:.2f}"
+
+
 def f3(x):
     return "∞" if np.isinf(x) else f"{x:.3f}"
 
@@ -426,8 +435,9 @@ def discussion(V):
     return [("h1", "12. Discussion"),
             ("p", "**What the results mean for alloy design.** A materials-informatics workflow that reports 'conformal' 90% "
                   "intervals calibrated on random held-out alloys delivered, on average, "
-                  f"{g('system', 'SCP') * 100:.0f}–{g('system', 'CV+') * 100:.0f}% coverage on new chemical systems and "
-                  f"{g('cluster', 'SCP') * 100:.0f}–{g('cluster', 'CQR') * 100:.0f}% on new regions of composition space. In the worst "
+                  f"{rc_range(V, 'system')} coverage on new chemical systems and "
+                  f"{rc_range(V, 'cluster')} on new regions of composition space (the upper ends belong to WCP, which "
+                  "reached them only by returning infinite intervals for part of the alloys). In the worst "
                   "datasets coverage was close to two-thirds. The nominal level is therefore not a property of the method alone. "
                   "It is a property of the method *and* of how the calibration data relate to the deployment data. The remedy "
                   "studied here is simple to state: calibrate on whole held-out families, so that the calibration residuals "
@@ -436,7 +446,9 @@ def discussion(V):
                   f"{(g('system', 'FCP', 'mean_width_sd') / g('system', 'CV+', 'mean_width_sd') - 1) * 100:.0f}% (system) and "
                   f"{(g('cluster', 'FCP', 'mean_width_sd') / g('cluster', 'CV+', 'mean_width_sd') - 1) * 100:.0f}% (cluster) wider "
                   "than the under-covering random-calibrated ones. Measured by the interval score, which accounts for both width "
-                  "and misses, that price was worth paying in every comparison except against random-forest tree spread."),
+                  "and misses, FCP was better than every baseline except random-forest tree spread at the level of the 12 "
+                  "dataset-protocol cells. At the level of the six independent datasets, the advantage over CV+ and CQR was "
+                  "consistent in direction but not statistically significant."),
             ("p", "**Choosing the family definition.** The family is the unit of novelty against which coverage is certified. "
                   "Chemical systems are natural for HEA/MPEA design campaigns that open new element combinations. Composition "
                   "clusters are natural when moving to distant regions of an existing system. Section 9.2 shows that calibrating on "
@@ -501,18 +513,24 @@ def conclusion(V):
                   "discovery: prediction for alloys from families absent from the training data. The main conclusions are:"),
             ("numbered", [
                 "Conformal intervals calibrated on randomly held-out alloys lose their guarantee under alloy-family extrapolation. "
-                f"Nominal 90% intervals covered {g('system', 'SCP'):.2f}–{g('system', 'WCP'):.2f} of alloys from unseen chemical "
-                f"systems and {g('cluster', 'SCP'):.2f}–{g('cluster', 'WCP'):.2f} from unseen composition clusters.",
+                f"Nominal 90% intervals covered {rc_range(V, 'system')} of alloys from unseen chemical systems and "
+                f"{rc_range(V, 'cluster')} from unseen composition clusters.",
                 "Family-calibrated conformal prediction (FCP), i.e. CV+ with family-grouped folds and a leakage-free, "
                 "novelty-aware scale model, restored mean coverage to "
                 f"{g('system', 'FCP'):.3f} and {g('cluster', 'FCP'):.3f}. It reduced the coverage shortfall relative to seven of "
-                "eight baselines and improved the interval score relative to six.",
+                "eight baselines and improved the interval score relative to six (12 dataset-protocol cells, Holm-corrected). In "
+                "a lower-bound screen for high-performing alloys it cut false discoveries three- to four-fold relative to "
+                "split conformal prediction, at the cost of lower recall.",
                 "Grouping the calibration folds by family is the decisive ingredient. The ensemble-spread scale improves efficiency, "
                 "and the compositional-novelty scale equalizes coverage across novelty levels at a small efficiency cost.",
                 "Random-forest tree-spread intervals were an unexpectedly strong but uncalibrated competitor. Their robustness comes "
                 "from systematic over-coverage in-distribution.",
                 "Remaining failures concentrate in families with extreme property values, where new strengthening or pairing "
                 "mechanisms are likely. Interval estimates for such candidates should be treated with additional caution.",
+                "FCP certifies coverage against the novelty encoded by the family definition, and nothing beyond it. "
+                "Calibrating on a finer family definition than the actual shift lowered coverage. A chronological test showed "
+                "nominal coverage when newly reported alloys came from new chemical systems, but no method, FCP included, "
+                "covered a shift caused by new processing routes within known systems.",
             ], "numbers2"),
             ]
 
@@ -543,14 +561,26 @@ TITLE = ("Prediction intervals for alloys from unseen families: family-calibrate
          "machine-learned alloy properties")
 
 
+def temporal_sentence(V):
+    tp = TAB / "table_temporal.csv"
+    if not tp.exists():
+        return ""
+    T = pd.read_csv(tp).set_index(["task", "method"])
+    ok = (T.loc[("mpea_ys", "FCP"), "coverage"] >= 0.88 and T.loc[("mpea_hv", "FCP"), "coverage"] < 0.8
+          and T.loc[("mpea_hv", "SCP"), "coverage"] < 0.8)
+    claim(ok, "abstract temporal sentence supported by table_temporal")
+    return ("In a chronological test, FCP reached nominal coverage where new alloys came from new chemical systems but, like "
+            "every method, not where new processing routes shifted known systems. ")
+
+
 def abstract(V):
     g = V["g"]
     a = (f"Machine-learning models are increasingly used to screen alloys from chemical systems that have never been measured, "
          f"yet their uncertainty estimates are validated on randomly held-out alloys. We show that this practice fails under "
          f"alloy-family extrapolation. Across {V['n_tasks']} public datasets (multi-principal-element alloy hardness and yield "
          f"strength, steel yield strength, and three inorganic-compound properties), nominal 90% conformal intervals calibrated "
-         f"on random splits covered only {g('system', 'SCP') * 100:.0f}–{g('system', 'WCP') * 100:.0f}% of alloys from unseen "
-         f"chemical systems and {g('cluster', 'SCP') * 100:.0f}–{g('cluster', 'WCP') * 100:.0f}% from unseen composition clusters. "
+         f"on random splits covered only {rc_range(V, 'system')} of alloys from unseen "
+         f"chemical systems and {rc_range(V, 'cluster')} from unseen composition clusters. "
          f"We propose family-calibrated conformal prediction (FCP): CV+ intervals whose calibration folds hold out whole alloy "
          f"families, with scores normalized by a leakage-free scale built from family-bagged ensemble disagreement and "
          f"compositional novelty. A family-weighted variant targets family-level coverage, and the finite-sample condition for "
@@ -558,9 +588,9 @@ def abstract(V):
          f"methods, FCP restored mean coverage to {g('system', 'FCP'):.3f} and {g('cluster', 'FCP'):.3f}. It reduced the coverage "
          f"shortfall relative to seven baselines and the interval score relative to six (Holm-corrected Wilcoxon tests). "
          f"Ablations identify family-grouped calibration as the decisive component. Random-forest tree-spread intervals were "
-         f"competitive under shift, but only because they systematically over-cover in-distribution. Remaining failures "
-         f"concentrate in alloy families with extreme property values. All results are reproducible from public data with the "
-         f"released code.")
+         f"competitive under shift, but only because they systematically over-cover in-distribution. {temporal_sentence(V)}"
+         f"Remaining failures concentrate in families with extreme property values. "
+         f"All results are reproducible from public data with the released code.")
     n = len(a.split())
     claim(n <= 250, f"abstract has {n} words (<= 250)")
     return a
@@ -572,8 +602,8 @@ KEYWORDS = ["Alloy design", "High-entropy alloys", "Machine learning", "Uncertai
 
 def highlights(V):
     g = V["g"]
-    h = [f"Random-split 90% conformal intervals cover only {g('cluster', 'SCP') * 100:.0f}–{g('system', 'WCP') * 100:.0f}% of new-family alloys",
-         "Family-grouped CV+ calibration restores nominal coverage on new alloy families",
+    h = [f"Random-split 90% conformal intervals cover only {min(g(p, m) for p in ['system', 'cluster'] for m in RC) * 100:.0f}–{max(g(p, m) for p in ['system', 'cluster'] for m in RC) * 100:.0f}% of new-family alloys",
+         "Family-grouped CV+ calibration restores mean coverage near 90% for new families",
          "Leakage-free scale from ensemble spread and novelty adapts the interval width",
          "Benchmark: 6 datasets, 3 shift protocols, 17 interval methods, 10 seeds",
          "Remaining misses concentrate in alloy families with extreme property values"]
@@ -634,8 +664,6 @@ def build(V):
     blocks.append({"type": "heading", "level": 1, "text": "Abstract"})
     blocks.append({"type": "para", "runs": runs(abstract(V))})
     blocks.append({"type": "label", "runs": runs("**Keywords:** " + "; ".join(KEYWORDS))})
-    blocks.append({"type": "heading", "level": 1, "text": "Highlights"})
-    blocks.append({"type": "bullets", "items": [runs(h) for h in highlights(V)]})
     global TB
     TB = tables(V, bib)
     for sec in [S.intro, S.related, S.gap, S.method, S.setup, design, results, screening, ablation, robustness_sections,
@@ -717,10 +745,13 @@ def SENS_HOOK(V):
 def screening(V):
     sp = pd.read_csv(TAB / "table_screening_pooled.csv").set_index("method")
     st = pd.read_csv(TAB / "table_screening.csv")
+    ys = st[st.task == "mpea_ys"].set_index("method")
     claim(sp.loc["FCP", "fdp"] < sp.loc["SCP", "fdp"] / 2 and sp.loc["FCP", "fdp"] < sp.loc["CV+", "fdp"] / 2, "FCP halves FDP vs SCP/CV+")
+    claim(2.5 < sp.loc["SCP", "fdp"] / sp.loc["FCP", "fdp"] < 4.5 and 2.5 < sp.loc["CV+", "fdp"] / sp.loc["FCP", "fdp"] < 4.5, "FDP ratio three- to four-fold (2.5-4.5)")
+    claim(all(sp.loc[m, "fdp"] < 0.05 for m in ["SCP", "CV+", "FCP"]), "pooled FDP below 5% for SCP, CV+, FCP")
+    claim(ys.loc["SCP", "fdp"] > 0.10, "MPEA YS SCP FDP > 10%")
     claim(sp.loc["FCP", "recall"] < sp.loc["SCP", "recall"], "FCP recall lower than SCP")
     claim(sp.loc["RF-z", "fdp"] < sp.loc["FCP", "fdp"] and sp.loc["RF-z", "recall"] < sp.loc["FCP", "recall"], "RF-z more conservative")
-    ys = st[st.task == "mpea_ys"].set_index("method")
     claim(ys.loc["FCP", "fdp"] < ys.loc["SCP", "fdp"], "MPEA-YS FCP fewer false discoveries")
     rows = []
     for m in ["SCP", "CV+", "CQR", "GP", "RF-z", "GSCP", "FCP"]:
@@ -749,9 +780,11 @@ def screening(V):
                   f"FCP recovered {sp.loc['FCP', 'recall'] * 100:.0f}% of the true high performers against "
                   f"{sp.loc['SCP', 'recall'] * 100:.0f}% for SCP. RF-z was more conservative still (false discoveries "
                   f"{sp.loc['RF-z', 'fdp'] * 100:.1f}%, recall {sp.loc['RF-z', 'recall'] * 100:.0f}%), and CQR's wide quantile "
-                  "intervals almost never cleared the threshold. With family-level calibration, the stated confidence of a "
-                  "lower-bound screen holds on new chemical systems; with random-split calibration, it is overstated by a factor "
-                  "of three to four."),
+                  f"intervals almost never cleared the threshold. Pooled over tasks, all methods kept the false-discovery "
+                  "proportion below the 5% that a 95% one-sided lower bound would suggest, but this hides large task-level "
+                  f"differences: for MPEA yield strength, SCP's {ys.loc['SCP', 'fdp'] * 100:.0f}% far exceeds it. "
+                  f"Relative to FCP, SCP and CV+ admitted {sp.loc['SCP', 'fdp'] / sp.loc['FCP', 'fdp']:.1f} and "
+                  f"{sp.loc['CV+', 'fdp'] / sp.loc['FCP', 'fdp']:.1f} times as large a proportion of false discoveries."),
             ("table_screening", None)]
 
 
@@ -885,6 +918,10 @@ if __name__ == "__main__":
     (HERE / "spec.json").write_text(json.dumps(spec, ensure_ascii=False))
     (HERE.parent / "claim_audit.json").write_text(json.dumps(CLAIMS, indent=1, ensure_ascii=False))
     (HERE.parent / "highlights.txt").write_text("\n".join(highlights(V)) + "\n")
+    hs = {"meta": {"title": "Highlights", "line_numbers": False},
+          "blocks": [{"type": "heading", "level": 1, "text": "Highlights"},
+                     {"type": "bullets", "items": [runs(h) for h in highlights(V)]}]}
+    (HERE / "highlights_spec.json").write_text(json.dumps(hs, ensure_ascii=False))
     print("blocks", len(spec["blocks"]), "references", len(bib.order), "claims", len(CLAIMS))
     unused = sorted(set(S.CITE_KEYS) | set(S.MANUAL) - set(bib.order))
     print("uncited keys:", [k for k in unused if k not in bib.order])

@@ -1,26 +1,6 @@
 [
  {
-  "claim": "abstract has 209 words (<= 250)",
-  "holds": true
- },
- {
-  "claim": "highlight <= 85 characters: Random-split 90% conformal intervals cover only 72–87% of new-family alloys (75)",
-  "holds": true
- },
- {
-  "claim": "highlight <= 85 characters: Family-grouped CV+ calibration restores nominal coverage on new alloy families (78)",
-  "holds": true
- },
- {
-  "claim": "highlight <= 85 characters: Leakage-free scale from ensemble spread and novelty adapts the interval width (77)",
-  "holds": true
- },
- {
-  "claim": "highlight <= 85 characters: Benchmark: 6 datasets, 3 shift protocols, 17 interval methods, 10 seeds (71)",
-  "holds": true
- },
- {
-  "claim": "highlight <= 85 characters: Remaining misses concentrate in alloy families with extreme property values (75)",
+  "claim": "abstract has 208 words (<= 250)",
   "holds": true
  },
  {
@@ -101,6 +81,18 @@
  },
  {
   "claim": "FCP halves FDP vs SCP/CV+",
+  "holds": true
+ },
+ {
+  "claim": "FDP ratio three- to four-fold (2.5-4.5)",
+  "holds": true
+ },
+ {
+  "claim": "pooled FDP below 5% for SCP, CV+, FCP",
+  "holds": true
+ },
+ {
+  "claim": "MPEA YS SCP FDP > 10%",
   "holds": true
  },
  {

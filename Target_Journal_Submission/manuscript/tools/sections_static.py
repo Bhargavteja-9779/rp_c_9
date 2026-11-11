@@ -54,7 +54,7 @@ def intro(V):
               "[@meredig2018;@xiong2020;@omee2024;@tan2025]. Recent work on polymers has shown that split-conformal coverage "
               "falls well below nominal when whole chemical classes are held out [@han2026;@akdogan2026]. For "
               "composition-based alloy property models, however, the size of this coverage loss has not been quantified, and no "
-              "calibration procedure has been proposed and tested that remains valid when the test alloy comes from an unseen "
+              "calibration procedure has been proposed and tested that restores coverage when the test alloy comes from an unseen "
               "alloy family."),
         ("p", "This paper addresses that gap. We treat the *alloy family* (the chemical system of an alloy, or a cluster of "
               "similar compositions) as the unit of exchangeability, following the hierarchical view of Dunn et al. "
@@ -76,6 +76,9 @@ def intro(V):
             "A benchmark of interval coverage under alloy-family extrapolation: "
             f"{V['n_tasks']} tasks, 3 split protocols, {V['n_seeds']} outer-split seeds and 17 interval methods. It shows how far "
             "random-split calibration and model-based uncertainty fall below nominal coverage (Section 7).",
+            "Evidence of the practical consequence for alloy screening (false discoveries among lower-bound selections) and a "
+            "chronological deployment test that delineates what family-level calibration can and cannot correct (Sections 7.5 "
+            "and 9.3).",
             "Ablation, robustness, sensitivity and efficiency experiments that isolate which component matters and what it costs, "
             "together with an error analysis of the alloy families on which intervals still fail (Sections 8–11).",
             "A fully reproducible code base in which every number, table and figure is regenerated from public data by a single "

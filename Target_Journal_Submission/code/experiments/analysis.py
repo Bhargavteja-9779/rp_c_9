@@ -712,6 +712,34 @@ def temporal_analysis(out, cfg):
     g.to_csv(out / "tables" / "table_temporal.csv", index=False); _md(g, out / "tables" / "table_temporal.md")
 
 
+def fig_graphical_abstract(cm, out):
+    """Graphical abstract (Elsevier: >= 1328 x 531 px, readable at 13 x 5 cm)."""
+    fig = plt.figure(figsize=(13 / 2.54 * 1.6, 5 / 2.54 * 1.6))
+    ax0 = fig.add_axes([0.0, 0.0, 0.47, 1.0]); ax0.axis("off"); ax0.set_xlim(0, 10); ax0.set_ylim(0, 5)
+    for i, (x, lab, c) in enumerate([(0.2, "Known alloy\nfamilies", C_VIOLET), (3.5, "Calibrate on\nwhole held-out\nfamilies", C_BLUE),
+                                      (6.9, "Interval for\nan alloy of an\nunseen family", C_ORANGE)]):
+        ax0.add_patch(matplotlib.patches.FancyBboxPatch((x, 1.6), 2.8, 1.8, boxstyle="round,pad=0.05,rounding_size=0.15",
+                                                        fc=c, alpha=0.18, ec=INK2, lw=0.8))
+        ax0.text(x + 1.4, 2.5, lab, ha="center", va="center", fontsize=7.5, color=INK)
+        if i < 2:
+            ax0.annotate("", (x + 3.3, 2.5), (x + 2.85, 2.5), arrowprops=dict(arrowstyle="-|>", color=INK2, lw=1.0))
+    ax0.text(5, 4.4, "Family-calibrated conformal prediction (FCP)", ha="center", fontsize=9.5, weight="bold", color=INK)
+    ax0.text(5, 0.7, "6 public datasets · 3 shift protocols · 10 seeds", ha="center", fontsize=7.5, color=INK2)
+    ax = fig.add_axes([0.56, 0.16, 0.42, 0.62])
+    meths = ["SCP", "CV+", "CQR", "GP", "RF-z", "FCP"]
+    for k, (p, c) in enumerate([("system", C_BLUE), ("cluster", C_ORANGE)]):
+        v = [cm[(cm.protocol == p) & (cm.method == m)].coverage.mean() for m in meths]
+        ax.bar(np.arange(len(meths)) + (k - 0.5) * 0.38, v, width=0.36, color=c,
+               label={"system": "unseen chemical system", "cluster": "unseen composition cluster"}[p])
+    ax.axhline(0.9, color=C_RED, ls="--", lw=1); ax.set_ylim(0.6, 1.0)
+    ax.set_xticks(range(len(meths))); ax.set_xticklabels(meths, fontsize=8)
+    ax.set_ylabel("Coverage of 90% intervals", fontsize=8)
+    ax.legend(fontsize=6.5, loc="lower left", bbox_to_anchor=(0.0, 1.0), ncol=2, frameon=False)
+    fig.savefig(out / "figures" / "graphical_abstract.png", dpi=300)
+    fig.savefig(out / "figures" / "graphical_abstract.pdf")
+    plt.close(fig)
+
+
 def run(cfg, out):
     out = Path(out)
     _style()
@@ -725,7 +753,7 @@ def run(cfg, out):
                "summary_alpha0.1": summ.replace({np.inf: "inf"}).to_dict(orient="records")}
     (out / "metrics.json").write_text(json.dumps(metrics, indent=2, default=float))
     fig_workflow(out); fig_datasets(out, cfg); fig_coverage(cm, out); fig_tradeoff(cm, out); fig_novelty(cm, out)
-    fig_ablation(summ, out); fig_alpha(df, out); fig_parity(out, cfg); error_analysis(out, cfg)
+    fig_ablation(summ, out); fig_alpha(df, out); fig_graphical_abstract(cm, out); fig_parity(out, cfg); error_analysis(out, cfg)
     fig_robust(out); fig_sens(out); fig_eff(out, cm)
     basemodel_analysis(df, out)
     randfolds_analysis(df, out)
