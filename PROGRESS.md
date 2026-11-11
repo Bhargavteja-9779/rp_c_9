@@ -17,8 +17,8 @@ Branch: claude/autonomous-research-discovery-795xcu. All deliverables are under 
 ## Phase status
 - [x] Phase 0 journal selection (docs written)
 - [x] Phase 1-4 topic + prior art (to be written into literature/ docs)
-- [ ] Phase 9-10 implementation
-- [ ] Phase 11-19 experiments
+- [x] Phase 9-10 implementation (tests pass)
+- [~] Phase 11-19 experiments running (v2 scale model, see supplementary/iteration_log.md)
 - [ ] Phase 20-23 figures/tables/manuscript
 - [ ] Phase 24-33 reviews 01-10
 - [ ] Phase 34-42 audits, docx, cover letter, risk report

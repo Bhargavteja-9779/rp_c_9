@@ -316,12 +316,25 @@ def fig_datasets(out, cfg):
     _save(fig, out, "fig2_dataset_distributions")
 
 
+def load_merged(cache, task, prot, seed):
+    """Baseline bounds from the default run + v2 CV+ bounds (v1 CV+ entries dropped)."""
+    f0 = cache / f"main_{task}_{prot}_{seed}_default.pkl"
+    f2 = cache / f"main_{task}_{prot}_{seed}_cvplus_v2.pkl"
+    if not (f0.exists() and f2.exists()):
+        return None
+    from fcp.evaluation.protocol import CV_VARIANTS
+    r = pickle.loads(f0.read_bytes()); r2 = pickle.loads(f2.read_bytes())
+    for side in ("lo", "hi"):
+        r[side] = {k: v for k, v in r[side].items() if k[0] not in CV_VARIANTS}
+        r[side].update(r2[side])
+    return r
+
+
 def fig_parity(out, cfg):
     from experiments import runner as R
-    f = R.CACHE / "main_mpea_hv_cluster_0_default.pkl"
-    if not f.exists():
+    r = load_merged(R.CACHE, "mpea_hv", "cluster", 0)
+    if r is None:
         return
-    r = pickle.loads(f.read_bytes())
     fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.2), sharex=True, sharey=True)
     y, mu = r["y"], r["mu"]
     o = np.argsort(y)
@@ -344,8 +357,11 @@ def error_analysis(out, cfg):
     from experiments import runner as R
     rows = []
     for f in sorted(R.CACHE.glob("main_*_system_*_default.pkl")):
-        r = pickle.loads(f.read_bytes())
-        t, s = r["meta"]["task"], r["meta"]["seed"]
+        meta = pickle.loads(f.read_bytes())["meta"]
+        r = load_merged(R.CACHE, meta["task"], "system", meta["seed"])
+        if r is None:
+            continue
+        t, s = meta["task"], meta["seed"]
         y, fam, nov = r["y"], np.asarray(r["families"]), r["novelty"]
         z = np.abs(y - np.median(y)) / (np.quantile(y, 0.75) - np.quantile(y, 0.25) + 1e-12)
         for m in ["SCP", "CV+", "GSCP", "FCP", "FCP-W"]:
@@ -485,11 +501,36 @@ def fig_workflow(out):
     _save(fig, out, "fig1_workflow")
 
 
+def iteration_table(df, out):
+    """v1 (unclamped scale) vs v2 (clamped) for every run in which both exist (alpha = 0.1)."""
+    d = df[df.alpha == 0.1]
+    v1 = d[d.method.str.endswith(" (v1)")].copy()
+    if v1.empty:
+        return
+    v1["base"] = v1.method.str.replace(" (v1)", "", regex=False)
+    keys = ["task", "protocol", "seed"]
+    v2 = d[d.method.isin(v1.base.unique())].rename(columns={"method": "base"})
+    m = v1.merge(v2, on=keys + ["base"], suffixes=("_v1", "_v2"))
+    rows = []
+    for (b, p), g in m.groupby(["base", "protocol"]):
+        rows.append({"method": b, "protocol": p, "n_runs": len(g),
+                     "coverage_v1": g.coverage_v1.mean(), "coverage_v2": g.coverage_v2.mean(),
+                     "mean_width_sd_v1": g.width_sd_v1.mean(), "mean_width_sd_v2": g.width_sd_v2.mean(),
+                     "median_width_sd_v1": g.median_width_sd_v1.mean(), "median_width_sd_v2": g.median_width_sd_v2.mean(),
+                     "interval_score_v1": g.interval_score_sd_v1.mean(), "interval_score_v2": g.interval_score_sd_v2.mean()})
+    t = pd.DataFrame(rows)
+    t = t[t.method.isin(["FCP", "FCP-W", "NCV+", "GCV+[novelty]", "GCV+"])]
+    t.to_csv(out / "tables" / "table_iteration_v1_v2.csv", index=False)
+    _md(t, out / "tables" / "table_iteration_v1_v2.md")
+
+
 def run(cfg, out):
     out = Path(out)
     _style()
     (out / "tables").mkdir(exist_ok=True); (out / "figures").mkdir(exist_ok=True)
-    df = pd.read_csv(out / "raw_results.csv")
+    df_all = pd.read_csv(out / "raw_results.csv")
+    iteration_table(df_all, out)
+    df = df_all[~df_all.method.str.endswith(" (v1)")]
     cm, summ = tables(df, out)
     stat = statistics(cm, out)
     metrics = {"n_runs": int(df.groupby(["task", "protocol", "seed"]).ngroups), "tasks": sorted(df.task.unique()),
