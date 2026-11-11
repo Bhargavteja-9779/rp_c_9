@@ -176,6 +176,18 @@
   "holds": true
  },
  {
+  "claim": "FCP cost within 10% of random-fold CV+",
+  "holds": true
+ },
+ {
+  "claim": "FCP costs 3-8x SCP",
+  "holds": true
+ },
+ {
+  "claim": "GP slower than FCP on 4 larger tasks",
+  "holds": true
+ },
+ {
   "claim": "target extremity negatively associated with family coverage in >= 4 tasks for FCP",
   "holds": true
  },

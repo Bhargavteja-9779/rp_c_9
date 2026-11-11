@@ -804,7 +804,42 @@ def robustness_sections(V):
 
 
 def computational(V):
-    return COMP_HOOK(V) if "COMP_HOOK" in globals() else []
+    d = V["df"]; d = d[d.alpha == 0.1]
+    t = d.groupby(["task", "method"]).fit_time_s_per_fold.mean().unstack()
+    ratio_cv = (t["FCP"] / t["CV+"])
+    ratio_scp = (t["FCP"] / t["SCP"])
+    claim((ratio_cv - 1).abs().max() < 0.1, "FCP cost within 10% of random-fold CV+")
+    claim(ratio_scp.min() > 3 and ratio_scp.max() < 8, "FCP costs 3-8x SCP")
+    claim(all(t.loc[k, "GP"] > t.loc[k, "FCP"] for k in ["mpea_ys", "expt_hf", "supercon_tc", "superhard_k"]), "GP slower than FCP on 4 larger tasks")
+    rows = []
+    for k in TASK:
+        rows.append([TASK[k]] + [f"{t.loc[k, m]:.1f}" for m in ["SCP", "WCP", "CQR", "GSCP", "CV+", "FCP", "GP", "RF-z"]])
+    TB["table_cost"] = {"type": "table", "font_size": 16,
+        "caption": runs("**Table {{tab:cost}}.** Mean wall time (s) per outer fold to fit a method and form its intervals for all "
+                        "test alloys (single CPU thread; 4 runs executed concurrently on a 4-core machine; α = 0.1). FCP-W and "
+                        "the other CV+ variants share FCP's fits."),
+        "header": ["Task", "SCP", "WCP", "CQR", "GSCP", "CV+", "FCP", "GP", "RF-z"], "rows": rows,
+        "col_widths": [0.24] + [0.095] * 8}
+    E = [("h1", "10. Computational cost"),
+         ("p", "FCP's cost is dominated by fitting *K* = 5 family-bagged ensembles of *M* = 6 members, i.e. 30 LightGBM models per "
+               f"outer fold. It was therefore within {(ratio_cv - 1).abs().max() * 100:.0f}% of random-fold CV+, which fits the same "
+               f"number of models, and {ratio_scp.min():.1f}–{ratio_scp.max():.1f} times as expensive as split conformal prediction "
+               f"(Table {{{{tab:cost}}}}). In absolute terms, one outer fold took {t['FCP'].min():.1f}–{t['FCP'].max():.1f} s on a single CPU "
+               f"thread for about {int(V['ds'].n.min() * 0.8):,}–{int(V['ds'].n.max() * 0.8):,} training alloys (80% of each task), less than the Gaussian process on the four larger tasks. Forming the "
+               "intervals is a weighted quantile over the *n* calibration bounds per test alloy, which adds O(*n* log *n*) per "
+               "alloy and is negligible at these sizes. No GPU is required. The extra cost relative to split conformal prediction "
+               "is incurred once per model update, not per prediction, which matters little in alloy design, where each new "
+               "measurement costs hours to days.")]
+    ep = V["efficiency"]
+    if ep is not None:
+        e = ep.set_index(["task", "method"])
+        E[-1] = (E[-1][0], E[-1][1] + f" Measured in isolated processes, the peak resident memory of FCP was "
+                 f"{e.xs('FCP', level='method').peak_rss_mb.max():.0f} MB, against {e.xs('GP', level='method').peak_rss_mb.max():.0f} MB "
+                 "for the GP (Fig. {{fig:efficiency}}).")
+        E.append(("fig", ("fig12_efficiency", "Fig. {{fig:efficiency}}. Wall time and peak memory for one outer fold (unseen-system "
+                         "protocol, single process).")))
+    E.append(("table_cost", None))
+    return E
 
 
 if __name__ == "__main__":
