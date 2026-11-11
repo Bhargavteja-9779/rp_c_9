@@ -35,6 +35,8 @@ CV_VARIANTS = {
 
 
 def outer_groups(task, protocol):
+    if protocol == "temporal":
+        return task["fam_system"]
     if protocol == "random":
         return task["formula"]
     if protocol == "system":
@@ -48,7 +50,7 @@ def _fold_job(task, protocol, seed, k, tr, te, cfg, inner_family):
     t0 = time.perf_counter()
     X, y = task["X"], task["y"]
     Xtr, ytr, Xte = X[tr], y[tr], X[te]
-    fam_key = {"system": "fam_system", "cluster": "fam_cluster"}[inner_family or ("system" if protocol == "random" else protocol)]
+    fam_key = {"system": "fam_system", "cluster": "fam_cluster"}[inner_family or ("system" if protocol in ("random", "temporal") else protocol)]
     gtr = task[fam_key][tr]
     alphas = cfg.get("alphas", ALPHAS)
     kw = dict(n_members=cfg["n_members"], family_frac=cfg["family_frac"], lgbm_params=cfg.get("lgbm_params"))
@@ -162,10 +164,15 @@ def run_protocol(task, protocol, seed, cfg, inner_family=None, n_jobs=4, train_f
     if label_noise > 0:  # robustness: Gaussian noise on training AND test labels as a fraction of target SD
         task["y"] = y_orig + rng.normal(0, label_noise * y_orig.std(), size=len(y_orig))
     groups = outer_groups(task, protocol)
-    folds = C.assign_folds(len(groups), cfg["outer_folds"], groups, seed=seed,
-                           balanced=cfg.get("outer_assign", "balanced") == "balanced")
+    if protocol == "temporal":  # single chronological split: newest publication year is the test set
+        folds = np.where(task["year"] >= cfg.get("temporal_cutoff", 2019), 0, 1)
+        n_outer = 1
+    else:
+        folds = C.assign_folds(len(groups), cfg["outer_folds"], groups, seed=seed,
+                               balanced=cfg.get("outer_assign", "balanced") == "balanced")
+        n_outer = cfg["outer_folds"]
     jobs = []
-    for k in range(cfg["outer_folds"]):
+    for k in range(n_outer):
         tr, te = np.where(folds != k)[0], np.where(folds == k)[0]
         if train_fraction < 1.0:  # robustness: reduced training data (subsample whole training families)
             fam_key = "fam_system" if protocol in ("random", "system") else "fam_cluster"
@@ -176,6 +183,9 @@ def run_protocol(task, protocol, seed, cfg, inner_family=None, n_jobs=4, train_f
     res = Parallel(n_jobs=n_jobs)(delayed(_fold_job)(task, protocol, seed, k, tr, te, cfg, inner_family)
                                   for k, tr, te in jobs)
     n = len(task["y"])
+    tested = np.zeros(n, bool)
+    for _, _, te in jobs:
+        tested[te] = True
     keys = sorted({kk for r in res for kk in r["lo"]})
     out = {"y": task["y"], "fold": folds, "mu": np.full(n, np.nan), "novelty": np.full(n, np.nan),
            "lo": {kk: np.full(n, np.nan) for kk in keys}, "hi": {kk: np.full(n, np.nan) for kk in keys},
@@ -188,4 +198,9 @@ def run_protocol(task, protocol, seed, cfg, inner_family=None, n_jobs=4, train_f
         for m, t in r["time"].items():
             out["time"].setdefault(m, []).append(t)
     out["families"] = groups
+    if not tested.all():  # temporal protocol: keep only tested rows
+        for k in ("y", "fold", "mu", "novelty", "families"):
+            out[k] = np.asarray(out[k])[tested]
+        for side in ("lo", "hi"):
+            out[side] = {kk: v[tested] for kk, v in out[side].items()}
     return out

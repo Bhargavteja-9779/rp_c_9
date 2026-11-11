@@ -15,6 +15,11 @@ CACHE = ROOT / "results" / "cache"
 
 def load_task(name, cfg):
     t = build_task(name, k_clusters=cfg["k_clusters"])
+    if name in ("mpea_hv", "mpea_ys"):
+        from fcp.data.datasets import load_years
+        yrs = load_years(name)
+        assert len(yrs) == len(t["y"])
+        t = dict(t, year=yrs)
     if name == "supercon_tc" and len(t["y"]) > cfg["supercon_max_rows"]:
         rng = np.random.default_rng(0)
         fams = rng.permutation(np.unique(t["fam_system"]))

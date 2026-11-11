@@ -169,6 +169,18 @@ def mondrian(cfg, out, n_jobs):
     _save_rows(rows, out / "mondrian_results.csv")
 
 
+def temporal(cfg, out, n_jobs):
+    """Reviewer-5 request: chronological deployment test on MPEA data (train: publications before 2019; test: 2019)."""
+    c2 = copy.deepcopy(cfg)
+    jobs = [(t, "temporal", s) for t in ["mpea_hv", "mpea_ys"] for s in cfg["seeds"]]
+    from joblib import Parallel, delayed
+    Parallel(n_jobs=n_jobs)(delayed(_one)("temporal", t, p, s, c2, "y2019", {}) for t, p, s in jobs)
+    rows = []
+    for t, p, s in jobs:
+        rows += R.metrics_rows(R.run_one("temporal", t, p, s, c2, variant="y2019"))
+    _save_rows(rows, out / "temporal_results.csv")
+
+
 def efficiency(cfg, out, n_jobs):
     """Wall time and peak resident memory of each method for one outer fold (separate processes)."""
     rows = []

@@ -964,3 +964,164 @@
   robust superhard_k system seed=4 noise0.1 wall=193s (call 0s)
   robust expt_hf system seed=0 noise0.25 wall=185s (call 0s)
   robust superhard_k system seed=4 noise0.25 wall=198s (call 0s)
+  robust expt_hf system seed=2 noise0.1 wall=196s (call 197s)
+  robust expt_hf system seed=4 noise0.1 wall=201s (call 202s)
+  robust expt_hf system seed=3 noise0.1 wall=203s (call 203s)
+  robust expt_hf system seed=1 noise0.1 wall=204s (call 204s)
+  robust expt_hf system seed=2 noise0.25 wall=189s (call 189s)
+  robust expt_hf system seed=4 noise0.25 wall=191s (call 191s)
+  robust expt_hf system seed=1 noise0.25 wall=192s (call 192s)
+  robust expt_hf system seed=3 noise0.25 wall=194s (call 194s)
+  robust mpea_hv system seed=0 trainfrac0.5 wall=35s (call 36s)
+  robust mpea_hv system seed=2 trainfrac0.5 wall=35s (call 35s)
+  robust mpea_hv system seed=4 trainfrac0.5 wall=38s (call 38s)
+  robust mpea_ys system seed=1 trainfrac0.5 wall=51s (call 51s)
+  robust mpea_hv system seed=1 trainfrac0.5 wall=33s (call 33s)
+  robust mpea_hv system seed=3 trainfrac0.5 wall=33s (call 33s)
+  robust steel_ys system seed=0 trainfrac0.5 wall=21s (call 22s)
+  robust mpea_ys system seed=0 trainfrac0.5 wall=48s (call 48s)
+  robust mpea_ys system seed=2 trainfrac0.5 wall=48s (call 48s)
+  robust mpea_ys system seed=3 trainfrac0.5 wall=50s (call 50s)
+  robust steel_ys system seed=1 trainfrac0.5 wall=23s (call 23s)
+  robust steel_ys system seed=2 trainfrac0.5 wall=22s (call 22s)
+  robust steel_ys system seed=3 trainfrac0.5 wall=23s (call 23s)
+  robust steel_ys system seed=4 trainfrac0.5 wall=18s (call 18s)
+  robust mpea_ys system seed=4 trainfrac0.5 wall=50s (call 50s)
+  robust superhard_k system seed=0 trainfrac0.5 wall=123s (call 123s)
+  robust superhard_k system seed=1 trainfrac0.5 wall=123s (call 123s)
+  robust superhard_k system seed=2 trainfrac0.5 wall=124s (call 124s)
+  robust superhard_k system seed=3 trainfrac0.5 wall=122s (call 122s)
+  robust superhard_k system seed=4 trainfrac0.5 wall=125s (call 125s)
+  robust expt_hf system seed=0 trainfrac0.5 wall=118s (call 118s)
+  robust expt_hf system seed=1 trainfrac0.5 wall=118s (call 118s)
+  robust expt_hf system seed=2 trainfrac0.5 wall=118s (call 118s)
+  robust expt_hf system seed=3 trainfrac0.5 wall=120s (call 120s)
+  robust expt_hf system seed=4 trainfrac0.5 wall=117s (call 117s)
+  robustness mpea_hv seed=0
+  robustness mpea_hv seed=1
+  robustness mpea_hv seed=2
+  robustness mpea_hv seed=3
+  robustness mpea_hv seed=4
+  robustness mpea_ys seed=0
+  robustness mpea_ys seed=1
+  robustness mpea_ys seed=2
+  robustness mpea_ys seed=3
+  robustness mpea_ys seed=4
+  robustness steel_ys seed=0
+  robustness steel_ys seed=1
+  robustness steel_ys seed=2
+  robustness steel_ys seed=3
+  robustness steel_ys seed=4
+  robustness superhard_k seed=0
+  robustness superhard_k seed=1
+  robustness superhard_k seed=2
+  robustness superhard_k seed=3
+  robustness superhard_k seed=4
+  robustness expt_hf seed=0
+  robustness expt_hf seed=1
+  robustness expt_hf seed=2
+  robustness expt_hf seed=3
+  robustness expt_hf seed=4
+=== stage robustness done in 914s ===
+=== stage generalization ===
+  general mpea_hv cluster seed=2 inner_system wall=51s (call 51s)
+  general mpea_hv cluster seed=0 inner_system wall=51s (call 51s)
+  general mpea_hv cluster seed=1 inner_system wall=51s (call 51s)
+  general mpea_hv cluster seed=3 inner_system wall=53s (call 53s)
+  general mpea_hv cluster seed=4 inner_system wall=51s (call 51s)
+  general mpea_ys cluster seed=0 inner_system wall=66s (call 66s)
+  general mpea_ys cluster seed=1 inner_system wall=66s (call 66s)
+  general mpea_ys cluster seed=2 inner_system wall=65s (call 65s)
+  general steel_ys cluster seed=0 inner_system wall=36s (call 36s)
+  general steel_ys cluster seed=1 inner_system wall=36s (call 36s)
+  general mpea_ys cluster seed=3 inner_system wall=63s (call 63s)
+  general mpea_ys cluster seed=4 inner_system wall=64s (call 64s)
+  general steel_ys cluster seed=2 inner_system wall=33s (call 33s)
+  general steel_ys cluster seed=3 inner_system wall=33s (call 33s)
+  general steel_ys cluster seed=4 inner_system wall=34s (call 34s)
+  general superhard_k cluster seed=0 inner_system wall=152s (call 152s)
+  general superhard_k cluster seed=2 inner_system wall=149s (call 149s)
+  general superhard_k cluster seed=1 inner_system wall=151s (call 151s)
+  general superhard_k cluster seed=3 inner_system wall=151s (call 151s)
+  general superhard_k cluster seed=4 inner_system wall=146s (call 146s)
+  general expt_hf cluster seed=0 inner_system wall=144s (call 144s)
+  general expt_hf cluster seed=1 inner_system wall=144s (call 144s)
+  general expt_hf cluster seed=2 inner_system wall=144s (call 144s)
+  general expt_hf cluster seed=3 inner_system wall=137s (call 137s)
+  general expt_hf cluster seed=4 inner_system wall=139s (call 139s)
+  general supercon_tc cluster seed=0 inner_system wall=183s (call 184s)
+  general supercon_tc cluster seed=1 inner_system wall=184s (call 185s)
+  general supercon_tc cluster seed=2 inner_system wall=187s (call 187s)
+  general supercon_tc cluster seed=3 inner_system wall=189s (call 190s)
+  general supercon_tc cluster seed=4 inner_system wall=186s (call 186s)
+  generalization mpea_hv seed=0
+  generalization mpea_hv seed=1
+  generalization mpea_hv seed=2
+  generalization mpea_hv seed=3
+  generalization mpea_hv seed=4
+  generalization mpea_ys seed=0
+  generalization mpea_ys seed=1
+  generalization mpea_ys seed=2
+  generalization mpea_ys seed=3
+  generalization mpea_ys seed=4
+  generalization steel_ys seed=0
+  generalization steel_ys seed=1
+  generalization steel_ys seed=2
+  generalization steel_ys seed=3
+  generalization steel_ys seed=4
+  generalization superhard_k seed=0
+  generalization superhard_k seed=1
+  generalization superhard_k seed=2
+  generalization superhard_k seed=3
+  generalization superhard_k seed=4
+  generalization expt_hf seed=0
+  generalization expt_hf seed=1
+  generalization expt_hf seed=2
+  generalization expt_hf seed=3
+  generalization expt_hf seed=4
+  generalization supercon_tc seed=0
+  generalization supercon_tc seed=1
+  generalization supercon_tc seed=2
+  generalization supercon_tc seed=3
+  generalization supercon_tc seed=4
+=== stage generalization done in 852s ===
+=== stage sensitivity ===
+  sens mpea_hv system seed=0 n_members=3 wall=13s (call 13s)
+  sens mpea_hv system seed=0 K=3 wall=15s (call 15s)
+  sens mpea_hv system seed=0 family_frac=0.5 wall=20s (call 20s)
+  sens mpea_hv system seed=0 family_frac=0.9 wall=27s (call 27s)
+  sens mpea_hv system seed=0 K=10 wall=46s (call 46s)
+  sens mpea_hv system seed=0 n_members=12 wall=47s (call 47s)
+  sens mpea_hv system seed=0 novelty_k=1 wall=24s (call 24s)
+  sens mpea_hv system seed=1 K=3 wall=16s (call 16s)
+  sens mpea_hv system seed=0 novelty_k=15 wall=23s (call 23s)
+  sens mpea_hv system seed=1 n_members=3 wall=12s (call 12s)
+  sens mpea_hv system seed=1 family_frac=0.5 wall=21s (call 21s)
+  sens mpea_hv system seed=1 K=10 wall=47s (call 47s)
+  sens mpea_hv system seed=1 family_frac=0.9 wall=28s (call 28s)
+  sens mpea_hv system seed=1 n_members=12 wall=49s (call 49s)
+  sens mpea_hv system seed=1 novelty_k=1 wall=24s (call 24s)
+  sens mpea_hv system seed=2 K=3 wall=16s (call 16s)
+  sens mpea_hv system seed=1 novelty_k=15 wall=24s (call 24s)
+  sens mpea_hv system seed=2 n_members=3 wall=12s (call 12s)
+  sens mpea_hv system seed=2 family_frac=0.5 wall=20s (call 20s)
+  sens mpea_hv system seed=2 family_frac=0.9 wall=28s (call 28s)
+  sens mpea_hv system seed=2 K=10 wall=49s (call 49s)
+  sens mpea_hv system seed=2 n_members=12 wall=52s (call 52s)
+  sens mpea_hv system seed=2 novelty_k=1 wall=31s (call 31s)
+  sens mpea_hv system seed=3 K=3 wall=26s (call 26s)
+  sens mpea_hv system seed=2 novelty_k=15 wall=40s (call 40s)
+  sens mpea_hv system seed=3 n_members=3 wall=23s (call 23s)
+  sens mpea_hv system seed=3 family_frac=0.5 wall=28s (call 28s)
+  sens mpea_hv system seed=3 family_frac=0.9 wall=35s (call 35s)
+  sens mpea_hv system seed=3 K=10 wall=71s (call 71s)
+  sens mpea_hv system seed=3 n_members=12 wall=61s (call 61s)
+  sens mpea_hv system seed=3 novelty_k=1 wall=29s (call 29s)
+  sens mpea_hv system seed=4 K=3 wall=17s (call 17s)
+  sens mpea_hv system seed=3 novelty_k=15 wall=28s (call 28s)
+  sens mpea_hv system seed=4 n_members=3 wall=13s (call 13s)
+  sens mpea_hv system seed=4 family_frac=0.5 wall=20s (call 20s)
+  sens mpea_hv system seed=4 family_frac=0.9 wall=28s (call 28s)
+  sens mpea_hv system seed=4 K=10 wall=49s (call 49s)
+  sens mpea_hv system seed=4 novelty_k=1 wall=24s (call 24s)
+  sens mpea_hv system seed=4 n_members=12 wall=49s (call 49s)

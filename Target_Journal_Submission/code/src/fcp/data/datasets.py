@@ -68,3 +68,16 @@ def load_task(name: str) -> pd.DataFrame:
         out = pd.DataFrame({"formula": df["formula"].astype(str), "y": df["expt_form_e"].astype(float)})
         return out.groupby("formula", as_index=False)["y"].median()
     raise KeyError(name)
+
+
+def load_years(name):
+    """Earliest publication year of each cleaned MPEA row (same grouping keys and order as load_task)."""
+    df = _mpea()
+    df["year"] = df["REFERENCE: year"].astype(float)
+    if name == "mpea_hv":
+        df = df[df["HV"].notna()]
+        return df.groupby(["formula", "processing"], as_index=False)["year"].min()["year"].to_numpy()
+    if name == "mpea_ys":
+        df = df[df["YS (MPa)"].notna() & df["test_type"].isin(["C", "T"]) & df["test_temp_C"].notna()]
+        return df.groupby(["formula", "processing", "test_type", "test_temp_C"], as_index=False)["year"].min()["year"].to_numpy()
+    raise KeyError(name)

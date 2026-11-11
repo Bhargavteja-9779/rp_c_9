@@ -315,7 +315,7 @@ def setup(V):
         ("p", f"Pre-specified settings: LightGBM with {V['lgbm_trees']} trees, learning rate {V['lgbm_lr']}, {V['lgbm_leaves']} leaves, "
               f"row and column subsampling {V['lgbm_sub']} and {V['lgbm_col']}, minimum 5 alloys per leaf, L2 penalty 1; *M* = {V['M']} members; φ = {V['phi']}; *K* = {V['K']} "
               f"inner folds; *k*_{{nn}} = {V['knn']}; {V['pcs']} principal components. None of these was tuned on test folds, and "
-              "their influence is examined in Section 9.3. All computations ran on CPUs (4 cores, no GPU) with Python, "
+              "their influence is examined in Section 9.4. All computations ran on CPUs (4 cores, no GPU) with Python, "
               "scikit-learn [@pedregosa2011] and LightGBM. A single command (run_all.py) regenerates every number, table and "
               "figure from the public data."),
     ]

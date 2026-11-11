@@ -470,10 +470,12 @@ def fig_robust(out):
     cols = [C_BLUE, C_ORANGE, C_AQUA]
     for k, c in enumerate(conds):
         v = g[g.condition == c].set_index("method").reindex(meths).coverage
-        ax.bar(np.arange(len(meths)) + (k - (len(conds) - 1) / 2) * 0.27, v, width=0.25, color=cols[k % 3], label=c)
-    ax.axhline(0.9, color=C_RED, ls="--", lw=1); ax.set_ylim(0.5, 1.0)
-    ax.set_xticks(range(len(meths))); ax.set_xticklabels(meths); ax.set_ylabel("Coverage (system holdout, mean of datasets)")
-    ax.legend(fontsize=6.5, ncol=3, loc="lower left")
+        lab = {"label_noise=0.1": "Label noise 0.10 SD(y)", "label_noise=0.25": "Label noise 0.25 SD(y)",
+               "train_fraction=0.5": "50% of training families"}.get(c, c)
+        ax.bar(np.arange(len(meths)) + (k - (len(conds) - 1) / 2) * 0.27, v, width=0.25, color=cols[k % 3], label=lab)
+    ax.axhline(0.9, color=C_RED, ls="--", lw=1); ax.set_ylim(0.7, 1.0)
+    ax.set_xticks(range(len(meths))); ax.set_xticklabels(meths); ax.set_ylabel("Coverage (unseen systems,\nmean over datasets)")
+    ax.legend(fontsize=7, ncol=3, loc="lower center", bbox_to_anchor=(0.5, 1.0))
     _save(fig, out, "fig8_robustness")
 
 
@@ -664,6 +666,36 @@ def mondrian_analysis(df_main, out):
     t.to_csv(out / "tables" / "table_mondrian.csv", index=False); _md(t, out / "tables" / "table_mondrian.md")
 
 
+def temporal_analysis(out, cfg):
+    """Chronological test (MPEA, train < 2019, test = 2019): coverage overall and split by whether the test alloy's
+    chemical system occurs in the training years; mean residual (label/processing shift diagnostic)."""
+    from experiments import runner as R
+    rows = []
+    for task in ["mpea_hv", "mpea_ys"]:
+        t = R.load_task(task, cfg)
+        seen = set(t["fam_system"][t["year"] < cfg.get("temporal_cutoff", 2019)])
+        for seed in cfg["seeds"]:
+            f = R.CACHE / f"temporal_{task}_temporal_{seed}_y2019.pkl"
+            if not f.exists():
+                continue
+            r = pickle.loads(f.read_bytes()); y = r["y"]
+            new = np.array([g not in seen for g in r["families"]])
+            for (m, a) in r["lo"]:
+                if a != 0.1:
+                    continue
+                c = (y >= r["lo"][(m, a)]) & (y <= r["hi"][(m, a)])
+                rows.append({"task": task, "seed": seed, "method": m, "coverage": c.mean(), "cov_seen_system": c[~new].mean(),
+                             "cov_unseen_system": c[new].mean(), "frac_unseen": new.mean(), "bias": float(np.mean(y - r["mu"])),
+                             "r2": 1 - np.mean((y - r["mu"]) ** 2) / np.var(y)})
+    if not rows:
+        return
+    d = pd.DataFrame(rows)
+    g = d.groupby(["task", "method"]).agg(coverage=("coverage", "mean"), coverage_sd=("coverage", "std"),
+                                          cov_seen_system=("cov_seen_system", "mean"), cov_unseen_system=("cov_unseen_system", "mean"),
+                                          frac_unseen=("frac_unseen", "mean"), bias=("bias", "mean"), r2=("r2", "mean")).reset_index()
+    g.to_csv(out / "tables" / "table_temporal.csv", index=False); _md(g, out / "tables" / "table_temporal.md")
+
+
 def run(cfg, out):
     out = Path(out)
     _style()
@@ -683,6 +715,7 @@ def run(cfg, out):
     randfolds_analysis(df, out)
     screening_analysis(out, cfg)
     mondrian_analysis(df, out)
+    temporal_analysis(out, cfg)
     for name in ["generalization_results.csv"]:
         p = out / name
         if p.exists():

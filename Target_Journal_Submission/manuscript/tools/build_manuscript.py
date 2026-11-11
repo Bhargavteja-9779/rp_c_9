@@ -212,7 +212,7 @@ def results(V):
                 "individual datasets reached 0.98. Its apparent robustness therefore comes from intervals that are systematically "
                 "too wide in-distribution. That inflation happens to offset the extrapolation error under shift, but nothing "
                 "guarantees it. It depends on forest hyper-parameters such as max_features and leaf size, and it cannot be dialled "
-                "to a requested level. Section 9.4 asks the constructive question: does family-level calibration applied to a "
+                "to a requested level. Section 9.5 asks the constructive question: does family-level calibration applied to a "
                 "random-forest point predictor combine the forest's efficiency with calibrated coverage?"),
           ("fig", ("fig11_alpha_calibration", "Fig. {{fig:alpha}}. Empirical versus nominal coverage at α ∈ {0.05, 0.1, 0.2}. A calibrated "
                    "method lies on the diagonal in the random protocol and stays near it under shift."))]
@@ -439,8 +439,9 @@ def discussion(V):
                   "and misses, that price was worth paying in every comparison except against random-forest tree spread."),
             ("p", "**Choosing the family definition.** The family is the unit of novelty against which coverage is certified. "
                   "Chemical systems are natural for HEA/MPEA design campaigns that open new element combinations. Composition "
-                  "clusters are natural when moving to distant regions of an existing system. Section 9 shows what happens when the "
-                  "definition used for calibration is coarser or finer than the actual shift. Practitioners should calibrate at the "
+                  "clusters are natural when moving to distant regions of an existing system. Section 9.2 shows that calibrating on "
+                  "a finer definition than the actual shift costs coverage. Section 9.3 shows that FCP cannot correct shifts that "
+                  "are not family novelty at all, such as new processing routes. Practitioners should calibrate at the "
                   "level of novelty they intend to explore. With few families, they should prefer unweighted FCP, whose interval "
                   "stays finite, over FCP-W, whose interval correctly becomes unbounded."),
             ("p", "**Relation to prior work.** The coverage collapse reported for polymer chemistry holdouts [@han2026;@akdogan2026] "
@@ -470,7 +471,7 @@ def limitations(V):
                 "Coverage is marginal over alloys (FCP) or over families (FCP-W), not conditional on an individual alloy. Families "
                 "with extreme properties remained under-covered (Section 11).",
                 "Under the cluster protocol only ten families exist per dataset. Family-level (FCP-W) statements at α = 0.1 are "
-                "then impossible (Eq. 10), and the outer partition of the balanced protocol is identical across seeds (Section 9.5).",
+                "then impossible (Eq. 10), and the outer partition of the balanced protocol is identical across seeds (Section 9.6).",
                 "All datasets are public compilations. MPEA entries from different publications differ in processing and testing "
                 "details that are only partly encoded, and inter-laboratory bias cannot be separated from model error.",
                 "Features are composition-based (plus processing and test conditions for MPEA). Microstructure, defect and "
@@ -718,7 +719,88 @@ def screening(V):
 
 
 def robustness_sections(V):
-    return ROBUST_HOOK(V) if "ROBUST_HOOK" in globals() else []
+    E = [("h1", "9. Robustness and generalization")]
+    rb = V["robustness"]
+    if rb is not None:
+        r = rb[(rb.alpha == 0.1) & (rb.method != "GP")]
+        t = r.groupby(["condition", "method"]).agg(cov=("coverage", "mean"), mn=("coverage", "min"), isc=("interval_score_sd", "mean"))
+        c = lambda cond, m, k="cov": float(t.loc[(cond, m), k])
+        conds = ["label_noise=0.1", "label_noise=0.25", "train_fraction=0.5"]
+        for cd in conds:
+            claim(c(cd, "FCP") >= 0.9, f"FCP mean coverage >= 0.9 under {cd}")
+            claim(c(cd, "SCP") < 0.88 and c(cd, "CV+") < 0.89, f"SCP/CV+ under-cover under {cd}")
+        fmin = min(c(cd, "FCP", "mn") for cd in conds)
+        E += [("h2", "9.1. Label noise and reduced training data (RQ4)"),
+              ("p", "Fig. {{fig:robust}} reports coverage under the unseen-chemical-system protocol (5 seeds, all tasks except the "
+                    "superconductors) when Gaussian noise of 0.10 or 0.25 SD(y) was added to the labels, or when only half of the "
+                    "training families were available. FCP's mean coverage stayed at "
+                    f"{c(conds[0], 'FCP'):.3f}, {c(conds[1], 'FCP'):.3f} and {c(conds[2], 'FCP'):.3f}, and its worst dataset at "
+                    f"{fmin:.3f} or above. SCP ({c(conds[0], 'SCP'):.3f}, {c(conds[1], 'SCP'):.3f}, {c(conds[2], 'SCP'):.3f}) and "
+                    f"CV+ ({c(conds[0], 'CV+'):.3f}, {c(conds[1], 'CV+'):.3f}, {c(conds[2], 'CV+'):.3f}) remained below nominal, "
+                    "and the shortfall of SCP grew when training data were halved. Label noise widens all intervals but does not "
+                    "change the ranking: the calibration mismatch, not the noise level, drives the under-coverage. RF-z again "
+                    f"covered well ({c(conds[0], 'RF-z'):.3f}–{c(conds[2], 'RF-z'):.3f}) with a slightly lower interval score than FCP."),
+              ("fig", ("fig8_robustness", "Fig. {{fig:robust}}. Coverage under label noise and reduced training data "
+                       "(unseen-chemical-system protocol, α = 0.1, mean over five datasets and five seeds)."))]
+    ge = V["generalization"]
+    if ge is not None:
+        g = ge[ge.alpha == 0.1].groupby(["task", "method"]).coverage.mean().unstack()
+        m = g.mean()
+        claim(m["FCP"] < V["g"]("cluster", "FCP") - 0.05, "mis-specified families reduce FCP coverage substantially")
+        claim(m["FCP"] > m["SCP"] + 0.05 and m["FCP"] > m["GSCP"], "FCP still better than SCP/GSCP under mis-specification")
+        claim(m["FCP"] < 0.9, "FCP below nominal under mis-specification")
+        E += [("h2", "9.2. Mis-specified family definition (RQ5)"),
+              ("p", "In practice the family definition used for calibration may not match the novelty that is actually explored. "
+                    "We calibrated FCP on chemical systems (F1) while the test alloys came from unseen composition clusters (F2), "
+                    "a coarser and harder shift. Mean coverage then fell to "
+                    f"{m['FCP']:.3f} for FCP and {m['FCP-W']:.3f} for FCP-W, against {V['g']('cluster', 'FCP'):.3f} when calibration "
+                    f"used the matching cluster families. The random-calibrated methods fell further (SCP {m['SCP']:.3f}, CV+ "
+                    f"{m['CV+']:.3f}), and so did the family-held-out split GSCP ({m['GSCP']:.3f}). The task-wise minimum for FCP "
+                    f"was {g['FCP'].min():.3f} ({TASK[g['FCP'].idxmin()]}). FCP thus degrades gracefully, remaining the best of the "
+                    "methods compared, but it is not a substitute for choosing a family definition at least as coarse as the "
+                    "intended exploration. A practical rule follows: when in doubt, calibrate on the coarser family definition."),
+              ]
+    tp = TAB / "table_temporal.csv"
+    if tp.exists():
+        T = pd.read_csv(tp).set_index(["task", "method"])
+        q = lambda t, m, k="coverage": float(T.loc[(t, m), k])
+        claim(q("mpea_ys", "FCP") >= 0.88 and q("mpea_ys", "SCP") < 0.8, "temporal: FCP near nominal for MPEA YS, SCP not")
+        claim(q("mpea_ys", "FCP", "cov_unseen_system") > q("mpea_ys", "SCP", "cov_unseen_system") + 0.1, "temporal YS: FCP fixes unseen systems")
+        claim(q("mpea_hv", "FCP") < 0.8 and q("mpea_hv", "SCP") < 0.8, "temporal HV: all fail")
+        claim(q("mpea_hv", "FCP", "cov_seen_system") < q("mpea_hv", "FCP", "cov_unseen_system"), "temporal HV failure concentrated in seen systems")
+        claim(q("mpea_hv", "FCP", "bias") > 50, "temporal HV: positive bias > 50 HV")
+        E += [("h2", "9.3. Chronological deployment test"),
+              ("p", "Family holdouts are constructed shifts. A more realistic test trains on alloys published before 2019 and "
+                    "predicts those first reported in 2019, the most recent year in the MPEA database (10 seeds; Table {{tab:temporal}}). "
+                    f"For yield strength, {q('mpea_ys', 'FCP', 'frac_unseen') * 100:.0f}% of the 2019 alloys belong to chemical systems "
+                    f"absent from earlier years. FCP covered {q('mpea_ys', 'FCP'):.3f} of them overall and "
+                    f"{q('mpea_ys', 'FCP', 'cov_unseen_system'):.3f} of those in new systems, against {q('mpea_ys', 'SCP'):.3f} and "
+                    f"{q('mpea_ys', 'SCP', 'cov_unseen_system'):.3f} for SCP. Under a genuine chronological shift whose main component "
+                    "is family novelty, family-level calibration therefore delivered nominal coverage."),
+              ("p", f"Hardness behaved differently. Every method failed (FCP {q('mpea_hv', 'FCP'):.3f}, SCP {q('mpea_hv', 'SCP'):.3f}, "
+                    f"CV+ {q('mpea_hv', 'CV+'):.3f}). The failure was concentrated in chemical systems that *were* present in the "
+                    f"training years (FCP: {q('mpea_hv', 'FCP', 'cov_seen_system'):.3f} in seen vs "
+                    f"{q('mpea_hv', 'FCP', 'cov_unseen_system'):.3f} in unseen systems). The predictions were biased by "
+                    f"{q('mpea_hv', 'FCP', 'bias'):+.0f} HV on average, and the 2019 entries included more powder-processed alloys and "
+                    "more entries with unreported processing. This is a shift in the composition–property relation *within* known "
+                    "families, plausibly caused by new processing routes and measurement practice. No calibration on historical "
+                    "data, family-level or otherwise, can anticipate it. It marks the boundary of what FCP addresses: novelty of "
+                    "the alloy family, not changes in how alloys of known families are made or measured."),
+              ("table_temporal", None)]
+        rows = []
+        for t in ["mpea_hv", "mpea_ys"]:
+            for m in ["SCP", "CV+", "CQR", "WCP", "GP", "RF-z", "GSCP", "FCP", "FCP-W"]:
+                if (t, m) in T.index:
+                    rows.append([TASK[t], m, f"{q(t, m):.3f} ± {q(t, m, 'coverage_sd'):.3f}", f"{q(t, m, 'cov_seen_system'):.3f}",
+                                 f"{q(t, m, 'cov_unseen_system'):.3f}"])
+        TB["table_temporal"] = {"type": "table", "font_size": 16,
+            "caption": runs("**Table {{tab:temporal}}.** Chronological test on MPEA data (train: publication year < 2019; test: "
+                            "2019). Coverage (mean ± SD over 10 seeds) overall and for test alloys whose chemical system does or "
+                            "does not occur in the training years."),
+            "header": ["Task", "Method", "Coverage", "Seen systems", "Unseen systems"], "rows": rows,
+            "col_widths": [0.26, 0.14, 0.22, 0.19, 0.19]}
+    E += SENS_HOOK(V) if "SENS_HOOK" in globals() else []
+    return E
 
 
 def computational(V):

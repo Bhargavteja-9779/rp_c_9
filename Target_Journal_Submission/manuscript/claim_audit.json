@@ -140,6 +140,42 @@
   "holds": true
  },
  {
+  "claim": "FCP mean coverage >= 0.9 under label_noise=0.1",
+  "holds": true
+ },
+ {
+  "claim": "SCP/CV+ under-cover under label_noise=0.1",
+  "holds": true
+ },
+ {
+  "claim": "FCP mean coverage >= 0.9 under label_noise=0.25",
+  "holds": true
+ },
+ {
+  "claim": "SCP/CV+ under-cover under label_noise=0.25",
+  "holds": true
+ },
+ {
+  "claim": "FCP mean coverage >= 0.9 under train_fraction=0.5",
+  "holds": true
+ },
+ {
+  "claim": "SCP/CV+ under-cover under train_fraction=0.5",
+  "holds": true
+ },
+ {
+  "claim": "mis-specified families reduce FCP coverage substantially",
+  "holds": true
+ },
+ {
+  "claim": "FCP still better than SCP/GSCP under mis-specification",
+  "holds": true
+ },
+ {
+  "claim": "FCP below nominal under mis-specification",
+  "holds": true
+ },
+ {
   "claim": "target extremity negatively associated with family coverage in >= 4 tasks for FCP",
   "holds": true
  },
