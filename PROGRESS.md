@@ -30,3 +30,9 @@ Branch: claude/autonomous-research-discovery-795xcu. All deliverables are under 
 - RF-z (uncalibrated RF tree spread) matches FCP coverage under shift with better interval score; it over-covers
   in-distribution (0.955 at nominal 0.90). Base-model swap experiment (stage `basemodel`, FCP with RF members) queued.
 - Main results available: results/raw_results.csv, statistics.json, tables/, figures/ (analysis stage).
+- Review rounds 1-4 written (REVIEW/). Metric fix (empty CQR intervals) requires recompiling CSVs from cache at the end:
+  `cd Target_Journal_Submission/code && python3 run_all.py --mode full --stage main,robustness,generalization,sensitivity,basemodel,randfolds,mondrian,analysis`
+  (all cached; efficiency excluded because it re-measures).
+- Manuscript: `cd manuscript/tools && python3 build_manuscript.py && node build_docx.js spec.json ../Final_Manuscript.docx`
+- Remaining: Sections 9 (robustness, generalization incl. basemodel/randfolds/mondrian, sensitivity) and 10 (efficiency) text;
+  reviews 5-10; final audit; cover letter; risk report; final DOCX/PDF.

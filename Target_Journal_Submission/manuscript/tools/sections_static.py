@@ -162,7 +162,8 @@ def method(V):
               "with equal weight."),
         ("h2", "4.2. Family-bagged base predictor and difficulty signals"),
         ("p", "The point predictor is an ensemble of *M* gradient-boosted tree regressors (LightGBM [@ke2017]). Member *m* is "
-              "trained on the alloys of a random subset containing a fraction φ of the families. Family subsampling has two "
+              "trained on the alloys of a random subset containing a fraction φ of the families (row subsampling is used instead "
+              "if fewer than three families are available). Family subsampling has two "
               "purposes. First, the member spread"),
         ("eq", [{"sub": ["μ", "k"]}, "(x) = ", {"frac": [["1"], ["M"]]}, "∑", {"sub": ["f", "k,m"]}, "(x),    ",
                 {"sub": ["s", "k"]}, "(x) = sd", {"sub": [{"curly": [{"sub": ["f", "k,m"]}, "(x)"]}, "m=1..M"]}]),
@@ -182,7 +183,10 @@ def method(V):
                 "(x) + ", {"sub": ["c", "k"]}, " log ", {"sub": ["d", "k"]}, "(x),    ", {"sub": ["b", "k"]}, ", ",
                 {"sub": ["c", "k"]}, " ≥ 0"]),
         ("p", "The coefficients are fitted by bounded least squares of log|FOOB residual| on the two log-signals. The fit uses "
-              "*only* the training part *D*_{−k} of fold *k*. If fewer than ten alloys have FOOB residuals, σ_{k} ≡ 1. The "
+              "*only* the training part *D*_{−k} of fold *k*: the spread entering the fit is the FOOB spread (standard deviation "
+              "over the members that did not see the alloy's family) and the novelty is the FOOB novelty. If ten or fewer alloys "
+              "have FOOB residuals, σ_{k} ≡ 1. When σ_{k} is evaluated, both signals are clamped to the range observed in the fit, "
+              "so the log-linear model is never extrapolated, and σ_{k} is floored at the 5th percentile of its fitted values. The "
               "non-negativity constraints encode a physical prior: larger model disagreement or greater compositional distance "
               "should never *narrow* an interval. Because the scale model never sees the labels of fold *k*, the normalized score"),
         ("eq", [{"sub": ["S", "i"]}, " = ", {"abs": [{"sub": ["y", "i"]}, " − ", {"sub": ["μ", "k(i)"]}, "(", {"sub": ["x", "i"]}, ")"]}, " / ",
@@ -309,7 +313,7 @@ def setup(V):
               "target values, and the definition of what counts as 'new' is fixed before any split."),
         ("h2", "5.6. Implementation"),
         ("p", f"Pre-specified settings: LightGBM with {V['lgbm_trees']} trees, learning rate {V['lgbm_lr']}, {V['lgbm_leaves']} leaves, "
-              f"row and column subsampling {V['lgbm_sub']} and {V['lgbm_col']}; *M* = {V['M']} members; φ = {V['phi']}; *K* = {V['K']} "
+              f"row and column subsampling {V['lgbm_sub']} and {V['lgbm_col']}, minimum 5 alloys per leaf, L2 penalty 1; *M* = {V['M']} members; φ = {V['phi']}; *K* = {V['K']} "
               f"inner folds; *k*_{{nn}} = {V['knn']}; {V['pcs']} principal components. None of these was tuned on test folds, and "
               "their influence is examined in Section 9.3. All computations ran on CPUs (4 cores, no GPU) with Python, "
               "scikit-learn [@pedregosa2011] and LightGBM. A single command (run_all.py) regenerates every number, table and "

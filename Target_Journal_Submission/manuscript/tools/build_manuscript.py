@@ -349,8 +349,8 @@ def tables(V, bib):
                    "header": ["Task", "Unit", "Source", "n", "Features", "Systems", "Mean ± SD", "Range"],
                    "rows": rows, "col_widths": [0.19, 0.08, 0.17, 0.07, 0.09, 0.09, 0.15, 0.16]}
     pa = V["table_point_accuracy"]
-    T["table2"] = {"type": "table", "caption": runs("**Table {{tab:accuracy}}.** R² of the shared point predictor (family-bagged LightGBM) on the "
-                   "outer test folds, mean ± SD over 10 seeds."),
+    T["table2"] = {"type": "table", "caption": runs("**Table {{tab:accuracy}}.** R² of the shared point predictor (family-bagged LightGBM ensemble fitted on the "
+                   "whole outer training part) on the outer test folds, mean ± SD over 10 seeds."),
                    "header": ["Task", "Random", "Unseen system", "Unseen cluster"],
                    "rows": [[r.Task, r["R² random"], r["R² system"], r["R² cluster"]] for _, r in pa.iterrows()],
                    "col_widths": [0.34, 0.22, 0.22, 0.22]}

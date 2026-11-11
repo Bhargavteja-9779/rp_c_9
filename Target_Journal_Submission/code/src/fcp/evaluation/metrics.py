@@ -13,12 +13,15 @@ import numpy as np
 
 def interval_metrics(y, lo, hi, alpha, families, novelty, sd_y):
     cov = (y >= lo) & (y <= hi)
-    w = hi - lo
+    # an inverted interval (lo > hi, possible for CQR when quantile models cross) is an empty set: width 0, never covers
+    w = np.maximum(hi - lo, 0.0)
     fin = np.isfinite(w)
     fams = np.unique(families)
     fc = np.array([cov[families == g].mean() for g in fams])
     big = np.array([(families == g).sum() >= 5 for g in fams])
     miss = np.where(y < lo, lo - y, 0) + np.where(y > hi, y - hi, 0)
+    inv = lo > hi  # empty interval: penalise as a miss by the distance to the nearer bound
+    miss = np.where(inv, np.minimum(np.abs(y - lo), np.abs(y - hi)), miss)
     with np.errstate(invalid="ignore"):
         score = w + (2 / alpha) * miss
     t1, t2 = np.quantile(novelty, [1 / 3, 2 / 3])
@@ -34,6 +37,7 @@ def interval_metrics(y, lo, hi, alpha, families, novelty, sd_y):
         "cov_novelty_mid": cov[(novelty > t1) & (novelty <= t2)].mean(),
         "cov_novelty_high": cov[novelty > t2].mean(),
         "n_test": len(y),
+        "empty_rate": float(np.mean(lo > hi)),
         "n_test_families": len(fams),
     }
     return out
