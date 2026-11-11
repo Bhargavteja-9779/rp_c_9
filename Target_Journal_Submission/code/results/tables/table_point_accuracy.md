@@ -1,0 +1,3 @@
+| Task | R² random | R² system | R² cluster |
+|---|---|---|---|
+| MPEA hardness | 0.790 ± 0.006 | 0.734 ± 0.009 |  |

@@ -299,7 +299,7 @@ def fig_alpha(df, out):
 def fig_datasets(out, cfg):
     from experiments import runner as R
     tasks = [t for t in cfg["tasks"]]
-    fig, axes = plt.subplots(2, len(tasks), figsize=(7.2, 3.4))
+    fig, axes = plt.subplots(2, len(tasks), figsize=(7.2, 3.4), squeeze=False)
     for j, t in enumerate(tasks):
         d = R.load_task(t, cfg)
         axes[0, j].hist(d["y"], bins=30, color=C_BLUE, edgecolor="white", linewidth=0.4)

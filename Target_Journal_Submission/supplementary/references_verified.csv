@@ -1,0 +1,52 @@
+doi,status,authors,n_authors,year,title,venue,volume,issue,page,type
+10.1007/b106715,verified,,0,2005,Algorithmic Learning in a Random World,Springer-Verlag,,,,book
+10.1080/01621459.2017.1307116,verified,"Lei, Jing; G’Sell, Max; Rinaldo, Alessandro; Tibshirani, Ryan J.; Wasserman, Larry",5,2018,Distribution-Free Predictive Inference for Regression,Journal of the American Statistical Association,113,523,1094-1111,journal-article
+10.1214/20-AOS1965,verified,"Barber, Rina Foygel; Candès, Emmanuel J.; Ramdas, Aaditya; Tibshirani, Ryan J.",4,2021,Predictive inference with the jackknife+,The Annals of Statistics,49,1,486-507,journal-article
+10.1080/01621459.2022.2060112,verified,"Dunn, Robin; Wasserman, Larry; Ramdas, Aaditya",3,2023,Distribution-Free Prediction Sets for Two-Layer Hierarchical Models,Journal of the American Statistical Association,118,544,2491-2502,journal-article
+10.1214/23-AOS2276,verified,"Barber, Rina Foygel; Candès, Emmanuel J.; Ramdas, Aaditya; Tibshirani, Ryan J.",4,2023,Conformal prediction beyond exchangeability,The Annals of Statistics,51,2,816-845,journal-article
+10.1613/jair.3198,verified,"Papadopoulos, H.; Vovk, V.; Gammerman, A.",3,2011,Regression Conformal Prediction with Nearest Neighbours,Journal of Artificial Intelligence Research,40,,815-840,journal-article
+10.1561/2200000101,verified,"Angelopoulos, Anastasios N.; Bates, Stephen",2,2023,Conformal Prediction: A Gentle Introduction,Foundations and Trends® in Machine Learning,16,4,494-591,journal-article
+10.1038/npjcompumats.2016.28,verified,"Ward, Logan; Agrawal, Ankit; Choudhary, Alok; Wolverton, Christopher",4,2016,A general-purpose machine learning framework for predicting properties of inorganic materials,npj Computational Materials,2,1,16028,journal-article
+10.1016/j.commatsci.2018.05.018,verified,"Ward, Logan; Dunn, Alexander; Faghaninia, Alireza; Zimmermann, Nils E.R.; Bajaj, Saurabh; Wang, Qi et al.",16,2018,Matminer: An open source toolkit for materials data mining,Computational Materials Science,152,,60-69,journal-article
+10.1016/j.commatsci.2012.10.028,verified,"Ong, Shyue Ping; Richards, William Davidson; Jain, Anubhav; Hautier, Geoffroy; Kocher, Michael; Cholia, Shreyas et al.",10,2013,"Python Materials Genomics (pymatgen): A robust, open-source python library for materials analysis",Computational Materials Science,68,,314-319,journal-article
+10.1038/s41597-020-00768-9,verified,"Borg, Christopher K. H.; Frey, Carolina; Moh, Jasper; Pollock, Tresa M.; Gorsse, Stéphane; Miracle, Daniel B. et al.",9,2020,Expanded dataset of mechanical properties and observed phases of multi-principal element alloys,Scientific Data,7,1,430,journal-article
+10.1016/j.commatsci.2018.07.052,verified,"Hamidieh, Kam",1,2018,A data-driven statistical model for predicting the critical temperature of a superconductor,Computational Materials Science,154,,346-354,journal-article
+10.1038/s41524-020-00406-3,verified,"Dunn, Alexander; Wang, Qi; Ganose, Alex; Dopp, Daniel; Jain, Anubhav",5,2020,Benchmarking materials property prediction methods: the Matbench test set and Automatminer reference algorithm,npj Computational Materials,6,1,138,journal-article
+10.1021/jacs.8b02717,verified,"Mansouri Tehrani, Aria; Oliynyk, Anton O.; Parry, Marcus; Rizvi, Zeshan; Couper, Samantha; Lin, Feng et al.",9,2018,"Machine Learning Directed Search for Ultraincompressible, Superhard Materials",Journal of the American Chemical Society,140,31,9844-9853,journal-article
+10.1038/s41524-022-00881-w,verified,"Kingsbury, Ryan S.; Rosen, Andrew S.; Gupta, Ayush S.; Munro, Jason M.; Ong, Shyue Ping; Jain, Anubhav et al.",9,2022,A flexible and scalable scheme for mixing computed formation energies from different levels of theory,npj Computational Materials,8,1,195,journal-article
+10.1039/C8ME00012C,verified,"Meredig, Bryce; Antono, Erin; Church, Carena; Hutchinson, Maxwell; Ling, Julia; Paradiso, Sean et al.",12,2018,Can machine learning identify the next high-temperature superconductor? Examining extrapolation performance for materials discovery,Molecular Systems Design &amp; Engineering,3,5,819-825,journal-article
+10.1023/A:1010933404324,verified,"Breiman, Leo",1,2001,Random Forests,Machine Learning,45,1,5-32,journal-article
+10.1198/016214506000001437,verified,"Gneiting, Tilmann; Raftery, Adrian E",2,2007,"Strictly Proper Scoring Rules, Prediction, and Estimation",Journal of the American Statistical Association,102,477,359-378,journal-article
+10.1088/2632-2153/ab7e1a,verified,"Tran, Kevin; Neiswanger, Willie; Yoon, Junwoong; Zhang, Qingyang; Xing, Eric; Ulissi, Zachary W",6,2020,Methods for comparing uncertainty quantifications for material property predictions,Machine Learning: Science and Technology,1,2,025006,journal-article
+10.1038/s41524-022-00794-8,verified,"Palmer, Glenn; Du, Siqi; Politowicz, Alexander; Emory, Joshua Paul; Yang, Xiyu; Gautam, Anupraas et al.",10,2022,Calibration after bootstrap for accurate uncertainty quantification in regression models,npj Computational Materials,8,1,115,journal-article
+10.1063/5.0133528,verified,"Varivoda, Daniel; Dong, Rongzhi; Omee, Sadman Sadeed; Hu, Jianjun",4,2023,Materials property prediction with uncertainty quantification: A benchmark study,Applied Physics Reviews,10,2,021409,journal-article
+10.1021/acsomega.6c02607,verified,"Akdoğan, Murat",1,2026,"Trust Beyond Accuracy:
+Conformal Uncertainty Quantification
+Reveals the Generalization Gap in Polymer Glass Transition Temperature
+Prediction",ACS Omega,11,30,44926-44941,journal-article
+10.3390/polym18192445,verified,"Han, Deao; Shao, Yangkun; Zhong, Xueru; Song, Zhanzhao; Zhang, Quanzhong; Wang, Chuansheng et al.",8,2026,"What Random Splits Measure in Polymer Glass-Transition Prediction: Chemistry Holdouts, Applicability Domains, and Prior Integration",Polymers,18,19,2445,journal-article
+10.1038/s41524-024-01316-4,verified,"Omee, Sadman Sadeed; Fu, Nihang; Dong, Rongzhi; Hu, Ming; Hu, Jianjun",5,2024,Structure-based out-of-distribution (OOD) materials property prediction: a benchmark study,npj Computational Materials,10,1,144,journal-article
+10.1007/s40192-017-0098-z,verified,"Ling, Julia; Hutchinson, Maxwell; Antono, Erin; Paradiso, Sean; Meredig, Bryce",5,2017,High-Dimensional Materials and Process Optimization Using Data-Driven Experimental Design with Well-Calibrated Uncertainty Estimates,Integrating Materials and Manufacturing Innovation,6,3,207-217,journal-article
+10.1016/j.actamat.2019.03.010,verified,"Wen, Cheng; Zhang, Yan; Wang, Changxin; Xue, Dezhen; Bai, Yang; Antonov, Stoichko et al.",9,2019,Machine learning assisted design of high entropy alloys with desired property,Acta Materialia,170,,109-117,journal-article
+10.1126/science.abo4940,verified,"Rao, Ziyuan; Tung, Po-Yen; Xie, Ruiwen; Wei, Ye; Zhang, Hongbin; Ferrari, Alberto et al.",17,2022,Machine learning–enabled high-entropy alloy discovery,Science,378,6615,78-85,journal-article
+10.1038/s41524-019-0153-8,verified,"Lookman, Turab; Balachandran, Prasanna V.; Xue, Dezhen; Yuan, Ruihao",4,2019,Active learning in materials science with emphasis on adaptive sampling using uncertainties for targeted design,npj Computational Materials,5,1,21,journal-article
+10.1016/j.actamat.2016.08.081,verified,"Miracle, D.B.; Senkov, O.N.",2,2017,A critical review of high entropy alloys and related concepts,Acta Materialia,122,,448-511,journal-article
+10.1016/j.commatsci.2019.109203,verified,"Xiong, Zheng; Cui, Yuxin; Liu, Zhonghao; Zhao, Yong; Hu, Ming; Hu, Jianjun",6,2020,"Evaluating explorative prediction power of machine learning algorithms for materials discovery using
+                    <mml:math xmlns:mml=""http://www.w3.org/1998/Math/MathML"" altimg=""si1.svg"">
+                      <mml:mrow>
+                        <mml:mi>k</mml:mi>
+                      </mml:mrow>
+                    </mml:math>
+                    -fold forward cross-validation",Computational Materials Science,171,,109203,journal-article
+10.1021/acs.jcim.0c00502,verified,"Hirschfeld, Lior; Swanson, Kyle; Yang, Kevin; Barzilay, Regina; Coley, Connor W.",5,2020,"Uncertainty Quantification Using Neural Networks for
+Molecular Property Prediction",Journal of Chemical Information and Modeling,60,8,3770-3780,journal-article
+10.1214/26-EJS2506,verified,"Bhattacharyya, Aabesh; Barber, Rina Foygel",2,2026,Group-weighted conformal prediction,Electronic Journal of Statistics,20,1,1171-1199,journal-article
+10.1093/jrsssb/qkaf008,verified,"Gibbs, Isaac; Cherian, John J; Candès, Emmanuel J",3,2025,Conformal prediction with conditional guarantees,Journal of the Royal Statistical Society Series B: Statistical Methodology,87,4,1100-1126,journal-article
+10.1073/pnas.2204569119,verified,"Fannjiang, Clara; Bates, Stephen; Angelopoulos, Anastasios N.; Listgarten, Jennifer; Jordan, Michael I.",5,2022,Conformal prediction under feedback covariate shift for biomolecular design,Proceedings of the National Academy of Sciences,119,43,e2204569119,journal-article
+10.1007/s10994-014-5453-0,verified,"Johansson, Ulf; Boström, Henrik; Löfström, Tuve; Linusson, Henrik",4,2014,Regression conformal prediction with random forests,Machine Learning,97,1-2,155-176,journal-article
+10.1007/s10472-013-9368-4,verified,"Vovk, Vladimir",1,2015,Cross-conformal predictors,Annals of Mathematics and Artificial Intelligence,74,1-2,9-28,journal-article
+10.48550/arXiv.2511.11697,NOT FOUND: HTTP Error 404: Not Found,,,,,,,,,
+10.48550/arXiv.2608.07589,NOT FOUND: HTTP Error 404: Not Found,,,,,,,,,
+10.48550/arXiv.1904.06019,NOT FOUND: HTTP Error 404: Not Found,,,,,,,,,
+10.48550/arXiv.1905.03222,NOT FOUND: HTTP Error 404: Not Found,,,,,,,,,
+10.1038/s41524-025-01808-x,verified,"Segal, Nofit; Netanyahu, Aviv; Greenman, Kevin P.; Agrawal, Pulkit; Gómez-Bombarelli, Rafael",5,2025,Known Unknowns: Out-of-Distribution Property Prediction in Materials and Molecules,npj Computational Materials,11,1,345,journal-article

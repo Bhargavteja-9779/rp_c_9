@@ -1,0 +1,4 @@
+http://arxiv.org/abs/1905.03222v1 | 2019-05-08 | Yaniv Romano; Evan Patterson; Emmanuel J. Candès | Conformalized Quantile Regression
+http://arxiv.org/abs/1904.06019v3 | 2019-04-12 | Ryan J. Tibshirani; Rina Foygel Barber; Emmanuel J. Candes; Aaditya Ramdas | Conformal Prediction Under Covariate Shift
+http://arxiv.org/abs/2511.11697v1 | 2025-11-12 | Liqin Tan; Pin Chen; Menghan Liu; Xiean Wang; Jianhuan Cen | Benchmarking GNNs for OOD Materials Property Prediction with Uncertainty Quantification
+http://arxiv.org/abs/2608.07589v2 | 2026-08-05 | Irene Boruah | Distribution-Free Conformal Prediction for Steel Fatigue Strength: Marginal Validity Is Not Enough
