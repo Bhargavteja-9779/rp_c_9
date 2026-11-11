@@ -31,7 +31,7 @@ Cleaning (`src/fcp/data/datasets.py`): identical inputs are merged by median tar
 ## 3. Reproduce everything
 ```bash
 python run_all.py --mode quick   # ~1 min pipeline check, writes results_quick/ (NOT the paper's numbers)
-python run_all.py --mode full    # full study, roughly 8–10 h on 4 cores; writes results/
+python run_all.py --mode full    # full study, roughly 12–15 h on 4 CPU cores; writes results/
 ```
 Stages can be run separately and are resumable, because each run is cached in `results/cache/`:
 ```bash
@@ -41,19 +41,31 @@ python run_all.py --mode full --stage robustness      # Exp 4: label noise, redu
 python run_all.py --mode full --stage generalization  # Exp 5: mis-specified family definition
 python run_all.py --mode full --stage sensitivity     # Exp 7: hyper-parameters
 python run_all.py --mode full --stage efficiency      # Exp 6: wall time / memory
+python run_all.py --mode full --stage basemodel       # Sec 9.5: FCP with random-forest members
+python run_all.py --mode full --stage randfolds       # Sec 9.6: random cluster-to-fold assignment
+python run_all.py --mode full --stage mondrian        # Sec 9.7: Mondrian (novelty-tertile) conformal baseline
+python run_all.py --mode full --stage temporal        # Sec 9.3: chronological MPEA test (train < 2019, test 2019)
 python run_all.py --mode full --stage analysis        # statistics, tables, figures from cached runs
 ```
-Then build the manuscript (DOCX) from the generated results:
+Then build the manuscript, supplementary material, highlights and cover letter from the generated results
+(requires Node.js with the `docx` package; every number is read from `results/` and every directional claim is checked,
+see `manuscript/claim_audit.json`):
 ```bash
-cd ../manuscript/tools && python build_manuscript.py && node build_docx.js spec.json ../Final_Manuscript.docx
+cd ../manuscript/tools
+python build_manuscript.py && node build_docx.js spec.json ../Final_Manuscript.docx
+node build_docx.js highlights_spec.json ../highlights.docx
+python build_supplementary.py && node build_docx.js supp_spec.json ../../supplementary/Supplementary_Material.docx
+python build_cover_letter.py && node build_docx.js cover_spec.json ../cover_letter.docx
+cd ../../code && python scripts/package_submission.py   # copies results/figures/tables to the package root
 ```
+After an interruption, `scripts/resume_all.sh` relaunches all remaining stages; completed runs are reused from `results/cache/`.
 
 ## 4. Outputs
 | Path | Content |
 |---|---|
 | `results/raw_results.csv` | one row per task × protocol × seed × method × α (all metrics) |
 | `results/metrics.json`, `results/statistics.json` | summary metrics; hypothesis tests (Wilcoxon, Holm, effect sizes, bootstrap CIs) |
-| `results/{robustness,generalization,sensitivity,efficiency}_results.csv` | Experiments 4–7 |
+| `results/{robustness,generalization,sensitivity,efficiency,basemodel,randfolds,mondrian,temporal}_results.csv` | Experiments 4–7 and review-driven experiments |
 | `results/tables/*.csv / *.md` | every manuscript table |
 | `results/figures/*.png / *.pdf` | every manuscript figure |
 | `results/logs/` | run log and hardware/config record |

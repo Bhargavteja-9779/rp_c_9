@@ -4,7 +4,8 @@
     python run_all.py --mode quick     # pipeline check (minutes); writes to results_quick/
     python run_all.py --mode full      # full study (hours on 4 CPU cores)
     python run_all.py --mode full --stage analysis   # re-create statistics/tables/figures from cached runs
-Stages: data, main, robustness, generalization, sensitivity, efficiency, analysis (default: all)
+Stages: data, main, robustness, generalization, sensitivity, efficiency, basemodel, randfolds, mondrian, temporal,
+analysis (default: all)
 """
 import argparse, json, os, platform, sys, time
 from pathlib import Path
@@ -43,7 +44,8 @@ def main():
         R.CACHE = out / "cache"
     (out / "logs").mkdir(exist_ok=True)
     json.dump({"device": device_report(), "config": cfg, "mode": a.mode}, open(out / "logs" / "run_info.json", "w"), indent=2)
-    stages = ["data", "main", "robustness", "generalization", "sensitivity", "efficiency", "analysis"] if a.stage == "all" else a.stage.split(",")
+    stages = ["data", "main", "robustness", "generalization", "sensitivity", "efficiency", "basemodel", "randfolds",
+              "mondrian", "temporal", "analysis"] if a.stage == "all" else a.stage.split(",")
     from experiments import stages as S
     for st in stages:
         t0 = time.time()
