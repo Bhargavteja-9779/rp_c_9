@@ -4,3 +4,4 @@ Target_Journal_Submission/code/data/raw/
 Target_Journal_Submission/code/data/processed/
 Target_Journal_Submission/code/results/cache/
 .pytest_cache/
+Target_Journal_Submission/code/results/logs/full_run.log
