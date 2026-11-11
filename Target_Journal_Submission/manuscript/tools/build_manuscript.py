@@ -807,7 +807,7 @@ def EXTRA_HOOK(V):
               ("p", "In the cluster protocol the size-balanced assignment of ten clusters to five folds is identical for every seed "
                     "(Section 13), so seed-to-seed variation there reflects only model randomness. We therefore repeated the "
                     "cluster protocol with a fully random cluster-to-fold assignment, a different partition for each of the ten "
-                    "seeds (Supplementary Table S9). Mean coverage was "
+                    "seeds (Supplementary Material). Mean coverage was "
                     f"{q('FCP', 'random'):.3f} for FCP (balanced: {q('FCP', 'balanced (main)'):.3f}), {q('SCP', 'random'):.3f} for "
                     f"SCP ({q('SCP', 'balanced (main)'):.3f}), {q('CV+', 'random'):.3f} for CV+ and {q('GSCP', 'random'):.3f} for GSCP. "
                     f"The average seed SD of FCP's coverage rose from {q('FCP', 'balanced (main)', 'mean_seed_sd'):.3f} to "
