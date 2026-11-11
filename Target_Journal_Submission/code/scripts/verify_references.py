@@ -20,10 +20,16 @@ DOIS = [
 
 def get(doi):
     u = "https://api.crossref.org/works/" + urllib.parse.quote(doi)
-    try:
-        return json.load(urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "citation-audit/0.1"}), timeout=60))["message"]
-    except Exception as e:
-        return {"error": str(e)}
+    err = None
+    for k in range(5):
+        try:
+            return json.load(urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "citation-audit/0.1"}), timeout=60))["message"]
+        except Exception as e:
+            err = str(e)
+            if "404" in err:
+                break
+            time.sleep(2 ** (k + 1))
+    return {"error": err}
 
 
 def main(out):
@@ -33,13 +39,13 @@ def main(out):
         if "error" in m:
             rows.append({"doi": d, "status": "NOT FOUND: " + m["error"]}); continue
         au = m.get("author", [])
-        names = "; ".join(f"{a.get('family', '')}, {a.get('given', '')}".strip(", ") for a in au[:6]) + (" et al." if len(au) > 6 else "")
+        names = "; ".join(f"{a.get('family', '')}, {a.get('given', '')}".strip(", ") if a.get("family") else a.get("name", "") for a in au)
         yr = (m.get("published-print") or m.get("published-online") or m.get("issued") or {}).get("date-parts", [[None]])[0][0]
         rows.append({"doi": d, "status": "verified", "authors": names, "n_authors": len(au), "year": yr,
                      "title": (m.get("title") or [""])[0], "venue": (m.get("container-title") or [m.get("publisher", "")])[0],
                      "volume": m.get("volume", ""), "issue": m.get("issue", ""), "page": m.get("page", "") or m.get("article-number", ""),
                      "type": m.get("type", "")})
-        time.sleep(0.3)
+        time.sleep(1.0)
     with open(out, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=["doi", "status", "authors", "n_authors", "year", "title", "venue", "volume", "issue", "page", "type"])
         w.writeheader(); w.writerows(rows)

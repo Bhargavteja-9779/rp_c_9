@@ -33,21 +33,37 @@ def data(cfg, out, n_jobs):
 
 def main(cfg, out, n_jobs):
     """RQ1-RQ3: coverage/efficiency of all methods under random, chemical-system and cluster extrapolation."""
+    jobs = [(t, p, s) for t in cfg["tasks"] for p in cfg["protocols"] for s in cfg["seeds"]]
+    _parallel_runs("main", jobs, cfg, n_jobs)
     rows = []
-    for t in cfg["tasks"]:
-        for p in cfg["protocols"]:
-            for s in cfg["seeds"]:
-                t0 = time.time()
-                r = R.run_one("main", t, p, s, cfg, n_jobs=n_jobs)
-                rows += R.metrics_rows(r)
-                print(f"  main {t} {p} seed={s} wall={r['wall']:.0f}s (this call {time.time() - t0:.0f}s)", flush=True)
-                _save_rows(rows, out / "raw_results.csv")
+    for t, p, s in jobs:
+        rows += R.metrics_rows(R.run_one("main", t, p, s, cfg))
+    _save_rows(rows, out / "raw_results.csv")
+
+
+def _one(exp, t, p, s, cfg, variant, kw):
+    t0 = time.time()
+    r = R.run_one(exp, t, p, s, cfg, variant=variant, n_jobs=1, **kw)
+    print(f"  {exp} {t} {p} seed={s} {variant} wall={r['wall']:.0f}s (call {time.time() - t0:.0f}s)", flush=True)
+    return None
+
+
+def _parallel_runs(exp, jobs, cfg, n_jobs, variant="default", kw=None):
+    """Runs (task, protocol, seed) jobs concurrently, one process per run (single-threaded inside), so all cores
+    stay busy. Results are cached per run; already cached runs return immediately."""
+    from joblib import Parallel, delayed
+    Parallel(n_jobs=n_jobs, verbose=0)(delayed(_one)(exp, t, p, s, cfg, variant, kw or {}) for t, p, s in jobs)
 
 
 def robustness(cfg, out, n_jobs):
     """RQ4: label noise and reduced training data (system-holdout protocol)."""
     rc = cfg["robustness"]
     c2 = copy.deepcopy(cfg); c2["methods"] = rc["methods"]
+    from joblib import Parallel, delayed
+    todo = [(t, s, "noise", ln) for t in rc["tasks"] for s in rc["seeds"] for ln in rc["label_noise"]] + \
+           [(t, s, "frac", tf) for t in rc["tasks"] for s in rc["seeds"] for tf in rc["train_fraction"]]
+    Parallel(n_jobs=n_jobs)(delayed(_one)("robust", t, "system", s, c2, f"noise{v}" if k == "noise" else f"trainfrac{v}",
+                                          {"label_noise": v} if k == "noise" else {"train_fraction": v}) for t, s, k, v in todo)
     rows = []
     for t in rc["tasks"]:
         for s in rc["seeds"]:
@@ -65,6 +81,9 @@ def generalization(cfg, out, n_jobs):
     """RQ5: mis-specified family definition: true shift = composition clusters, FCP calibrates on chemical systems."""
     rc = cfg["robustness"]
     c2 = copy.deepcopy(cfg); c2["methods"] = ["GSCP", "GCV+", "FCP", "FCP-W", "CV+", "SCP"]
+    from joblib import Parallel, delayed
+    Parallel(n_jobs=n_jobs)(delayed(_one)("general", t, "cluster", s, c2, "inner_system", {"inner_family": "system"})
+                            for t in cfg["tasks"] for s in rc["seeds"])
     rows = []
     for t in cfg["tasks"]:
         for s in rc["seeds"]:
@@ -77,6 +96,15 @@ def generalization(cfg, out, n_jobs):
 def sensitivity(cfg, out, n_jobs):
     """Hyper-parameter sensitivity of FCP (one factor at a time around the pre-specified defaults)."""
     sc = cfg["sensitivity"]
+    from joblib import Parallel, delayed
+    todo = []
+    for t in sc["tasks"]:
+        for s in sc["seeds"]:
+            for par, vals in sc["grid"].items():
+                for v in vals:
+                    c2 = copy.deepcopy(cfg); c2["methods"] = sc["methods"]; c2[par] = v
+                    todo.append((t, s, c2, f"{par}={v}"))
+    Parallel(n_jobs=n_jobs)(delayed(_one)("sens", t, "system", s, c2, var, {}) for t, s, c2, var in todo)
     rows = []
     for t in sc["tasks"]:
         for s in sc["seeds"]:
