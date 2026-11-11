@@ -1131,3 +1131,6 @@
   sens mpea_ys system seed=0 family_frac=0.5 wall=28s (call 28s)
   sens mpea_ys system seed=0 family_frac=0.9 wall=35s (call 35s)
   sens mpea_ys system seed=0 K=10 wall=59s (call 59s)
+  sens mpea_ys system seed=0 novelty_k=1 wall=31s (call 31s)
+  sens mpea_ys system seed=0 n_members=12 wall=61s (call 61s)
+  sens mpea_ys system seed=1 K=3 wall=19s (call 19s)
