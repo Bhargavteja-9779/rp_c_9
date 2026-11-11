@@ -43,8 +43,8 @@ def paired_wilcoxon(a, b):
                 "median_diff": float(np.median(d)) if len(d) else np.nan, "ci_lo": np.nan, "ci_hi": np.nan}
     res = stats.wilcoxon(a, b, alternative="two-sided", zero_method="wilcox")
     lo, hi = bootstrap_ci(d)
-    return {"n": len(d), "statistic": float(res.statistic), "p": float(res.pvalue), "rank_biserial": rank_biserial(d),
-            "median_diff": float(np.median(d)), "ci_lo": lo, "ci_hi": hi}
+    return {"n": len(d), "n_eff": int(np.sum(d != 0)), "statistic": float(res.statistic), "p": float(res.pvalue),
+            "rank_biserial": rank_biserial(d), "median_diff": float(np.median(d)), "ci_lo": lo, "ci_hi": hi}
 
 
 def one_sample_wilcoxon(x, mu0, alternative="less"):

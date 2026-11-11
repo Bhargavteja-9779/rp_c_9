@@ -278,7 +278,12 @@ def setup(V):
               "μ ± *z*·*s*); and the base ensemble's member spread (**Ens-z**). Family-calibrated baseline: split conformal "
               "prediction with 25% of the training *families* held out for calibration (**GSCP**), the simplest way to "
               "calibrate on new families. Proposed: **FCP** and **FCP-W**. Ablations (Section 8) vary grouping, the scale model "
-              "(none / spread / novelty / both) and weighting within the same CV+ code path (10 variants)."),
+              "(none / spread / novelty / both) and weighting within the same CV+ code path (10 variants). Deviations from the "
+              "original descriptions of the baselines, made to keep a common base learner and budget, were as follows. CQR used "
+              "LightGBM quantile regressors with the same hyper-parameters as the point model. WCP estimated density ratios with "
+              "an L2-regularized logistic-regression classifier on 16 principal components. The GP was trained on at most "
+              f"{V['gp_max']} alloys (a random subset for the three larger tasks). RF-z used 300 trees with max_features = 1/3. "
+              "No baseline was tuned on test folds, and neither was FCP."),
         ("h2", "5.5. Metrics and statistical analysis"),
         ("p", "For each run the following were recorded:"),
         ("bullets", [
@@ -299,7 +304,9 @@ def setup(V):
               "the interval score. Effect sizes are matched-pairs rank-biserial correlations, and 95% confidence intervals for "
               "the median paired difference were obtained by bootstrap (10,000 resamples). The two shift protocols of a task "
               "share data, so the 12 cells are not fully independent. Each test is therefore also reported separately per "
-              "protocol (6 cells)."),
+              "protocol (6 cells), and at the task level (6 independent units, each averaging its two shift protocols). The "
+              "families of F2 are obtained by unsupervised clustering of compositions of all alloys in a task. This uses no "
+              "target values, and the definition of what counts as 'new' is fixed before any split."),
         ("h2", "5.6. Implementation"),
         ("p", f"Pre-specified settings: LightGBM with {V['lgbm_trees']} trees, learning rate {V['lgbm_lr']}, {V['lgbm_leaves']} leaves, "
               f"row and column subsampling {V['lgbm_sub']} and {V['lgbm_col']}; *M* = {V['M']} members; φ = {V['phi']}; *K* = {V['K']} "

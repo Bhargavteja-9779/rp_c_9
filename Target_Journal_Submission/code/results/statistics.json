@@ -48,6 +48,7 @@
       "results": {
         "SCP": {
           "n": 12,
+          "n_eff": 12,
           "statistic": 0.0,
           "p": 0.00048828125,
           "rank_biserial": -1.0,
@@ -58,6 +59,7 @@
         },
         "CV+": {
           "n": 12,
+          "n_eff": 10,
           "statistic": 0.0,
           "p": 0.001953125,
           "rank_biserial": -1.0,
@@ -68,6 +70,7 @@
         },
         "CQR": {
           "n": 12,
+          "n_eff": 12,
           "statistic": 0.0,
           "p": 0.00048828125,
           "rank_biserial": -1.0,
@@ -78,6 +81,7 @@
         },
         "WCP": {
           "n": 12,
+          "n_eff": 10,
           "statistic": 3.0,
           "p": 0.009765625,
           "rank_biserial": -0.8909090909090909,
@@ -88,6 +92,7 @@
         },
         "GP": {
           "n": 12,
+          "n_eff": 10,
           "statistic": 0.0,
           "p": 0.001953125,
           "rank_biserial": -1.0,
@@ -98,6 +103,7 @@
         },
         "RF-z": {
           "n": 12,
+          "n_eff": 3,
           "statistic": 1.0,
           "p": 0.5,
           "rank_biserial": 0.6666666666666666,
@@ -108,6 +114,7 @@
         },
         "Ens-z": {
           "n": 12,
+          "n_eff": 12,
           "statistic": 0.0,
           "p": 0.00048828125,
           "rank_biserial": -1.0,
@@ -118,6 +125,7 @@
         },
         "GSCP": {
           "n": 12,
+          "n_eff": 9,
           "statistic": 0.0,
           "p": 0.00390625,
           "rank_biserial": -1.0,
@@ -133,6 +141,7 @@
       "results": {
         "SCP": {
           "n": 12,
+          "n_eff": 12,
           "statistic": 0.0,
           "p": 0.00048828125,
           "rank_biserial": -1.0,
@@ -143,6 +152,7 @@
         },
         "CV+": {
           "n": 12,
+          "n_eff": 12,
           "statistic": 10.0,
           "p": 0.02099609375,
           "rank_biserial": -0.7435897435897436,
@@ -153,6 +163,7 @@
         },
         "CQR": {
           "n": 12,
+          "n_eff": 12,
           "statistic": 8.0,
           "p": 0.01220703125,
           "rank_biserial": -0.7948717948717948,
@@ -173,6 +184,7 @@
         },
         "GP": {
           "n": 12,
+          "n_eff": 12,
           "statistic": 0.0,
           "p": 0.00048828125,
           "rank_biserial": -1.0,
@@ -183,6 +195,7 @@
         },
         "RF-z": {
           "n": 12,
+          "n_eff": 12,
           "statistic": 16.0,
           "p": 0.0771484375,
           "rank_biserial": 0.5897435897435898,
@@ -193,6 +206,7 @@
         },
         "Ens-z": {
           "n": 12,
+          "n_eff": 12,
           "statistic": 0.0,
           "p": 0.00048828125,
           "rank_biserial": -1.0,
@@ -203,6 +217,7 @@
         },
         "GSCP": {
           "n": 12,
+          "n_eff": 12,
           "statistic": 0.0,
           "p": 0.00048828125,
           "rank_biserial": -1.0,
@@ -218,6 +233,7 @@
       "results": {
         "FCP_vs_GCV+_interval_score_sd": {
           "n": 12,
+          "n_eff": 12,
           "statistic": 29.0,
           "p": 0.4697265625,
           "rank_biserial": -0.2564102564102564,
@@ -227,6 +243,7 @@
         },
         "FCP_vs_GCV+_cov_novelty_high": {
           "n": 12,
+          "n_eff": 12,
           "statistic": 2.0,
           "p": 0.00146484375,
           "rank_biserial": 0.9487179487179487,
@@ -236,6 +253,7 @@
         },
         "GCV+_vs_CV+_coverage": {
           "n": 12,
+          "n_eff": 12,
           "statistic": 0.0,
           "p": 0.00048828125,
           "rank_biserial": 1.0,
@@ -245,6 +263,7 @@
         },
         "FCP_vs_NCV+_coverage": {
           "n": 12,
+          "n_eff": 12,
           "statistic": 9.0,
           "p": 0.01611328125,
           "rank_biserial": 0.7692307692307693,
@@ -254,6 +273,7 @@
         },
         "FCP-W_vs_FCP_family_coverage": {
           "n": 12,
+          "n_eff": 12,
           "statistic": 5.0,
           "p": 0.0048828125,
           "rank_biserial": 0.8717948717948718,
@@ -267,6 +287,7 @@
       "system": {
         "SCP": {
           "n": 6,
+          "n_eff": 6,
           "statistic": 0.0,
           "p": 0.03125,
           "rank_biserial": -1.0,
@@ -276,6 +297,7 @@
         },
         "CV+": {
           "n": 6,
+          "n_eff": 4,
           "statistic": 0.0,
           "p": 0.125,
           "rank_biserial": -1.0,
@@ -285,6 +307,7 @@
         },
         "CQR": {
           "n": 6,
+          "n_eff": 6,
           "statistic": 0.0,
           "p": 0.03125,
           "rank_biserial": -1.0,
@@ -294,6 +317,7 @@
         },
         "WCP": {
           "n": 6,
+          "n_eff": 4,
           "statistic": 0.0,
           "p": 0.125,
           "rank_biserial": -1.0,
@@ -303,6 +327,7 @@
         },
         "GSCP": {
           "n": 6,
+          "n_eff": 3,
           "statistic": 0.0,
           "p": 0.25,
           "rank_biserial": -1.0,
@@ -314,6 +339,7 @@
       "cluster": {
         "SCP": {
           "n": 6,
+          "n_eff": 6,
           "statistic": 0.0,
           "p": 0.03125,
           "rank_biserial": -1.0,
@@ -323,6 +349,7 @@
         },
         "CV+": {
           "n": 6,
+          "n_eff": 6,
           "statistic": 0.0,
           "p": 0.03125,
           "rank_biserial": -1.0,
@@ -332,6 +359,7 @@
         },
         "CQR": {
           "n": 6,
+          "n_eff": 6,
           "statistic": 0.0,
           "p": 0.03125,
           "rank_biserial": -1.0,
@@ -341,6 +369,7 @@
         },
         "WCP": {
           "n": 6,
+          "n_eff": 6,
           "statistic": 2.0,
           "p": 0.09375,
           "rank_biserial": -0.8095238095238095,
@@ -350,6 +379,7 @@
         },
         "GSCP": {
           "n": 6,
+          "n_eff": 6,
           "statistic": 0.0,
           "p": 0.03125,
           "rank_biserial": -1.0,
@@ -357,6 +387,167 @@
           "ci_lo": -0.15556642970819795,
           "ci_hi": -0.010387989203778702
         }
+      }
+    },
+    "task_level_replication": {
+      "shortfall FCP vs SCP": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -0.11385145053393547,
+        "ci_lo": -0.15780991038119188,
+        "ci_hi": -0.053663032500397195
+      },
+      "interval_score FCP vs SCP": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -0.28545709794293006,
+        "ci_lo": -1.0934837610924573,
+        "ci_hi": -0.1939693643239202
+      },
+      "shortfall FCP vs CV+": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -0.08500829196687698,
+        "ci_lo": -0.13487770600167653,
+        "ci_hi": -0.04471347960781652
+      },
+      "interval_score FCP vs CV+": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 2.0,
+        "p": 0.09375,
+        "rank_biserial": -0.8095238095238095,
+        "median_diff": -0.10216726682362431,
+        "ci_lo": -0.6836720436723633,
+        "ci_hi": 0.00455672332182111
+      },
+      "shortfall FCP vs CQR": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -0.10200536736774879,
+        "ci_lo": -0.1391789728551957,
+        "ci_hi": -0.04097638784866439
+      },
+      "interval_score FCP vs CQR": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 1.0,
+        "p": 0.0625,
+        "rank_biserial": -0.9047619047619048,
+        "median_diff": -0.35583077603744195,
+        "ci_lo": -0.511778452590592,
+        "ci_hi": -0.03985431770250436
+      },
+      "shortfall FCP vs WCP": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 1.0,
+        "p": 0.0625,
+        "rank_biserial": -0.9047619047619048,
+        "median_diff": -0.027594698259231526,
+        "ci_lo": -0.05535262646340802,
+        "ci_hi": -0.0045573395902342995
+      },
+      "interval_score FCP vs WCP": {
+        "n": 0,
+        "statistic": NaN,
+        "p": NaN,
+        "rank_biserial": 0.0,
+        "median_diff": NaN,
+        "ci_lo": NaN,
+        "ci_hi": NaN
+      },
+      "shortfall FCP vs GP": {
+        "n": 6,
+        "n_eff": 5,
+        "statistic": 0.0,
+        "p": 0.0625,
+        "rank_biserial": -1.0,
+        "median_diff": -0.032909610880922424,
+        "ci_lo": -0.09040715828639595,
+        "ci_hi": -0.008333333333333331
+      },
+      "interval_score FCP vs GP": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -0.7724286323552201,
+        "ci_lo": -1.1175805454620729,
+        "ci_hi": -0.4452419699789527
+      },
+      "shortfall FCP vs RF-z": {
+        "n": 6,
+        "n_eff": 3,
+        "statistic": 1.0,
+        "p": 0.5,
+        "rank_biserial": 0.6666666666666666,
+        "median_diff": 0.0,
+        "ci_lo": -8.012820512820484e-05,
+        "ci_hi": 0.0032606024936455147
+      },
+      "interval_score FCP vs RF-z": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 2.0,
+        "p": 0.09375,
+        "rank_biserial": 0.8095238095238095,
+        "median_diff": 0.39735771419211774,
+        "ci_lo": -0.04719045946370204,
+        "ci_hi": 0.964174350420153
+      },
+      "shortfall FCP vs Ens-z": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -0.4270630904183536,
+        "ci_lo": -0.46341986153418124,
+        "ci_hi": -0.38548086623787003
+      },
+      "interval_score FCP vs Ens-z": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -1.7985961797376715,
+        "ci_lo": -2.27805251915513,
+        "ci_hi": -0.4817134079032419
+      },
+      "shortfall FCP vs GSCP": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -0.02640588578088579,
+        "ci_lo": -0.07997656910710707,
+        "ci_hi": -0.009518948162774349
+      },
+      "interval_score FCP vs GSCP": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -0.308911414653968,
+        "ci_lo": -1.0171904074236686,
+        "ci_hi": -0.18105648485950865
       }
     }
   }

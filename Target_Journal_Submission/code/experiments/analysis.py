@@ -194,10 +194,24 @@ def statistics(cm, out):
         sh = (0.9 - c).clip(lower=0)
         per[p] = {m: T.paired_wilcoxon(sh["FCP"].values, sh[m].values) for m in ["SCP", "CV+", "CQR", "WCP", "GSCP"] if m in sh}
     res["tests"]["H2_per_protocol"] = per
+    # task-level replication (6 fully independent units: each task's two shift protocols averaged)
+    tl = {}
+    tcov = shift.groupby(["task", "method"]).coverage.mean().unstack()
+    tis = shift.groupby(["task", "method"]).interval_score_sd.mean().unstack()
+    tsh = (0.9 - shift.pivot_table(index=["task", "protocol"], columns="method", values="coverage")).clip(lower=0).groupby(level=0).mean()
+    for m in BASELINES:
+        if m in tsh:
+            tl[f"shortfall FCP vs {m}"] = T.paired_wilcoxon(tsh["FCP"].values, tsh[m].values)
+            tl[f"interval_score FCP vs {m}"] = T.paired_wilcoxon(tis["FCP"].values, tis[m].values)
+    res["tests"]["task_level_replication"] = tl
     (out / "statistics.json").write_text(json.dumps(res, indent=2, default=float))
     # flat table
     rows = []
     for h, block in res["tests"].items():
+        if h == "task_level_replication":
+            for m, r in block.items():
+                rows.append({"hypothesis": "task-level (n=6)", "comparison": m, **r})
+            continue
         if h == "H2_per_protocol":
             for p, d in block.items():
                 for m, r in d.items():

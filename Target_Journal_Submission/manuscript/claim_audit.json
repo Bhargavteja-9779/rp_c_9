@@ -80,6 +80,18 @@
   "holds": true
  },
  {
+  "claim": "FCP smaller task-level shortfall than SCP, CV+, CQR, Ens-z, GSCP in all 6 tasks",
+  "holds": true
+ },
+ {
+  "claim": "task-level IS: FCP better in all 6 tasks vs SCP, GP, Ens-z, GSCP",
+  "holds": true
+ },
+ {
+  "claim": "task-level IS vs CV+/CQR not significant",
+  "holds": true
+ },
+ {
   "claim": "RF-z over-covers in-distribution",
   "holds": true
  },

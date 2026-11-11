@@ -80,6 +80,31 @@ def fig_block(name, caption, width=6.3):
 
 
 # ------------------------------------------------------------------------------------------- results
+def task_level_text(V):
+    tl = V["st"]["tests"]["task_level_replication"]
+    cm = V["cm"]; sh = cm[cm.protocol.isin(["system", "cluster"])]
+    short = (0.9 - sh.pivot_table(index=["task", "protocol"], columns="method", values="coverage")).clip(lower=0).groupby(level=0).mean()
+    isc = sh.groupby(["task", "method"]).interval_score_sd.mean().unstack()
+    def wins(tab, m):
+        return int((tab["FCP"] < tab[m]).sum())
+    all6 = [m for m in ["SCP", "CV+", "CQR", "Ens-z", "GSCP"] if wins(short, m) == 6]
+    claim(len(all6) == 5, "FCP smaller task-level shortfall than SCP, CV+, CQR, Ens-z, GSCP in all 6 tasks")
+    w_wcp, w_gp = wins(short, "WCP"), wins(short, "GP")
+    is6 = [m for m in ["SCP", "GP", "Ens-z", "GSCP"] if wins(isc, m) == 6]
+    claim(len(is6) == 4, "task-level IS: FCP better in all 6 tasks vs SCP, GP, Ens-z, GSCP")
+    p_cv, p_cqr = tl["interval_score FCP vs CV+"]["p"], tl["interval_score FCP vs CQR"]["p"]
+    claim(p_cv > 0.05 and p_cqr > 0.05, "task-level IS vs CV+/CQR not significant")
+    return ("Because the two shift protocols of a task share data, the comparison was repeated at the task level, with six fully "
+            "independent units, each averaging its two shift protocols. FCP's shortfall was smaller than that of SCP, CV+, CQR, "
+            "Ens-z and GSCP in all six tasks (exact Wilcoxon p = 0.031, the smallest attainable with six units). It was smaller "
+            f"than WCP's in {w_wcp} and GP's in {w_gp} of six tasks (p = {tl['shortfall FCP vs WCP']['p']:.3f} and "
+            f"{tl['shortfall FCP vs GP']['p']:.3f}). For the interval score, the task-level advantage was consistent against SCP, "
+            f"GP, Ens-z and GSCP (six of six tasks), but not significant against CV+ (p = {p_cv:.3f}) or CQR (p = {p_cqr:.3f}). "
+            "The coverage benefit is therefore robust at every level of analysis. The efficiency benefit over the best "
+            "random-calibrated baselines is consistent in direction but limited by the number of independent datasets.")
+
+
+
 def results(V):
     g, st = V["g"], V["st"]
     E = []
@@ -167,6 +192,7 @@ def results(V):
                 f"under the system protocol; {g('cluster', 'FCP', 'mean_width_sd'):.2f} vs {g('cluster', 'CV+', 'mean_width_sd'):.2f} "
                 "under the cluster protocol; Fig. {{fig:tradeoff}}). The extra width is the price of covering extrapolation error that the narrower "
                 "intervals miss: their miss penalties outweigh the width saving."),
+          ("p", task_level_text(V)),
           ("fig", ("fig4_coverage_width_tradeoff", "Fig. {{fig:tradeoff}}. Coverage versus mean interval width (in units of SD(y)) under the "
                    "two shift protocols, averaged over datasets (α = 0.1). Methods above the dashed line meet the nominal level on "
                    "average; points further left are more efficient.")),
@@ -353,17 +379,18 @@ def tables(V, bib):
         a, b = h2[m], h3[m]
         def fmt(r, k):
             return "n/a" if not np.isfinite(r.get(k, np.nan)) else (f"{r[k]:.4f}" if k.startswith("p") else f"{r[k]:+.3f}")
-        rows.append([f"FCP vs {m}", fmt(a, "median_diff"), f"[{a['ci_lo']:+.3f}, {a['ci_hi']:+.3f}]", f"{a['rank_biserial']:+.2f}",
+        rows.append([f"FCP vs {m}", str(a.get("n_eff", "")), fmt(a, "median_diff"), f"[{a['ci_lo']:+.3f}, {a['ci_hi']:+.3f}]", f"{a['rank_biserial']:+.2f}",
                      fmt(a, "p_holm"), fmt(b, "median_diff") if b["n"] >= 3 else "n/a (∞)",
                      f"[{b['ci_lo']:+.3f}, {b['ci_hi']:+.3f}]" if b["n"] >= 3 else "–",
                      f"{b['rank_biserial']:+.2f}" if b["n"] >= 3 else "–", fmt(b, "p_holm") if b["n"] >= 3 else "–"])
     T["table4"] = {"type": "table", "font_size": 15,
                    "caption": runs("**Table {{tab:tests}}.** Paired comparisons over the 12 shift cells (6 tasks × 2 shift protocols; Wilcoxon "
                                    "signed-rank, Holm-corrected over 8 baselines). Δ: median paired difference (FCP − baseline) with "
-                                   "bootstrap 95% CI; r: matched-pairs rank-biserial correlation. Negative Δ favours FCP. For RF-z the shortfall is zero in "
-                                   "most cells for both methods, so Δ and its CI are 0."),
-                   "header": ["Comparison", "Δ shortfall", "95% CI", "r", "p_Holm", "Δ IS", "95% CI", "r", "p_Holm"],
-                   "rows": rows, "col_widths": [0.15, 0.1, 0.15, 0.07, 0.08, 0.1, 0.15, 0.07, 0.08]}
+                                   "bootstrap 95% CI; r: matched-pairs rank-biserial correlation. Negative Δ favours FCP. n_eff: cells with a non-zero "
+                                   "shortfall difference (the signed-rank test ignores ties). For RF-z the shortfall is zero in most "
+                                   "cells for both methods, so Δ and its CI are 0."),
+                   "header": ["Comparison", "n_eff", "Δ shortfall", "95% CI", "r", "p_Holm", "Δ IS", "95% CI", "r", "p_Holm"],
+                   "rows": rows, "col_widths": [0.14, 0.06, 0.1, 0.14, 0.06, 0.08, 0.1, 0.14, 0.06, 0.08]}
     ab = pd.read_csv(TAB / "table_ablation.csv")
     order = ["CV+", "NCV+", "GCV+", "GCV+[spread]", "GCV+[novelty]", "FCP", "GCV+-W", "FCP-W"]
     desc = {"CV+": ("random", "–", "1"), "NCV+": ("random", "spread+novelty", "1"), "GCV+": ("family", "–", "1"),
