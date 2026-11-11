@@ -22,3 +22,11 @@ Branch: claude/autonomous-research-discovery-795xcu. All deliverables are under 
 - [ ] Phase 20-23 figures/tables/manuscript
 - [ ] Phase 24-33 reviews 01-10
 - [ ] Phase 34-42 audits, docx, cover letter, risk report
+
+## Open issues found during analysis (to be handled in review rounds)
+- Cluster protocol: greedy size-balanced assignment of 10 distinct-size clusters to 5 outer folds is deterministic,
+  so the 10 seeds share the same outer partition (seed SD reflects only internal randomness). Plan: Reviewer-3 round ->
+  extra experiment with fully random cluster-to-fold assignment (stage `randfolds`), report both.
+- RF-z (uncalibrated RF tree spread) matches FCP coverage under shift with better interval score; it over-covers
+  in-distribution (0.955 at nominal 0.90). Base-model swap experiment (stage `basemodel`, FCP with RF members) queued.
+- Main results available: results/raw_results.csv, statistics.json, tables/, figures/ (analysis stage).
