@@ -1,10 +1,10 @@
 [
  {
-  "claim": "abstract has 206 words (<= 250)",
+  "claim": "abstract has 209 words (<= 250)",
   "holds": true
  },
  {
-  "claim": "highlight <= 85 characters: Random-split conformal 90% intervals cover only 72–87% of unseen alloy families (79)",
+  "claim": "highlight <= 85 characters: Random-split 90% conformal intervals cover only 72–87% of new-family alloys (75)",
   "holds": true
  },
  {
@@ -85,6 +85,22 @@
  },
  {
   "claim": "RF-z reaches 0.98 in a dataset",
+  "holds": true
+ },
+ {
+  "claim": "FCP halves FDP vs SCP/CV+",
+  "holds": true
+ },
+ {
+  "claim": "FCP recall lower than SCP",
+  "holds": true
+ },
+ {
+  "claim": "RF-z more conservative",
+  "holds": true
+ },
+ {
+  "claim": "MPEA-YS FCP fewer false discoveries",
   "holds": true
  },
  {

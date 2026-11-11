@@ -602,6 +602,39 @@ def randfolds_analysis(df_main, out):
     t.to_csv(out / "tables" / "table_randfolds.csv", index=False); _md(t, out / "tables" / "table_randfolds.md")
 
 
+def screening_analysis(out, cfg):
+    """Materials decision case study: under the system (unseen chemical system) protocol, an alloy is 'selected' as a
+    high performer if its 90%-interval LOWER bound exceeds tau = upper quartile of the task's property. Reports the
+    number selected and the false-discovery proportion (selected alloys whose measured property is below tau)."""
+    from experiments import runner as R
+    rows = []
+    for task in ["mpea_hv", "mpea_ys", "steel_ys", "superhard_k", "supercon_tc"]:
+        for seed in cfg["seeds"]:
+            r = load_merged(R.CACHE, task, "system", seed)
+            if r is None:
+                continue
+            y = r["y"]; tau = np.quantile(y, 0.75)
+            for m in ["SCP", "CV+", "CQR", "GP", "RF-z", "GSCP", "FCP"]:
+                if (m, 0.1) not in r["lo"]:
+                    continue
+                sel = r["lo"][(m, 0.1)] >= tau
+                rows.append({"task": task, "seed": seed, "method": m, "tau": tau, "n_selected": int(sel.sum()),
+                             "false_discoveries": int((sel & (y < tau)).sum()),
+                             "true_high_found": int((sel & (y >= tau)).sum()), "n_true_high": int((y >= tau).sum())})
+    if not rows:
+        return
+    d = pd.DataFrame(rows)
+    g = d.groupby(["task", "method"]).agg(n_selected=("n_selected", "mean"), fd=("false_discoveries", "mean"),
+                                          found=("true_high_found", "mean"), n_high=("n_true_high", "mean")).reset_index()
+    g["fdp"] = g.fd / g.n_selected.replace(0, np.nan)
+    g["recall"] = g.found / g.n_high
+    g.to_csv(out / "tables" / "table_screening.csv", index=False); _md(g, out / "tables" / "table_screening.md")
+    tot = d.groupby("method").agg(sel=("n_selected", "sum"), fd=("false_discoveries", "sum"), found=("true_high_found", "sum"),
+                                  high=("n_true_high", "sum")).reset_index()
+    tot["fdp"] = tot.fd / tot.sel; tot["recall"] = tot.found / tot.high
+    tot.to_csv(out / "tables" / "table_screening_pooled.csv", index=False); _md(tot, out / "tables" / "table_screening_pooled.md")
+
+
 def run(cfg, out):
     out = Path(out)
     _style()
@@ -619,6 +652,7 @@ def run(cfg, out):
     fig_robust(out); fig_sens(out); fig_eff(out, cm)
     basemodel_analysis(df, out)
     randfolds_analysis(df, out)
+    screening_analysis(out, cfg)
     for name in ["generalization_results.csv"]:
         p = out / name
         if p.exists():

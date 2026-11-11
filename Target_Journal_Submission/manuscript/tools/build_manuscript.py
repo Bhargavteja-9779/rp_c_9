@@ -74,7 +74,9 @@ TASK = {"mpea_hv": "MPEA hardness", "mpea_ys": "MPEA yield strength", "steel_ys"
 def fig_block(name, caption, width=6.3):
     p = FIG / f"{name}.png"
     w, h = Image.open(p).size
-    return {"type": "figure", "path": str(p), "ratio": h / w, "width_in": width, "caption": runs(caption), "alt": caption[:120]}
+    import re
+    alt = re.sub(r"\{+(fig|tab):\w+\}+\.?\s*", "", caption).replace("Fig. ", "").strip()[:150]
+    return {"type": "figure", "path": str(p), "ratio": h / w, "width_in": width, "caption": runs(caption), "alt": alt}
 
 
 # ------------------------------------------------------------------------------------------- results
@@ -88,7 +90,7 @@ def results(V):
     claim((r2["cluster"] < r2["random"]).all(), "point accuracy (R2) is lower under cluster holdout than random for every task")
     E += [("h1", "7. Results"),
           ("h2", "7.1. Severity of the distribution shift"),
-          ("p", "Holding out whole families degraded the shared point predictor in every task (Table 2). Mean R² over tasks fell "
+          ("p", "Holding out whole families degraded the shared point predictor in every task (Table {{tab:accuracy}}). Mean R² over tasks fell "
                 f"from {r2['random'].mean():.3f} (random) to {r2['system'].mean():.3f} (unseen chemical system) and "
                 f"{r2['cluster'].mean():.3f} (unseen composition cluster). The largest losses occurred for steel yield strength "
                 f"(R² {r2.loc['steel_ys', 'random']:.2f} → {r2.loc['steel_ys', 'cluster']:.2f}) and superconductor Tc "
@@ -102,7 +104,7 @@ def results(V):
         claim(g("system", m) < 0.88 and g("cluster", m) < 0.76, f"{m} under-covers under shift")
     claim(all(h1[m]["p"] < 0.05 for m in ["SCP", "CV+", "CQR", "WCP"]), "H1 significant for all four random-calibrated methods")
     E += [("h2", "7.2. RQ1: random-split calibration does not transfer to unseen families"),
-          ("p", "In the random protocol, every conformal method attained its nominal 90% coverage (Fig. 3, left; Table 3). "
+          ("p", "In the random protocol, every conformal method attained its nominal 90% coverage (Fig. {{fig:coverage}}, left; Table {{tab:summary}}). "
                 f"Mean coverage was {g('random', 'SCP'):.3f} for SCP, {g('random', 'CV+'):.3f} for CV+, {g('random', 'CQR'):.3f} "
                 f"for CQR and {g('random', 'WCP'):.3f} for WCP. The same methods under-covered as soon as whole families were "
                 f"held out: {g('system', 'SCP'):.3f}, {g('system', 'CV+'):.3f}, {g('system', 'CQR'):.3f} and "
@@ -121,7 +123,7 @@ def results(V):
                 f"{g('system', 'GP'):.3f} and {g('cluster', 'GP'):.3f}, and the base ensemble's own spread (Ens-z) covered only "
                 f"{g('system', 'Ens-z'):.3f} and {g('cluster', 'Ens-z'):.3f}. Family-subsampled bagging thus does not by itself "
                 "produce calibrated uncertainty. Random-forest tree spread (RF-z) is discussed in Section 7.4."),
-          ("fig", ("fig3_coverage_by_protocol", "Fig. 3. Empirical coverage of 90% prediction intervals (α = 0.1) for ten "
+          ("fig", ("fig3_coverage_by_protocol", "Fig. {{fig:coverage}}. Empirical coverage of 90% prediction intervals (α = 0.1) for ten "
                    "methods under the three protocols. Each marker is one dataset, averaged over 10 outer-split seeds. Horizontal "
                    "bars are means over datasets; the dashed line is the nominal level. Colour encodes the method group and marker "
                    "shape the individual method."))]
@@ -148,7 +150,7 @@ def results(V):
                 f"remain per outer fold, below the bound of Eq. (10), so {g('cluster', 'FCP-W', 'mean_inf_rate') * 100:.0f}% of its "
                 "intervals were infinite by construction."),
           ("p", "Over the 12 shift cells, FCP's coverage shortfall max(0, 0.9 − coverage) was significantly smaller than that of "
-                f"seven of the eight baselines after Holm correction (H2, Table 4; p_Holm ≤ {max(h2[m]['p_holm'] for m in sig2):.3f}; "
+                f"seven of the eight baselines after Holm correction (H2, Table {{tab:tests}}; p_Holm ≤ {max(h2[m]['p_holm'] for m in sig2):.3f}; "
                 "rank-biserial r = −1 for six of them). The median paired reductions ranged from "
                 f"{min(-h2[m]['median_diff'] for m in sig2) * 100:.1f} to {max(-h2[m]['median_diff'] for m in sig2) * 100:.1f} "
                 "percentage points. Compared with the simplest family-calibrated alternative, GSCP, which holds out 25% of the "
@@ -163,9 +165,9 @@ def results(V):
                 f"{12 - h3['WCP']['n']} of the 12 cells. FCP's intervals were wider than those of the random-calibrated methods "
                 f"(mean width {g('system', 'FCP', 'mean_width_sd'):.2f} vs {g('system', 'CV+', 'mean_width_sd'):.2f} SD(y) for CV+ "
                 f"under the system protocol; {g('cluster', 'FCP', 'mean_width_sd'):.2f} vs {g('cluster', 'CV+', 'mean_width_sd'):.2f} "
-                "under the cluster protocol; Fig. 4). The extra width is the price of covering extrapolation error that the narrower "
+                "under the cluster protocol; Fig. {{fig:tradeoff}}). The extra width is the price of covering extrapolation error that the narrower "
                 "intervals miss: their miss penalties outweigh the width saving."),
-          ("fig", ("fig4_coverage_width_tradeoff", "Fig. 4. Coverage versus mean interval width (in units of SD(y)) under the "
+          ("fig", ("fig4_coverage_width_tradeoff", "Fig. {{fig:tradeoff}}. Coverage versus mean interval width (in units of SD(y)) under the "
                    "two shift protocols, averaged over datasets (α = 0.1). Methods above the dashed line meet the nominal level on "
                    "average; points further left are more efficient.")),
           ("table3", None), ("table4", None)]
@@ -186,7 +188,7 @@ def results(V):
                 "guarantees it. It depends on forest hyper-parameters such as max_features and leaf size, and it cannot be dialled "
                 "to a requested level. Section 9.4 asks the constructive question: does family-level calibration applied to a "
                 "random-forest point predictor combine the forest's efficiency with calibrated coverage?"),
-          ("fig", ("fig11_alpha_calibration", "Fig. 11. Empirical versus nominal coverage at α ∈ {0.05, 0.1, 0.2}. A calibrated "
+          ("fig", ("fig11_alpha_calibration", "Fig. {{fig:alpha}}. Empirical versus nominal coverage at α ∈ {0.05, 0.1, 0.2}. A calibrated "
                    "method lies on the diagonal in the random protocol and stays near it under shift."))]
     return E
 
@@ -202,7 +204,7 @@ def ablation(V):
     it = V["table_iteration_v1_v2"]
     fcl = it[(it.method == "FCP") & (it.protocol == "cluster")].iloc[0]
     return [("h1", "8. Ablation study"),
-            ("p", "Table 5 and Fig. 6 decompose FCP into its three design choices: family-grouped folds, the scale model (none, "
+            ("p", "Table {{tab:ablation}} and Fig. {{fig:ablation}} decompose FCP into its three design choices: family-grouped folds, the scale model (none, "
                   "spread only, novelty only, both) and family weights. **Grouping is the decisive component.** Switching CV+ from "
                   "random to family-grouped folds, with nothing else changed, raised mean coverage from "
                   f"{g('system', 'CV+'):.3f} to {g('system', 'GCV+'):.3f} (system) and from {g('cluster', 'CV+'):.3f} to "
@@ -221,7 +223,7 @@ def ablation(V):
                   f"holdout, coverage was {g('cluster', 'FCP', 'mean_cov_high_novelty'):.3f} for FCP against "
                   f"{g('cluster', 'GCV+', 'mean_cov_high_novelty'):.3f} for GCV+ (12-cell median difference "
                   f"+{st['FCP_vs_GCV+_cov_novelty_high']['median_diff'] * 100:.1f} points, p = "
-                  f"{st['FCP_vs_GCV+_cov_novelty_high']['p']:.4f}; Fig. 5). Novelty also widened the intervals, so that under the "
+                  f"{st['FCP_vs_GCV+_cov_novelty_high']['p']:.4f}; Fig. {{fig:novelty}}). Novelty also widened the intervals, so that under the "
                   f"cluster protocol FCP's interval score ({g('cluster', 'FCP', 'mean_interval_score_sd'):.3f}) was worse than "
                   f"spread-only normalization ({g('cluster', 'GCV+[spread]', 'mean_interval_score_sd'):.3f}). Over the 12 cells, "
                   f"the FCP vs GCV+ interval-score difference was not significant (p = {st['FCP_vs_GCV+_interval_score_sd']['p']:.2f}). "
@@ -241,10 +243,10 @@ def ablation(V):
                   f"{fcl.interval_score_v1:.2f} to {fcl.interval_score_v2:.2f} (Supplementary Table S1). The change was made after "
                   "the interim analysis, and it is documented together with the original results."),
             ("table5", None),
-            ("fig", ("fig6_ablation", "Fig. 6. Ablation of FCP under the two shift protocols: mean coverage (left) and interval "
+            ("fig", ("fig6_ablation", "Fig. {{fig:ablation}}. Ablation of FCP under the two shift protocols: mean coverage (left) and interval "
                      "score (right) over datasets. GCV+: family-grouped CV+ without normalization; [spread] / [novelty]: scale model "
                      "with one signal; -W: family weights; NCV+: normalization with random folds.")),
-            ("fig", ("fig5_conditional_coverage_novelty", "Fig. 5. Coverage within tertiles of test-alloy novelty (k-nearest-"
+            ("fig", ("fig5_conditional_coverage_novelty", "Fig. {{fig:novelty}}. Coverage within tertiles of test-alloy novelty (k-nearest-"
                      "neighbour distance to the training alloys), averaged over datasets."))]
 
 
@@ -263,16 +265,16 @@ def error_analysis(V):
     ys = wf[wf.task == "mpea_ys"]
     return [("h1", "11. Error analysis"),
             ("p", "To see where intervals still fail, coverage was computed for every test family with at least five alloys in the "
-                  "system protocol (all seeds pooled; Fig. 9, Table 7). The dominant failure mode was **property extremity**, not "
+                  "system protocol (all seeds pooled; Fig. {{fig:errors}}, Table {{tab:worst}}). The dominant failure mode was **property extremity**, not "
                   "compositional novelty. For FCP, within-family coverage decreased with the family's mean distance from the median "
                   f"target (|y − median|/IQR) in {len(neg)} of 6 tasks (Spearman ρ from {f.spearman_rho.min():.2f} to "
                   f"{f.spearman_rho.max():.2f}). The families in the most extreme sextile were covered {q['FCP']:.2f} of the time by "
                   f"FCP, against {q['SCP']:.2f} by SCP. FCP therefore reduced this failure substantially but did not remove it. The "
                   "association with novelty was weaker and of inconsistent sign, which suggests that, once calibration is family-level, "
                   "the remaining misses are dominated by regression toward the mean of the training labels for families with "
-                  "unusually high or low properties. Fig. 7 illustrates this for MPEA hardness: the uncovered alloys concentrate "
+                  "unusually high or low properties. Fig. {{fig:parity}} illustrates this for MPEA hardness: the uncovered alloys concentrate "
                   "above about 800 HV."),
-            ("p", "Table 7 lists the families with the lowest FCP coverage. Several are metallurgically distinctive within their "
+            ("p", "Table {{tab:worst}} lists the families with the lowest FCP coverage. Several are metallurgically distinctive within their "
                   "datasets. Examples in the MPEA yield-strength data are the Cr–Fe–Ni–Ti and Al–Co–Cr–Fe–Mo–Ni systems and the "
                   "refractory Nb–Ta–Ti and Al–Mo–Nb–Ta–Ti–Zr systems. The ensemble predicted their strength levels poorly: the mean "
                   f"absolute error of the worst family exceeded {ys.abserr.max():.0f} MPa. An Fe–As–O–Sm (iron-pnictide) family "
@@ -280,10 +282,10 @@ def error_analysis(V):
                   "a new strengthening or pairing mechanism, absent from the training families, governs the property. No "
                   "calibration of residuals can anticipate such a mechanism. FCP's intervals are honest about the *average* "
                   "extrapolation error over families, not about every individual family."),
-            ("fig", ("fig9_error_analysis_families", "Fig. 9. Within-family coverage (system holdout, families with ≥ 5 alloys, "
+            ("fig", ("fig9_error_analysis_families", "Fig. {{fig:errors}}. Within-family coverage (system holdout, families with ≥ 5 alloys, "
                      "all tasks and seeds pooled) against the family's mean target extremity (left) and mean novelty (right), in "
                      "sextiles.")),
-            ("fig", ("fig7_parity_intervals_mpea_hv", "Fig. 7. Measured versus predicted MPEA hardness with 90% intervals for test "
+            ("fig", ("fig7_parity_intervals_mpea_hv", "Fig. {{fig:parity}}. Measured versus predicted MPEA hardness with 90% intervals for test "
                      "alloys from unseen composition clusters (seed 0): split conformal prediction (left) and FCP (right). Crosses "
                      "mark alloys outside their interval.")),
             ("table7", None)]
@@ -316,12 +318,12 @@ def tables(V, bib):
         r = ds.loc[t]
         rows.append([TASK[t], UNIT[t], SRC[t], str(int(r.n)), str(int(r.n_features)), str(int(r.n_systems)),
                      f"{num(r.y_mean)} ± {num(r.y_sd)}", f"{num(r.y_min)} to {num(r.y_max)}"])
-    T["table1"] = {"type": "table", "caption": runs("**Table 1.** Datasets after cleaning (identical inputs merged by median). "
+    T["table1"] = {"type": "table", "caption": runs("**Table {{tab:datasets}}.** Datasets after cleaning (identical inputs merged by median). "
                    "Systems: number of F1 alloy families (elements ≥ 1 at.%); every task also has 10 F2 composition clusters."),
                    "header": ["Task", "Unit", "Source", "n", "Features", "Systems", "Mean ± SD", "Range"],
                    "rows": rows, "col_widths": [0.19, 0.08, 0.17, 0.07, 0.09, 0.09, 0.15, 0.16]}
     pa = V["table_point_accuracy"]
-    T["table2"] = {"type": "table", "caption": runs("**Table 2.** R² of the shared point predictor (family-bagged LightGBM) on the "
+    T["table2"] = {"type": "table", "caption": runs("**Table {{tab:accuracy}}.** R² of the shared point predictor (family-bagged LightGBM) on the "
                    "outer test folds, mean ± SD over 10 seeds."),
                    "header": ["Task", "Random", "Unseen system", "Unseen cluster"],
                    "rows": [[r.Task, r["R² random"], r["R² system"], r["R² cluster"]] for _, r in pa.iterrows()],
@@ -338,7 +340,7 @@ def tables(V, bib):
                   f2(x.mean_interval_score_sd)]
         rows.append(r)
     T["table3"] = {"type": "table", "font_size": 14,
-                   "caption": runs("**Table 3.** Summary over the six datasets (α = 0.1; 10 seeds per dataset). Cov: mean coverage; "
+                   "caption": runs("**Table {{tab:summary}}.** Summary over the six datasets (α = 0.1; 10 seeds per dataset). Cov: mean coverage; "
                                    "Min: worst dataset; W: mean finite interval width / SD(y); IS: mean interval score / SD(y). "
                                    "*Some intervals infinite (WCP: density-ratio weights; FCP-W: fewer than 9 training families)."),
                    "header": ["Method", "Cov", "Min", "W", "IS", "Cov", "Min", "W", "IS", "Cov", "Min", "W", "IS"],
@@ -356,9 +358,10 @@ def tables(V, bib):
                      f"[{b['ci_lo']:+.3f}, {b['ci_hi']:+.3f}]" if b["n"] >= 3 else "–",
                      f"{b['rank_biserial']:+.2f}" if b["n"] >= 3 else "–", fmt(b, "p_holm") if b["n"] >= 3 else "–"])
     T["table4"] = {"type": "table", "font_size": 15,
-                   "caption": runs("**Table 4.** Paired comparisons over the 12 shift cells (6 tasks × 2 shift protocols; Wilcoxon "
+                   "caption": runs("**Table {{tab:tests}}.** Paired comparisons over the 12 shift cells (6 tasks × 2 shift protocols; Wilcoxon "
                                    "signed-rank, Holm-corrected over 8 baselines). Δ: median paired difference (FCP − baseline) with "
-                                   "bootstrap 95% CI; r: matched-pairs rank-biserial correlation. Negative Δ favours FCP."),
+                                   "bootstrap 95% CI; r: matched-pairs rank-biserial correlation. Negative Δ favours FCP. For RF-z the shortfall is zero in "
+                                   "most cells for both methods, so Δ and its CI are 0."),
                    "header": ["Comparison", "Δ shortfall", "95% CI", "r", "p_Holm", "Δ IS", "95% CI", "r", "p_Holm"],
                    "rows": rows, "col_widths": [0.15, 0.1, 0.15, 0.07, 0.08, 0.1, 0.15, 0.07, 0.08]}
     ab = pd.read_csv(TAB / "table_ablation.csv")
@@ -374,14 +377,14 @@ def tables(V, bib):
             r += [f"{x.mean_coverage:.3f}", f2(x.mean_interval_score_sd), f"{x.mean_cov_high_novelty:.3f}"]
         rows.append(r)
     T["table5"] = {"type": "table", "font_size": 15,
-                   "caption": runs("**Table 5.** Ablation (α = 0.1, mean over datasets). Cov: coverage; IS: interval score / SD(y); "
+                   "caption": runs("**Table {{tab:ablation}}.** Ablation (α = 0.1, mean over datasets). Cov: coverage; IS: interval score / SD(y); "
                                    "Cov_{hi}: coverage in the highest novelty tertile."),
                    "header": ["Variant", "Folds", "Scale", "Weights", "Cov", "IS", "Cov_hi", "Cov", "IS", "Cov_hi"],
                    "rows": [["", "", "", "", "Unseen system", "", "", "Unseen cluster", "", ""]] + rows,
                    "col_widths": [0.13, 0.08, 0.15, 0.08, 0.09, 0.09, 0.09, 0.1, 0.09, 0.1]}
     wf = V["table_worst_families_FCP"].head(10)
     T["table7"] = {"type": "table", "font_size": 16,
-                   "caption": runs("**Table 7.** Families with the lowest FCP coverage under system holdout (≥ 5 alloys; means over "
+                   "caption": runs("**Table {{tab:worst}}.** Families with the lowest FCP coverage under system holdout (≥ 5 alloys; means over "
                                    "seeds). Extremity: mean |y − median|/IQR; MAE in target units."),
                    "header": ["Task", "Family (chemical system)", "Coverage", "Alloys", "Novelty", "Extremity", "MAE"],
                    "rows": [[TASK[r.task], r.fam, f"{r['cov']:.2f}", f"{r.n:.0f}", f"{r.nov:.2f}", f"{r.z:.2f}", f"{r.abserr:.3g}"]
@@ -482,7 +485,7 @@ def declarations(V):
             ("p", "The authors declare that they have no known competing financial interests or personal relationships that could "
                   "have appeared to influence the work reported in this paper."),
             ("h1", "Data and code availability"),
-            ("p", "All six datasets are public (Table 1). The complete code is provided as supplementary material and will be "
+            ("p", "All six datasets are public (Table {{tab:datasets}}). The complete code is provided as supplementary material and will be "
                   "deposited in a public repository with a DOI upon acceptance [repository URL to be inserted]. It includes data "
                   "download, cleaning, featurization, all methods, the experiment driver (run_all.py), statistical analysis and "
                   "figure/table generation. Every number in this article is regenerated by `python run_all.py --mode full`."),
@@ -510,7 +513,7 @@ def abstract(V):
          f"We propose family-calibrated conformal prediction (FCP): CV+ intervals whose calibration folds hold out whole alloy "
          f"families, with scores normalized by a leakage-free scale built from family-bagged ensemble disagreement and "
          f"compositional novelty. A family-weighted variant targets family-level coverage, and the finite-sample condition for "
-         f"its validity is stated explicitly. In 360 evaluations (6 datasets, 3 split protocols, 10 seeds) against eight interval "
+         f"its validity is stated explicitly. In {V['n_runs']} evaluation runs (6 datasets × 3 split protocols × 10 seeds) against eight interval "
          f"methods, FCP restored mean coverage to {g('system', 'FCP'):.3f} and {g('cluster', 'FCP'):.3f}. It reduced the coverage "
          f"shortfall relative to seven baselines and the interval score relative to six (Holm-corrected Wilcoxon tests). "
          f"Ablations identify family-grouped calibration as the decisive component. Random-forest tree-spread intervals were "
@@ -528,7 +531,7 @@ KEYWORDS = ["Alloy design", "High-entropy alloys", "Machine learning", "Uncertai
 
 def highlights(V):
     g = V["g"]
-    h = [f"Random-split conformal 90% intervals cover only {g('cluster', 'SCP') * 100:.0f}–{g('system', 'CV+') * 100:.0f}% of unseen alloy families",
+    h = [f"Random-split 90% conformal intervals cover only {g('cluster', 'SCP') * 100:.0f}–{g('system', 'WCP') * 100:.0f}% of new-family alloys",
          "Family-grouped CV+ calibration restores nominal coverage on new alloy families",
          "Leakage-free scale from ensemble spread and novelty adapts the interval width",
          "Benchmark: 6 datasets, 3 shift protocols, 17 interval methods, 10 seeds",
@@ -576,6 +579,9 @@ def build(V):
                 blocks.append(fig_block(*val))
             elif kind.startswith("table"):
                 tb = TB[kind]
+                if tb.get("_placed"):
+                    raise ValueError("table placed twice: " + kind)
+                tb["_placed"] = True
                 tb["caption"] = [dict(r, t=bib.cite(r["t"])) for r in tb["caption"]]
                 tb["rows"] = [[bib.cite(c) if isinstance(c, str) else c for c in row] for row in tb["rows"]]
                 blocks.append(tb)
@@ -591,14 +597,95 @@ def build(V):
     blocks.append({"type": "bullets", "items": [runs(h) for h in highlights(V)]})
     global TB
     TB = tables(V, bib)
-    for sec in [S.intro, S.related, S.gap, S.method, S.setup, design, results, ablation, robustness_sections,
+    for sec in [S.intro, S.related, S.gap, S.method, S.setup, design, results, screening, ablation, robustness_sections,
                 computational, error_analysis, discussion, limitations, conclusion, declarations]:
         add(sec(V))
     blocks.append({"type": "heading", "level": 1, "text": "References"})
     blocks.append({"type": "refs", "items": [runs(x) for x in bib.formatted()]})
+    number_refs(blocks)
     spec = {"meta": {"title": TITLE, "line_numbers": True, "description": "Manuscript for Journal of Materials Research and Technology"},
             "blocks": blocks}
     return spec, bib
+
+
+def number_refs(blocks):
+    """Assign figure/table numbers in order of first appearance of {{fig:x}}/{{tab:x}} and substitute everywhere."""
+    import re
+    order = {"fig": [], "tab": []}
+    texts = []
+
+    def walk(o):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                if k == "t" and isinstance(v, str):
+                    texts.append(v)
+                else:
+                    walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+    walk(blocks)
+    for t in texts:
+        for kind, key in re.findall(r"\{+(fig|tab):(\w+)\}+", t):
+            if key not in order[kind]:
+                order[kind].append(key)
+
+    def sub(o):
+        if isinstance(o, dict):
+            for k, v in list(o.items()):
+                if k == "t" and isinstance(v, str):
+                    o[k] = re.sub(r"\{+(fig|tab):(\w+)\}+", lambda m: str(order[m.group(1)].index(m.group(2)) + 1), v)
+                else:
+                    sub(v)
+        elif isinstance(o, list):
+            for v in o:
+                sub(v)
+    sub(blocks)
+    NUMBERING.update(order)
+
+
+NUMBERING = {}
+
+
+def screening(V):
+    sp = pd.read_csv(TAB / "table_screening_pooled.csv").set_index("method")
+    st = pd.read_csv(TAB / "table_screening.csv")
+    claim(sp.loc["FCP", "fdp"] < sp.loc["SCP", "fdp"] / 2 and sp.loc["FCP", "fdp"] < sp.loc["CV+", "fdp"] / 2, "FCP halves FDP vs SCP/CV+")
+    claim(sp.loc["FCP", "recall"] < sp.loc["SCP", "recall"], "FCP recall lower than SCP")
+    claim(sp.loc["RF-z", "fdp"] < sp.loc["FCP", "fdp"] and sp.loc["RF-z", "recall"] < sp.loc["FCP", "recall"], "RF-z more conservative")
+    ys = st[st.task == "mpea_ys"].set_index("method")
+    claim(ys.loc["FCP", "fdp"] < ys.loc["SCP", "fdp"], "MPEA-YS FCP fewer false discoveries")
+    rows = []
+    for m in ["SCP", "CV+", "CQR", "GP", "RF-z", "GSCP", "FCP"]:
+        r = [m]
+        for t in ["mpea_hv", "mpea_ys", "steel_ys", "superhard_k", "supercon_tc"]:
+            x = st[(st.task == t) & (st.method == m)].iloc[0]
+            r.append(f"{x.n_selected:.1f} / " + ("–" if not np.isfinite(x.fdp) else f"{x.fdp * 100:.0f}%"))
+        r += [f"{sp.loc[m, 'fdp'] * 100:.1f}%", f"{sp.loc[m, 'recall']:.2f}"]
+        rows.append(r)
+    TB["table_screening"] = {"type": "table", "font_size": 15,
+        "caption": runs("**Table {{tab:screening}}.** Screening for high performers under unseen-chemical-system holdout (α = 0.1). An "
+                        "alloy is selected if the lower bound of its interval exceeds the upper quartile τ of the task's property. "
+                        "Per task: mean number selected per seed / false-discovery proportion (selected alloys with measured "
+                        "property < τ). Pooled over 5 tasks × 10 seeds: false-discovery proportion (FDP) and recall of all alloys "
+                        "with property ≥ τ."),
+        "header": ["Method", "MPEA HV", "MPEA YS", "Steel YS", "Bulk mod.", "Tc", "Pooled FDP", "Recall"],
+        "rows": rows, "col_widths": [0.1, 0.12, 0.12, 0.12, 0.13, 0.15, 0.13, 0.13]}
+    return [("h2", "7.5. Consequences for alloy screening"),
+            ("p", "Interval validity matters for decisions. A common use of intervals in alloy design is to accept a candidate "
+                  "only if even its pessimistic (lower-bound) prediction exceeds a target. We emulated this under unseen-chemical-"
+                  "system holdout: an alloy was 'selected' when its lower bound exceeded the upper quartile τ of the property "
+                  f"(Table {{tab:screening}}). Pooled over five tasks and ten seeds, {sp.loc['SCP', 'fdp'] * 100:.1f}% of the alloys "
+                  f"selected with SCP and {sp.loc['CV+', 'fdp'] * 100:.1f}% of those selected with CV+ were false discoveries, "
+                  f"against {sp.loc['FCP', 'fdp'] * 100:.1f}% with FCP. For MPEA yield strength the false-discovery proportion fell "
+                  f"from {ys.loc['SCP', 'fdp'] * 100:.0f}% (SCP) to {ys.loc['FCP', 'fdp'] * 100:.0f}% (FCP). The gain is not free: "
+                  f"FCP recovered {sp.loc['FCP', 'recall'] * 100:.0f}% of the true high performers against "
+                  f"{sp.loc['SCP', 'recall'] * 100:.0f}% for SCP. RF-z was more conservative still (false discoveries "
+                  f"{sp.loc['RF-z', 'fdp'] * 100:.1f}%, recall {sp.loc['RF-z', 'recall'] * 100:.0f}%), and CQR's wide quantile "
+                  "intervals almost never cleared the threshold. With family-level calibration, the stated confidence of a "
+                  "lower-bound screen holds on new chemical systems; with random-split calibration, it is overstated by a factor "
+                  "of three to four."),
+            ("table_screening", None)]
 
 
 def robustness_sections(V):

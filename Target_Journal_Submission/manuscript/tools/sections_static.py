@@ -210,7 +210,11 @@ def method(V):
         ("p", "FCP requires *K* ensembles of *M* members, i.e. *KM* tree-ensemble fits, plus *K* nearest-neighbour indices. "
               "Forming the interval for *n*_{t} test alloys costs O(*n*_{t} *n* log *n*) for sorting the *n* candidate bounds per "
               "test alloy. Random-split CV+ has the same cost. Split conformal prediction requires *M* fits but uses only part of "
-              "the data for training. Measured costs are reported in Section 10."),
+              "the data for training. Measured costs are reported in Section 10. Fig. {fig:workflow} summarizes the procedure."),
+        ("fig", ("fig1_workflow", "Fig. {fig:workflow}. Family-calibrated conformal prediction (FCP). Training alloys are split "
+                 "into folds that never share a family (Step 1); each fold's family-bagged ensemble, novelty scorer and scale model "
+                 "are fitted without the fold (Step 2); scores of the held-out families (Step 3) form weighted CV+ quantiles around "
+                 "each fold model's prediction (Step 4).")),
     ]
     return E
 
@@ -219,7 +223,7 @@ def setup(V):
     return [
         ("h1", "5. Experimental setup"),
         ("h2", "5.1. Datasets"),
-        ("p", "Six regression tasks from public sources were used (Table 1). Two come from the MPEA database of Borg et al. "
+        ("p", "Six regression tasks from public sources were used (Table {tab:datasets}). Two come from the MPEA database of Borg et al. "
               "[@borg2020]: Vickers hardness, and yield strength with test temperature, test type (tension/compression) and "
               "processing route as additional inputs. One is the yield strength of 312 steels from Matbench [@dunn2020]. "
               "Three are inorganic-compound tasks, used to test generalization beyond alloys: the bulk modulus training set of "
@@ -228,8 +232,11 @@ def setup(V):
               "dataset of Hamidieh [@hamidieh2018]. Identical inputs (same formula and, for MPEA tasks, same processing and test "
               "conditions) were merged by the median target before any split. The superconductor set was reduced to "
               f"{V['supercon_n']} compounds by sampling whole chemical systems with a fixed seed, to fit the computational "
-              "budget."),
+              "budget. Fig. {fig:datasets} shows the target distributions and the strongly skewed sizes of the chemical-system "
+              "families: most systems contain one or a few alloys, a few contain dozens."),
         ("table1", None),
+        ("fig", ("fig2_dataset_distributions", "Fig. {fig:datasets}. Target distributions (top) and number of alloys per chemical "
+                 "system (bottom, logarithmic axis) for the six tasks.")),
         ("h2", "5.2. Features and alloy families"),
         ("p", "Each composition was described by the 132 Magpie elemental-property statistics [@ward2016], computed with "
               "matminer [@ward2018] and pymatgen [@ong2013], together with the atomic fraction of every element present in the "
