@@ -146,6 +146,13 @@ def _fold_job(task, protocol, seed, k, tr, te, cfg, inner_family):
         for a in alphas:
             out["lo"][("GP", a)], out["hi"][("GP", a)] = C.gaussian_interval(gmu, gsd, a)
         out["time"]["GP"] = time.perf_counter() - tt
+    for name, grouped in (("FCP-RFsigma", True), ("CV+-RFsigma", False)):
+        if want(name):
+            tt = time.perf_counter()
+            crf = C.CrossFitRFSigma(K=cfg["K"], grouped=grouped, seed=rs).fit(Xtr, ytr, gtr, Xte)
+            for a in alphas:
+                out["lo"][(name, a)], out["hi"][(name, a)] = crf.intervals(a)
+            out["time"][name] = time.perf_counter() - tt
     if want("RF-z"):
         tt = time.perf_counter()
         rmu, rsd = C.rf_fit_predict(Xtr, ytr, Xte, seed=rs)

@@ -181,6 +181,19 @@ def temporal(cfg, out, n_jobs):
     _save_rows(rows, out / "temporal_results.csv")
 
 
+def rfsigma(cfg, out, n_jobs):
+    """Iteration 2: family-grouped CV+ normalized by random-forest tree spread (FCP-RFsigma) vs random-fold version and RF-z."""
+    c2 = copy.deepcopy(cfg); c2["methods"] = ["FCP-RFsigma", "CV+-RFsigma", "RF-z"]
+    seeds = cfg["robustness"]["seeds"]
+    jobs = [(t, p, s) for t in cfg["tasks"] for p in cfg["protocols"] for s in seeds]
+    from joblib import Parallel, delayed
+    Parallel(n_jobs=n_jobs)(delayed(_one)("rfsigma", t, p, s, c2, "rfsigma", {}) for t, p, s in jobs)
+    rows = []
+    for t, p, s in jobs:
+        rows += R.metrics_rows(R.run_one("rfsigma", t, p, s, c2, variant="rfsigma"))
+    _save_rows(rows, out / "rfsigma_results.csv")
+
+
 def efficiency(cfg, out, n_jobs):
     """Wall time and peak resident memory of each method for one outer fold (separate processes)."""
     rows = []

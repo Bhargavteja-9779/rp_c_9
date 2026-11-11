@@ -208,3 +208,42 @@ def rf_fit_predict(X_tr, y_tr, X_test, seed=0):
                                random_state=seed).fit(X_tr, y_tr)
     P = np.stack([t.predict(X_test) for t in rf.estimators_])
     return P.mean(0), P.std(0, ddof=1)
+
+
+class CrossFitRFSigma:
+    """Iteration 2 (Reviewer-8 hypothesis): CV+ normalized directly by random-forest tree spread.
+    For fold k a RandomForest (300 trees, max_features 1/3) is fitted on D_{-k}; s_k(x) = SD over trees;
+    sigma_k(x) = s_k(x) + beta_k with beta_k = 0.1 * median s_k over the calibration fold (features only, no labels).
+    Folds grouped by family (FCP-RFsigma) or random (CV+-RFsigma); unit weights."""
+
+    def __init__(self, K=5, grouped=True, seed=0, n_trees=300):
+        self.K, self.grouped, self.seed, self.n_trees = K, grouped, seed, n_trees
+
+    def fit(self, X, y, groups, X_test):
+        n = len(y)
+        self.folds = assign_folds(n, self.K, groups if self.grouped else None, seed=self.seed)
+        self.y = y
+        mu_c, sig_c = np.empty(n), np.empty(n)
+        self.mu_t, self.sig_t = [], []
+        for k in range(self.K):
+            tr, ca = self.folds != k, self.folds == k
+            mu, sd = rf_fit_predict(X[tr], y[tr], np.vstack([X[ca], X_test]), seed=self.seed * 1000 + k)
+            nc = int(ca.sum())
+            beta = 0.1 * np.median(sd[:nc]) + 1e-12
+            mu_c[ca], sig_c[ca] = mu[:nc], sd[:nc] + beta
+            self.mu_t.append(mu[nc:]); self.sig_t.append(sd[nc:] + beta)
+        self.S = np.abs(y - mu_c) / sig_c
+        return self
+
+    def intervals(self, alpha, chunk=400):
+        n = len(self.y); w = np.ones(n)
+        mu_t, sig_t = np.stack(self.mu_t), np.stack(self.sig_t)
+        nt = mu_t.shape[1]
+        lo, hi = np.empty(nt), np.empty(nt)
+        for a in range(0, nt, chunk):
+            b = min(nt, a + chunk)
+            M = mu_t[self.folds, a:b].T
+            Sg = sig_t[self.folds, a:b].T * self.S[None, :]
+            lo[a:b] = weighted_lower(M - Sg, w, 1.0, alpha)
+            hi[a:b] = weighted_upper(M + Sg, w, 1.0, 1 - alpha)
+        return lo, hi
