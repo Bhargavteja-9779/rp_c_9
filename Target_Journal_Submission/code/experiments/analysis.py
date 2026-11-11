@@ -120,7 +120,7 @@ def tables(df, out):
                          "cells_below_0.88": int((s.coverage < 0.88).sum()), "n_cells": len(s),
                          "mean_family_coverage": s.family_coverage.mean(),
                          "mean_width_sd": s.width_sd.replace(np.inf, np.nan).mean(), "mean_inf_rate": s.inf_rate.mean(),
-                         "mean_interval_score_sd": s.interval_score_sd.replace(np.inf, np.nan).mean(),
+                         "mean_interval_score_sd": s.interval_score_sd.mean(),  # inf if any interval is infinite
                          "mean_cov_high_novelty": s.cov_novelty_high.mean(), "mean_cov_low_novelty": s.cov_novelty_low.mean()})
     summ = pd.DataFrame(rows)
     summ.to_csv(T_ / "table_summary_by_protocol.csv", index=False)
@@ -230,22 +230,45 @@ def fig_coverage(cm, out):
     h = [Line2D([], [], color=c, marker="o", ls="", ms=4, label=l) for l, c in
          [("Random-calibrated conformal", C_ORANGE), ("Model-based (uncalibrated)", C_VIOLET), ("Family-calibrated", C_BLUE)]]
     h += [Line2D([], [], color=INK, lw=1.2, label="Mean over tasks"), Line2D([], [], color=C_RED, ls="--", label="Nominal 0.90")]
-    fig.legend(handles=h, loc="lower center", ncol=5, bbox_to_anchor=(0.5, -0.06))
-    fig.text(0.5, -0.11, "Each dot is one dataset (mean over 10 outer splits).", ha="center", color=INK2, fontsize=7)
+    fig.legend(handles=h, loc="upper center", ncol=3, bbox_to_anchor=(0.5, -0.02), fontsize=7)
+    fig.text(0.5, -0.19, "Each marker is one dataset (mean over 10 outer splits). FCP-W under cluster holdout: "
+             "intervals infinite whenever fewer than 9 training families (Eq. 9).", ha="center", color=INK2, fontsize=6.5)
     _save(fig, out, "fig3_coverage_by_protocol")
 
 
+def _repel(ys, min_gap):
+    """Greedy 1-D label de-overlap: returns label y positions (same order) at least min_gap apart."""
+    order = np.argsort(ys); orig = np.array(ys, float)[order]; pos = orig.copy()
+    for i in range(1, len(pos)):
+        pos[i] = max(pos[i], pos[i - 1] + min_gap)
+    pos -= np.mean(pos - orig)  # re-centre so labels spread both up and down
+    out = np.empty_like(pos); out[order] = pos
+    return out
+
+
 def fig_tradeoff(cm, out):
-    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.2), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.4))
     for ax, p in zip(axes, ["system", "cluster"]):
         s = cm[(cm.protocol == p) & cm.method.isin(KEY)]
-        g = s.groupby("method").agg(cov=("coverage", "mean"), w=("width_sd", lambda x: x.replace(np.inf, np.nan).mean()))
-        for m, r in g.iterrows():
-            ax.scatter(r.w, r.cov, color=GROUP[m][1], marker=MARK[m], s=28, edgecolors="white", linewidths=0.8, zorder=3)
-            ax.annotate(m, (r.w, r.cov), xytext=(4, 2), textcoords="offset points", fontsize=7, color=INK2)
+        g = s.groupby("method").agg(cv=("coverage", "mean"), w=("width_sd", lambda x: x.replace(np.inf, np.nan).mean()),
+                                    inf=("inf_rate", "mean"))
+        g = g[(g["inf"] < 0.5) & (g.index != "Ens-z")]  # see footnote
+        lo_y, hi_y = (0.82, 0.97) if p == "system" else (0.69, 0.95)
+        ly = _repel(g["cv"].values, 0.065 * (hi_y - lo_y))
+        for (m, r), yl in zip(g.iterrows(), ly):
+            ax.scatter(r["w"], r["cv"], color=GROUP[m][1], marker=MARK[m], s=30, zorder=3,
+                       facecolors="white" if r["inf"] > 0 else GROUP[m][1], linewidths=1.2)
+            lab = m + (f" ({r['inf'] * 100:.0f}% ∞)" if r["inf"] > 0.001 else "")
+            ax.annotate(lab, (r["w"], r["cv"]), xytext=(r["w"] + 0.05 * (g["w"].max() - g["w"].min()), yl),
+                        textcoords="data", fontsize=6.5, color=INK2, va="center",
+                        arrowprops=dict(arrowstyle="-", color=GRID, lw=0.5))
         ax.axhline(0.9, color=C_RED, lw=1, ls="--")
         ax.set_xlabel("Mean interval width / SD(y) (finite intervals)"); ax.set_title(PROT_LABEL[p])
+        ax.set_xlim(g["w"].min() * 0.85, g["w"].max() * 1.45); ax.set_ylim(lo_y, hi_y)
     axes[0].set_ylabel("Mean coverage over datasets")
+    fig.text(0.5, -0.04, "Open markers: some intervals infinite. Not shown: FCP-W under cluster holdout (64% infinite) and Ens-z "
+             "(coverage 0.48 / 0.45, far below the plotted range; Table 3).",
+             ha="center", fontsize=6.5, color=INK2)
     _save(fig, out, "fig4_coverage_width_tradeoff")
 
 
@@ -262,7 +285,8 @@ def fig_novelty(cm, out):
         ax.set_xticks([0, 1, 2]); ax.set_xticklabels(["low", "mid", "high"]); ax.set_xlabel("Novelty tertile of test alloy")
         ax.set_title(PROT_LABEL[p])
     axes[0].set_ylabel("Coverage (mean over datasets)")
-    axes[-1].legend(loc="lower left", fontsize=6.5)
+    h, l = axes[0].get_legend_handles_labels()
+    fig.legend(h, l, loc="upper center", ncol=6, bbox_to_anchor=(0.5, -0.0), fontsize=7)
     _save(fig, out, "fig5_conditional_coverage_novelty")
 
 
@@ -272,14 +296,18 @@ def fig_ablation(summ, out):
     for ax, met, lab in [(axes[0], "mean_coverage", "Mean coverage"), (axes[1], "mean_interval_score_sd", "Mean interval score / SD(y)")]:
         for k, (p, c) in enumerate([("system", C_BLUE), ("cluster", C_ORANGE)]):
             v = s[s.protocol == p].set_index("method").reindex(ABLATION)[met]
-            ax.barh(np.arange(len(ABLATION)) + (k - 0.5) * 0.38, v, height=0.36, color=c, label=PROT_LABEL[p])
+            yy = np.arange(len(ABLATION)) + (k - 0.5) * 0.38
+            fin = np.isfinite(v.values)
+            ax.barh(yy[fin], v.values[fin], height=0.36, color=c, label=PROT_LABEL[p])
+            for y_, f_ in zip(yy, fin):
+                if not f_:
+                    ax.text(0.05, y_, "∞ (fewer than 9 training families)", va="center", fontsize=6, color=INK2)
         ax.set_yticks(range(len(ABLATION))); ax.set_yticklabels(ABLATION); ax.invert_yaxis(); ax.set_xlabel(lab)
         if met == "mean_coverage":
             ax.axvline(0.9, color=C_RED, ls="--", lw=1); ax.set_xlim(0.5, 1.0)
     axes[1].set_yticklabels([])
-    axes[0].legend(loc="lower left", fontsize=6.5)
-    fig.text(0.5, -0.04, "Interval scores of weighted variants under cluster holdout are infinite (fewer than 9 training families) and are omitted.",
-             ha="center", fontsize=6.5, color=INK2)
+    h, l = axes[0].get_legend_handles_labels()
+    fig.legend(h, l, loc="upper center", ncol=2, bbox_to_anchor=(0.55, 0.0), fontsize=7)
     _save(fig, out, "fig6_ablation")
 
 
@@ -346,9 +374,10 @@ def fig_parity(out, cfg):
         ax.scatter(y[~cov], mu[~cov], s=9, color=C_RED, marker="x", linewidths=0.8, label="not covered")
         lim = [min(y.min(), mu.min()), max(y.max(), mu.max())]
         ax.plot(lim, lim, color=INK2, lw=0.8)
-        ax.set_title(f"{m}: coverage {cov.mean():.2f} (unseen composition clusters)")
+        ax.set_title(f"{m}  (coverage {cov.mean():.2f})")
         ax.set_xlabel("Measured hardness (HV)")
     axes[0].set_ylabel("Predicted hardness (HV) with 90% interval"); axes[1].legend(loc="upper left", fontsize=6.5)
+    fig.suptitle("MPEA hardness, unseen composition clusters (seed 0, α = 0.1)", fontsize=8.5, y=1.02)
     _save(fig, out, "fig7_parity_intervals_mpea_hv")
 
 
@@ -475,29 +504,29 @@ def fig_eff(out, cm):
 
 
 def fig_workflow(out):
-    fig, ax = plt.subplots(figsize=(7.2, 3.0)); ax.axis("off"); ax.set_xlim(0, 10); ax.set_ylim(0, 4.2)
+    fig, ax = plt.subplots(figsize=(7.2, 3.4)); ax.axis("off"); ax.set_xlim(0, 12.2); ax.set_ylim(-0.6, 4.3)
     def box(x, y, w, h, txt, c):
-        ax.add_patch(matplotlib.patches.FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.04,rounding_size=0.08",
-                                                        fc=c, ec=INK2, lw=0.6, alpha=0.18))
-        ax.add_patch(matplotlib.patches.FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.04,rounding_size=0.08",
+        ax.add_patch(matplotlib.patches.FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.03,rounding_size=0.08",
+                                                        fc=c, ec="none", alpha=0.16))
+        ax.add_patch(matplotlib.patches.FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.03,rounding_size=0.08",
                                                         fc="none", ec=INK2, lw=0.6))
-        ax.text(x + w / 2, y + h / 2, txt, ha="center", va="center", fontsize=6.6, color=INK, wrap=True)
+        ax.text(x + w / 2, y + h / 2, txt, ha="center", va="center", fontsize=6.3, color=INK, linespacing=1.35)
     def arrow(x0, y0, x1, y1):
-        ax.annotate("", (x1, y1), (x0, y0), arrowprops=dict(arrowstyle="-|>", color=INK2, lw=0.8))
-    box(0.05, 2.9, 1.8, 1.1, "Alloy compositions\n+ conditions\n(public datasets)", C_VIOLET)
-    box(0.05, 1.5, 1.8, 1.1, "Magpie descriptors\n+ element fractions", C_VIOLET)
-    box(0.05, 0.1, 1.8, 1.1, "Alloy families g\n(chemical system or\ncomposition cluster)", C_VIOLET)
-    arrow(0.95, 2.9, 0.95, 2.62); arrow(0.95, 1.5, 0.95, 1.22)
-    box(2.3, 2.6, 2.4, 1.4, "Step 1 · family-grouped K-fold\nsplit of training alloys\n(no family in two folds)", C_BLUE)
-    box(2.3, 0.6, 2.4, 1.6, "Step 2 · per fold k: family-bagged\nLightGBM ensemble μ_k, spread s_k,\nnovelty d_k; scale σ_k fitted on\nfamily-out-of-bag residuals", C_BLUE)
-    arrow(1.85, 2.05, 2.3, 3.2); arrow(1.85, 0.65, 2.3, 1.3); arrow(3.5, 2.6, 3.5, 2.22)
-    box(5.15, 2.6, 2.3, 1.4, "Step 3 · held-out-family scores\nS_i = |y_i − μ_k(x_i)| / σ_k(x_i)\nweights w_i = 1 or 1/n_g", C_AQUA)
-    box(5.15, 0.6, 2.3, 1.6, "Step 4 · weighted CV+ quantiles\n[ Q_α{μ_k(x) − S_i σ_k(x)},\n  Q_1−α{μ_k(x) + S_i σ_k(x)} ]", C_AQUA)
-    arrow(4.7, 1.4, 5.15, 3.2); arrow(6.3, 2.6, 6.3, 2.22)
-    box(7.9, 1.6, 2.05, 1.6, "Prediction interval\nfor an alloy from an\nunseen family\n(FCP / FCP-W)", C_ORANGE)
-    arrow(7.45, 1.4, 7.9, 2.2)
-    ax.text(5.0, 0.12, "Evaluation: 5 outer folds hold out whole families (random / system / cluster protocols) × 10 seeds",
-            ha="center", fontsize=6.5, color=INK2)
+        ax.annotate("", (x1, y1), (x0, y0), arrowprops=dict(arrowstyle="-|>", color=INK2, lw=0.8, shrinkA=0, shrinkB=0))
+    box(0.0, 3.0, 2.1, 1.1, "Alloy compositions\n+ test/processing\nconditions", C_VIOLET)
+    box(0.0, 1.55, 2.1, 1.1, "Magpie descriptors\n+ element fractions", C_VIOLET)
+    box(0.0, 0.1, 2.1, 1.1, "Alloy family g\n(chemical system or\ncomposition cluster)", C_VIOLET)
+    arrow(1.05, 3.0, 1.05, 2.67); arrow(1.05, 1.55, 1.05, 1.22)
+    box(2.6, 2.75, 2.9, 1.35, "Step 1\nfamily-grouped K-fold split\nof the training alloys\n(no family in two folds)", C_BLUE)
+    box(2.6, 0.1, 2.9, 2.2, "Step 2  (each fold k)\nfamily-bagged ensemble:\nmean μ_k, spread s_k\nnovelty d_k (kNN distance)\nscale σ_k fitted on family-\nout-of-bag residuals only", C_BLUE)
+    arrow(2.1, 2.1, 2.6, 3.4); arrow(2.1, 0.65, 2.6, 1.2); arrow(4.05, 2.75, 4.05, 2.32)
+    box(5.85, 2.75, 3.3, 1.35, "Step 3\nscores on held-out families\nS_i = |y_i − μ_k(x_i)| / σ_k(x_i)\nweights w_i = 1 or 1/n_g", C_AQUA)
+    box(5.85, 0.1, 3.3, 2.2, "Step 4\nweighted CV+ quantiles\nlower: Q_α{μ_k(x) − S_i σ_k(x)}\nupper: Q_1−α{μ_k(x) + S_i σ_k(x)}\n(+∞ mass w_∞ = 1)", C_AQUA)
+    arrow(5.5, 1.2, 5.85, 3.4); arrow(7.5, 2.75, 7.5, 2.32)
+    box(9.6, 1.0, 2.55, 2.2, "Prediction interval for\nan alloy from an\nunseen family\n\nFCP  (w_i = 1)\nFCP-W  (w_i = 1/n_g)", C_ORANGE)
+    arrow(9.15, 1.2, 9.6, 2.1)
+    ax.text(6.1, -0.42, "Evaluation: 5 outer folds hold out whole families (random / system / cluster protocols) × 10 seeds",
+            ha="center", fontsize=6.3, color=INK2)
     _save(fig, out, "fig1_workflow")
 
 
@@ -524,6 +553,38 @@ def iteration_table(df, out):
     _md(t, out / "tables" / "table_iteration_v1_v2.md")
 
 
+def basemodel_analysis(df_main, out):
+    p = out / "basemodel_results.csv"
+    if not p.exists():
+        return
+    b = pd.read_csv(p); b = b[b.alpha == 0.1]
+    seeds = sorted(b.seed.unique())
+    m = df_main[(df_main.alpha == 0.1) & df_main.seed.isin(seeds) & df_main.method.isin(["FCP", "RF-z", "CV+", "GSCP", "SCP"])].copy()
+    m["method"] = m["method"] + " [LGBM]"
+    m.loc[m.method == "RF-z [LGBM]", "method"] = "RF-z"
+    b["method"] = b["method"] + " [RF]"
+    allr = pd.concat([m, b])
+    cells = allr.groupby(["task", "protocol", "method"]).agg(coverage=("coverage", "mean"), interval_score_sd=("interval_score_sd", "mean"),
+                                                             width_sd=("width_sd", "mean"), r2=("point_r2", "mean")).reset_index()
+    summ = cells.groupby(["protocol", "method"]).agg(mean_coverage=("coverage", "mean"), min_cell=("coverage", "min"),
+                                                     mean_interval_score_sd=("interval_score_sd", "mean"),
+                                                     mean_width_sd=("width_sd", "mean")).reset_index()
+    summ.to_csv(out / "tables" / "table_basemodel.csv", index=False); _md(summ, out / "tables" / "table_basemodel.md")
+    sh = cells[cells.protocol.isin(["system", "cluster"])]
+    res = {}
+    for a, c in [("FCP [RF]", "RF-z"), ("FCP [RF]", "FCP [LGBM]"), ("FCP [RF]", "CV+ [RF]")]:
+        for met in ["interval_score_sd", "coverage"]:
+            P = sh.pivot_table(index=["task", "protocol"], columns="method", values=met)
+            if a in P and c in P:
+                x = P[a]; y = P[c]
+                if met == "coverage":
+                    x, y = (0.9 - x).clip(lower=0), (0.9 - y).clip(lower=0)
+                res[f"{a} vs {c} ({'shortfall' if met == 'coverage' else met})"] = T.paired_wilcoxon(x.values, y.values)
+    (out / "statistics_basemodel.json").write_text(json.dumps(res, indent=2, default=float))
+    rows = [{"comparison": k, **v} for k, v in res.items()]
+    _md(pd.DataFrame(rows), out / "tables" / "table_basemodel_tests.md", 4)
+
+
 def run(cfg, out):
     out = Path(out)
     _style()
@@ -539,6 +600,7 @@ def run(cfg, out):
     fig_workflow(out); fig_datasets(out, cfg); fig_coverage(cm, out); fig_tradeoff(cm, out); fig_novelty(cm, out)
     fig_ablation(summ, out); fig_alpha(df, out); fig_parity(out, cfg); error_analysis(out, cfg)
     fig_robust(out); fig_sens(out); fig_eff(out, cm)
+    basemodel_analysis(df, out)
     for name in ["generalization_results.csv"]:
         p = out / name
         if p.exists():

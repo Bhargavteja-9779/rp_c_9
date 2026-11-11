@@ -77,9 +77,10 @@ class CrossFit:
     """Fits the K fold models once; intervals for any (sigma mode, weighting, alpha) are then derived cheaply."""
 
     def __init__(self, K=5, grouped=True, n_members=8, family_frac=0.7, lgbm_params=None, novelty_k=5,
-                 novelty_pcs=16, seed=0, clip_scale=False):
+                 novelty_pcs=16, seed=0, clip_scale=False, member="lgbm", rf_trees=50):
         self.K, self.grouped, self.clip = K, grouped, clip_scale
-        self.kw = dict(n_members=n_members, family_frac=family_frac, lgbm_params=lgbm_params)
+        self.kw = dict(n_members=n_members, family_frac=family_frac, lgbm_params=lgbm_params, member=member,
+                       rf_trees=rf_trees)
         self.nk, self.npc, self.seed = novelty_k, novelty_pcs, seed
 
     def fit(self, X, y, groups, X_test):

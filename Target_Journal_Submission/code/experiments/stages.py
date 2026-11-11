@@ -128,6 +128,21 @@ def sensitivity(cfg, out, n_jobs):
             _save_rows(rows, out / "sensitivity_results.csv")
 
 
+def basemodel(cfg, out, n_jobs):
+    """Base-learner swap: FCP and random-fold CV+ with random-forest members (50 trees each, M members), to test
+    whether the family-level calibration principle composes with a different point predictor (compare with RF-z)."""
+    c2 = copy.deepcopy(cfg); c2["member"] = "rf"; c2["rf_trees"] = 50
+    c2["methods"] = ["CV+", "NCV+", "GCV+", "GCV+[spread]", "FCP", "SCP", "GSCP"]
+    seeds = cfg["robustness"]["seeds"]
+    jobs = [(t, p, s) for t in cfg["tasks"] for p in ["system", "cluster", "random"] for s in seeds]
+    from joblib import Parallel, delayed
+    Parallel(n_jobs=n_jobs)(delayed(_one)("basemodel", t, p, s, c2, "rf_members", {}) for t, p, s in jobs)
+    rows = []
+    for t, p, s in jobs:
+        rows += [dict(x, base="RF members") for x in R.metrics_rows(R.run_one("basemodel", t, p, s, c2, variant="rf_members"))]
+    _save_rows(rows, out / "basemodel_results.csv")
+
+
 def efficiency(cfg, out, n_jobs):
     """Wall time and peak resident memory of each method for one outer fold (separate processes)."""
     rows = []

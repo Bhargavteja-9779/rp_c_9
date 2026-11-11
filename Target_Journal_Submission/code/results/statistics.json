@@ -6,40 +6,40 @@
       "test": "one-sided one-sample Wilcoxon signed-rank of cell coverage vs 0.90",
       "results": {
         "SCP": {
-          "n": 1,
+          "n": 12,
           "statistic": 0.0,
-          "p": 0.5,
-          "median": 0.8550922761449077,
-          "ci_lo": 0.8550922761449077,
-          "ci_hi": 0.8550922761449077,
+          "p": 0.000244140625,
+          "median": 0.8025072898742989,
+          "ci_lo": 0.6937669621146756,
+          "ci_hi": 0.8582236842105262,
           "rank_biserial": -1.0
         },
         "CV+": {
-          "n": 1,
-          "statistic": 0.0,
-          "p": 0.5,
-          "median": 0.8831168831168831,
-          "ci_lo": 0.8831168831168831,
-          "ci_hi": 0.8831168831168831,
-          "rank_biserial": -1.0
+          "n": 12,
+          "statistic": 3.0,
+          "p": 0.001220703125,
+          "median": 0.824216075393702,
+          "ci_lo": 0.7334803850161917,
+          "ci_hi": 0.8762739234449759,
+          "rank_biserial": -0.9230769230769231
         },
         "CQR": {
-          "n": 1,
+          "n": 12,
           "statistic": 0.0,
-          "p": 0.5,
-          "median": 0.8547505126452496,
-          "ci_lo": 0.8547505126452496,
-          "ci_hi": 0.8547505126452496,
+          "p": 0.000244140625,
+          "median": 0.8257035472528509,
+          "ci_lo": 0.722523783377968,
+          "ci_hi": 0.8590131578947368,
           "rank_biserial": -1.0
         },
         "WCP": {
-          "n": 1,
-          "statistic": 0.0,
-          "p": 0.5,
-          "median": 0.8605604921394395,
-          "ci_lo": 0.8605604921394395,
-          "ci_hi": 0.8605604921394395,
-          "rank_biserial": -1.0
+          "n": 12,
+          "statistic": 12.0,
+          "p": 0.01708984375,
+          "median": 0.8707595693779904,
+          "ci_lo": 0.840333569579687,
+          "ci_hi": 0.8958955146893461,
+          "rank_biserial": -0.6923076923076923
         }
       }
     },
@@ -47,84 +47,84 @@
       "test": "two-sided Wilcoxon signed-rank on paired cell shortfall max(0, 0.9 - coverage); Holm over baselines; median_diff < 0 favours FCP",
       "results": {
         "SCP": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
+          "n": 12,
+          "statistic": 0.0,
+          "p": 0.00048828125,
           "rank_biserial": -1.0,
-          "median_diff": -0.04490772385509234,
-          "ci_lo": NaN,
-          "ci_hi": NaN,
-          "p_holm": NaN
+          "median_diff": -0.0974927101257011,
+          "ci_lo": -0.1873981247103283,
+          "ci_hi": -0.04177631578947377,
+          "p_holm": 0.00390625
         },
         "CV+": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
+          "n": 12,
+          "statistic": 0.0,
+          "p": 0.001953125,
           "rank_biserial": -1.0,
-          "median_diff": -0.016883116883116944,
-          "ci_lo": NaN,
-          "ci_hi": NaN,
-          "p_holm": NaN
+          "median_diff": -0.07578392460629796,
+          "ci_lo": -0.15917347802937365,
+          "ci_hi": -0.023726076555024067,
+          "p_holm": 0.009765625
         },
         "CQR": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
+          "n": 12,
+          "statistic": 0.0,
+          "p": 0.00048828125,
           "rank_biserial": -1.0,
-          "median_diff": -0.04524948735475043,
-          "ci_lo": NaN,
-          "ci_hi": NaN,
-          "p_holm": NaN
+          "median_diff": -0.07429645274714913,
+          "ci_lo": -0.16348683420404736,
+          "ci_hi": -0.040986842105263266,
+          "p_holm": 0.00390625
         },
         "WCP": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
-          "rank_biserial": -1.0,
-          "median_diff": -0.039439507860560497,
-          "ci_lo": NaN,
-          "ci_hi": NaN,
-          "p_holm": NaN
+          "n": 12,
+          "statistic": 3.0,
+          "p": 0.009765625,
+          "rank_biserial": -0.8909090909090909,
+          "median_diff": -0.029240430622009594,
+          "ci_lo": -0.04543836115744815,
+          "ci_hi": -0.004665071770334872,
+          "p_holm": 0.01953125
         },
         "GP": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
+          "n": 12,
+          "statistic": 0.0,
+          "p": 0.001953125,
           "rank_biserial": -1.0,
-          "median_diff": -0.030895420369104643,
-          "ci_lo": NaN,
-          "ci_hi": NaN,
-          "p_holm": NaN
+          "median_diff": -0.03017892549791512,
+          "ci_lo": -0.06141012043027266,
+          "ci_hi": -0.007240562908415404,
+          "p_holm": 0.009765625
         },
         "RF-z": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
-          "rank_biserial": 0.0,
+          "n": 12,
+          "statistic": 1.0,
+          "p": 0.5,
+          "rank_biserial": 0.6666666666666666,
           "median_diff": 0.0,
-          "ci_lo": NaN,
-          "ci_hi": NaN,
-          "p_holm": NaN
+          "ci_lo": 0.0,
+          "ci_hi": 0.0,
+          "p_holm": 0.5
         },
         "Ens-z": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
+          "n": 12,
+          "statistic": 0.0,
+          "p": 0.00048828125,
           "rank_biserial": -1.0,
-          "median_diff": -0.3969241285030759,
-          "ci_lo": NaN,
-          "ci_hi": NaN,
-          "p_holm": NaN
+          "median_diff": -0.42534327622334533,
+          "ci_lo": -0.45966230149869314,
+          "ci_hi": -0.3899798835044737,
+          "p_holm": 0.00390625
         },
         "GSCP": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
+          "n": 12,
+          "statistic": 0.0,
+          "p": 0.00390625,
           "rank_biserial": -1.0,
-          "median_diff": -0.004579630895420461,
-          "ci_lo": NaN,
-          "ci_hi": NaN,
-          "p_holm": NaN
+          "median_diff": -0.010387989203778702,
+          "ci_lo": -0.04880536130536134,
+          "ci_hi": -0.0006557377049180579,
+          "p_holm": 0.01171875
         }
       }
     },
@@ -132,84 +132,84 @@
       "test": "two-sided Wilcoxon signed-rank on paired cell mean Winkler interval score / SD(y); Holm; median_diff < 0 favours FCP",
       "results": {
         "SCP": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
+          "n": 12,
+          "statistic": 0.0,
+          "p": 0.00048828125,
           "rank_biserial": -1.0,
-          "median_diff": -0.028979337001381555,
-          "ci_lo": NaN,
-          "ci_hi": NaN,
-          "p_holm": NaN
+          "median_diff": -0.2655416990818289,
+          "ci_lo": -0.6862226643381134,
+          "ci_hi": -0.17858745436950968,
+          "p_holm": 0.00341796875
         },
         "CV+": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
-          "rank_biserial": 1.0,
-          "median_diff": 0.08114929010412286,
-          "ci_lo": NaN,
-          "ci_hi": NaN,
-          "p_holm": NaN
+          "n": 12,
+          "statistic": 10.0,
+          "p": 0.02099609375,
+          "rank_biserial": -0.7435897435897436,
+          "median_diff": -0.11340816829885464,
+          "ci_lo": -0.37006937874799795,
+          "ci_hi": -0.05214986572623559,
+          "p_holm": 0.0419921875
         },
         "CQR": {
+          "n": 12,
+          "statistic": 8.0,
+          "p": 0.01220703125,
+          "rank_biserial": -0.7948717948717948,
+          "median_diff": -0.45973855440514133,
+          "ci_lo": -0.5141762015274816,
+          "ci_hi": -0.1207984575635126,
+          "p_holm": 0.03662109375
+        },
+        "WCP": {
           "n": 1,
           "statistic": NaN,
           "p": NaN,
           "rank_biserial": -1.0,
-          "median_diff": -0.2595832078413607,
-          "ci_lo": NaN,
-          "ci_hi": NaN,
-          "p_holm": NaN
-        },
-        "WCP": {
-          "n": 0,
-          "statistic": NaN,
-          "p": NaN,
-          "rank_biserial": 0.0,
-          "median_diff": NaN,
+          "median_diff": -0.1804227247035617,
           "ci_lo": NaN,
           "ci_hi": NaN,
           "p_holm": NaN
         },
         "GP": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
+          "n": 12,
+          "statistic": 0.0,
+          "p": 0.00048828125,
           "rank_biserial": -1.0,
-          "median_diff": -0.7570849512666582,
-          "ci_lo": NaN,
-          "ci_hi": NaN,
-          "p_holm": NaN
+          "median_diff": -0.780460922064171,
+          "ci_lo": -0.9412169733479326,
+          "ci_hi": -0.5729806568230477,
+          "p_holm": 0.00341796875
         },
         "RF-z": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
-          "rank_biserial": -1.0,
-          "median_diff": -0.03197851781049099,
-          "ci_lo": NaN,
-          "ci_hi": NaN,
-          "p_holm": NaN
+          "n": 12,
+          "statistic": 16.0,
+          "p": 0.0771484375,
+          "rank_biserial": 0.5897435897435898,
+          "median_diff": 0.1463017242046204,
+          "ci_lo": -0.07104431810393425,
+          "ci_hi": 0.7573993790908318,
+          "p_holm": 0.0771484375
         },
         "Ens-z": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
+          "n": 12,
+          "statistic": 0.0,
+          "p": 0.00048828125,
           "rank_biserial": -1.0,
-          "median_diff": -1.5139762073167415,
-          "ci_lo": NaN,
-          "ci_hi": NaN,
-          "p_holm": NaN
+          "median_diff": -1.5350663537200997,
+          "ci_lo": -2.154881221464973,
+          "ci_hi": -0.6721505522098932,
+          "p_holm": 0.00341796875
         },
         "GSCP": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
+          "n": 12,
+          "statistic": 0.0,
+          "p": 0.00048828125,
           "rank_biserial": -1.0,
-          "median_diff": -0.10706222771951568,
-          "ci_lo": NaN,
-          "ci_hi": NaN,
-          "p_holm": NaN
+          "median_diff": -0.3717027704144238,
+          "ci_lo": -0.48658689662032095,
+          "ci_hi": -0.1851223152162103,
+          "p_holm": 0.00341796875
         }
       }
     },
@@ -217,101 +217,147 @@
       "test": "two-sided Wilcoxon signed-rank on paired cells (uncorrected; exploratory)",
       "results": {
         "FCP_vs_GCV+_interval_score_sd": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
-          "rank_biserial": 1.0,
-          "median_diff": 0.014337586090205967,
-          "ci_lo": NaN,
-          "ci_hi": NaN
+          "n": 12,
+          "statistic": 29.0,
+          "p": 0.4697265625,
+          "rank_biserial": -0.2564102564102564,
+          "median_diff": -0.050363300856637094,
+          "ci_lo": -0.14046163786948468,
+          "ci_hi": 0.07549419382527933
         },
         "FCP_vs_GCV+_cov_novelty_high": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
-          "rank_biserial": 1.0,
-          "median_diff": 0.007194244604316613,
-          "ci_lo": NaN,
-          "ci_hi": NaN
+          "n": 12,
+          "statistic": 2.0,
+          "p": 0.00146484375,
+          "rank_biserial": 0.9487179487179487,
+          "median_diff": 0.037023138073455586,
+          "ci_lo": 0.015369437955457144,
+          "ci_hi": 0.05374726340929442
         },
         "GCV+_vs_CV+_coverage": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
+          "n": 12,
+          "statistic": 0.0,
+          "p": 0.00048828125,
           "rank_biserial": 1.0,
-          "median_diff": 0.052289815447710275,
-          "ci_lo": NaN,
-          "ci_hi": NaN
+          "median_diff": 0.09139470669917388,
+          "ci_lo": 0.050675837320574346,
+          "ci_hi": 0.15397179058427618
         },
         "FCP_vs_NCV+_coverage": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
-          "rank_biserial": 1.0,
-          "median_diff": 0.05365686944634318,
-          "ci_lo": NaN,
-          "ci_hi": NaN
+          "n": 12,
+          "statistic": 9.0,
+          "p": 0.01611328125,
+          "rank_biserial": 0.7692307692307693,
+          "median_diff": 0.040185350671761266,
+          "ci_lo": 0.015324017009737456,
+          "ci_hi": 0.07337875864672727
         },
         "FCP-W_vs_FCP_family_coverage": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
-          "rank_biserial": 1.0,
-          "median_diff": 0.008248709931733877,
-          "ci_lo": NaN,
-          "ci_hi": NaN
+          "n": 12,
+          "statistic": 5.0,
+          "p": 0.0048828125,
+          "rank_biserial": 0.8717948717948718,
+          "median_diff": 0.04411624225623101,
+          "ci_lo": 0.00997885462002962,
+          "ci_hi": 0.07363927571324291
         }
       }
     },
     "H2_per_protocol": {
       "system": {
         "SCP": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
+          "n": 6,
+          "statistic": 0.0,
+          "p": 0.03125,
           "rank_biserial": -1.0,
-          "median_diff": -0.04490772385509234,
-          "ci_lo": NaN,
-          "ci_hi": NaN
+          "median_diff": -0.04177631578947377,
+          "ci_lo": -0.09961821619857558,
+          "ci_hi": -0.006822804790484416
         },
         "CV+": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
+          "n": 6,
+          "statistic": 0.0,
+          "p": 0.125,
           "rank_biserial": -1.0,
-          "median_diff": -0.016883116883116944,
-          "ci_lo": NaN,
-          "ci_hi": NaN
+          "median_diff": -0.023726076555024067,
+          "ci_lo": -0.07578392460629796,
+          "ci_hi": 0.0
         },
         "CQR": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
+          "n": 6,
+          "statistic": 0.0,
+          "p": 0.03125,
           "rank_biserial": -1.0,
-          "median_diff": -0.04524948735475043,
-          "ci_lo": NaN,
-          "ci_hi": NaN
+          "median_diff": -0.0423145933014355,
+          "ci_lo": -0.09228497565158411,
+          "ci_hi": -0.011466916713878728
         },
         "WCP": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
+          "n": 6,
+          "statistic": 0.0,
+          "p": 0.125,
           "rank_biserial": -1.0,
-          "median_diff": -0.039439507860560497,
-          "ci_lo": NaN,
-          "ci_hi": NaN
+          "median_diff": -0.023127248075479334,
+          "ci_lo": -0.06661380413224227,
+          "ci_hi": 0.0
         },
         "GSCP": {
-          "n": 1,
-          "statistic": NaN,
-          "p": NaN,
+          "n": 6,
+          "statistic": 0.0,
+          "p": 0.25,
           "rank_biserial": -1.0,
-          "median_diff": -0.004579630895420461,
-          "ci_lo": NaN,
-          "ci_hi": NaN
+          "median_diff": -0.0006557377049180579,
+          "ci_lo": -0.020718150288277615,
+          "ci_hi": 0.0
         }
       },
-      "cluster": {}
+      "cluster": {
+        "SCP": {
+          "n": 6,
+          "statistic": 0.0,
+          "p": 0.03125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.1873981247103283,
+          "ci_lo": -0.23019951539688388,
+          "ci_hi": -0.08483380994530315
+        },
+        "CV+": {
+          "n": 6,
+          "statistic": 0.0,
+          "p": 0.03125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.15917347802937365,
+          "ci_lo": -0.19668062200956932,
+          "ci_hi": -0.07383485395247508
+        },
+        "CQR": {
+          "n": 6,
+          "statistic": 0.0,
+          "p": 0.03125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.16348683420404736,
+          "ci_lo": -0.1954253501348716,
+          "ci_hi": -0.05934278613740046
+        },
+        "WCP": {
+          "n": 6,
+          "statistic": 2.0,
+          "p": 0.09375,
+          "rank_biserial": -0.8095238095238095,
+          "median_diff": -0.03407097546583149,
+          "ci_lo": -0.05823094713057769,
+          "ci_hi": 0.007033646178383091
+        },
+        "GSCP": {
+          "n": 6,
+          "statistic": 0.0,
+          "p": 0.03125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.044474499196362094,
+          "ci_lo": -0.15556642970819795,
+          "ci_hi": -0.010387989203778702
+        }
+      }
     }
   }
 }

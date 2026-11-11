@@ -29,10 +29,17 @@ EPS = 1e-12
 
 
 class FamilyBaggedLGBM:
-    def __init__(self, n_members=8, family_frac=0.7, lgbm_params=None, seed=0):
+    def __init__(self, n_members=8, family_frac=0.7, lgbm_params=None, seed=0, member="lgbm", rf_trees=50):
         self.M, self.frac = int(n_members), float(family_frac)
         self.params = dict(DEFAULT_LGBM, **(lgbm_params or {}))
-        self.seed = seed
+        self.seed, self.member, self.rf_trees = seed, member, rf_trees
+
+    def _new_member(self, rs):
+        if self.member == "rf":  # random-forest members (base-learner swap experiment)
+            from sklearn.ensemble import RandomForestRegressor
+            return RandomForestRegressor(n_estimators=self.rf_trees, max_features=0.33, min_samples_leaf=1, n_jobs=1,
+                                         random_state=rs)
+        return lgb.LGBMRegressor(random_state=rs, **self.params)
 
     def fit(self, X, y, groups):
         rng = np.random.default_rng(self.seed)
@@ -47,7 +54,7 @@ class FamilyBaggedLGBM:
             else:  # degenerate case: too few families -> row subsampling
                 chosen = fams
                 mask = rng.random(len(y)) < self.frac
-            mdl = lgb.LGBMRegressor(random_state=int(rng.integers(1 << 31)), **self.params)
+            mdl = self._new_member(int(rng.integers(1 << 31)))
             mdl.fit(X[mask], y[mask])
             self.members.append(mdl)
             self.bag_fams.append(set(chosen.tolist()))

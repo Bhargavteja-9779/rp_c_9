@@ -52,6 +52,8 @@ def _fold_job(task, protocol, seed, k, tr, te, cfg, inner_family):
     gtr = task[fam_key][tr]
     alphas = cfg.get("alphas", ALPHAS)
     kw = dict(n_members=cfg["n_members"], family_frac=cfg["family_frac"], lgbm_params=cfg.get("lgbm_params"))
+    if cfg.get("member", "lgbm") != "lgbm":
+        kw.update(member=cfg["member"], rf_trees=cfg.get("rf_trees", 50))
     rs = seed * 100 + k
     out = {"idx": te, "lo": {}, "hi": {}, "time": {}}
     methods = cfg.get("methods", "all")
