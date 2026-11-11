@@ -172,6 +172,30 @@
   "holds": true
  },
  {
+  "claim": "FCP coverage with RF members within 1.5 points of LGBM (system)",
+  "holds": true
+ },
+ {
+  "claim": "random-fold CV+ with RF members under-covers (system)",
+  "holds": true
+ },
+ {
+  "claim": "FCP coverage with RF members within 1.5 points of LGBM (cluster)",
+  "holds": true
+ },
+ {
+  "claim": "random-fold CV+ with RF members under-covers (cluster)",
+  "holds": true
+ },
+ {
+  "claim": "RF-z interval score significantly better than FCP[RF]",
+  "holds": true
+ },
+ {
+  "claim": "FCP[RF] shortfall significantly smaller than CV+[RF]",
+  "holds": true
+ },
+ {
   "claim": "FCP cost within 10% of random-fold CV+",
   "holds": true
  },

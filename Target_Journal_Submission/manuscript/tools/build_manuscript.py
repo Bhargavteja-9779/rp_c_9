@@ -738,8 +738,112 @@ def SENS_HOOK(V):
               ("fig", ("fig10_sensitivity", "Fig. {{fig:sens}}. Coverage of FCP and FCP-W under one-factor-at-a-time variation "
                        "of the number of folds K, ensemble members M, family fraction φ and k_nn (three alloy tasks, unseen-system "
                        "protocol, five seeds)."))]
+    E += basemodel_section(V)
     E += EXTRA_HOOK(V) if "EXTRA_HOOK" in globals() else []
     return E
+
+
+def basemodel_section(V):
+    bp = TAB / "table_basemodel.csv"
+    if not bp.exists():
+        return []
+    b = pd.read_csv(bp).set_index(["protocol", "method"])
+    q = lambda p, m, k="mean_coverage": float(b.loc[(p, m), k])
+    bt = json.load(open(RES / "statistics_basemodel.json"))
+    t_rz = bt["FCP [RF] vs RF-z (interval_score_sd)"]; t_cv = bt["FCP [RF] vs CV+ [RF] (shortfall)"]
+    for p in ["system", "cluster"]:
+        claim(abs(q(p, "FCP [RF]") - q(p, "FCP [LGBM]")) < 0.015, f"FCP coverage with RF members within 1.5 points of LGBM ({p})")
+        claim(q(p, "CV+ [RF]") < 0.88, f"random-fold CV+ with RF members under-covers ({p})")
+    claim(t_rz["median_diff"] > 0 and t_rz["p"] < 0.01, "RF-z interval score significantly better than FCP[RF]")
+    claim(t_cv["median_diff"] < 0 and t_cv["p"] < 0.01, "FCP[RF] shortfall significantly smaller than CV+[RF]")
+    E = [("h2", "9.5. Base-learner swap: random-forest members"),
+         ("p", "Is the effect of family-level calibration specific to LightGBM, and can it be combined with the efficiency of "
+               "random forests? FCP and the main baselines were re-run with the ensemble members replaced by random forests "
+               "(6 members of 50 trees, all tasks and protocols, seeds 0–4). Coverage with forest members was practically "
+               f"unchanged: FCP covered {q('system', 'FCP [RF]'):.3f} (system) and {q('cluster', 'FCP [RF]'):.3f} (cluster), "
+               f"against {q('system', 'FCP [LGBM]'):.3f} and {q('cluster', 'FCP [LGBM]'):.3f} with LightGBM members. Random-fold "
+               f"CV+ with the same forests under-covered just as before ({q('system', 'CV+ [RF]'):.3f} and "
+               f"{q('cluster', 'CV+ [RF]'):.3f}). FCP[RF]'s shortfall was smaller in the paired comparison (12 cells, "
+               f"p = {t_cv['p']:.4f}). The failure of random-split calibration and its repair by family-level calibration are "
+               "therefore properties of the calibration, not of the regressor. However, FCP with forest members did not match "
+               f"RF-z's interval score: RF-z was better in the paired comparison (median difference {t_rz['median_diff']:+.2f} SD, "
+               f"p = {t_rz['p']:.4f})."),
+         ]
+    rp = RES / "rfsigma_results.csv"
+    if rp.exists():
+        r = pd.read_csv(rp); r = r[r.alpha == 0.1]
+        c = r.groupby(["task", "protocol", "method"]).agg(cov=("coverage", "mean"), isc=("interval_score_sd", "mean")).reset_index()
+        m = c.groupby(["protocol", "method"]).agg(cov=("cov", "mean"), isc=("isc", "mean"), mn=("cov", "min"))
+        mm = lambda p, k, f="cov": float(m.loc[(p, k), f])
+        sh = c[c.protocol.isin(["system", "cluster"])]
+        from scipy.stats import wilcoxon
+        P = sh.pivot_table(index=["task", "protocol"], columns="method", values="isc")
+        pv = wilcoxon(P["FCP-RFsigma"], P["RF-z"]).pvalue
+        Cv = sh.pivot_table(index=["task", "protocol"], columns="method", values="cov")
+        RFSIG.update(cov_sys=mm("system", "FCP-RFsigma"), cov_cl=mm("cluster", "FCP-RFsigma"))
+        E.append(("p", "We then tested a specific explanation (hypothesis recorded before the run; Supplementary iteration log): "
+                       "RF-z's efficiency comes from its per-tree spread, so family-grouped CV+ normalized directly by that spread "
+                       "(FCP-RFσ) should be both calibrated and efficient. FCP-RFσ covered "
+                       f"{mm('system', 'FCP-RFsigma'):.3f} (system) and {mm('cluster', 'FCP-RFsigma'):.3f} (cluster), with interval "
+                       f"scores {mm('system', 'FCP-RFsigma', 'isc'):.2f} and {mm('cluster', 'FCP-RFsigma', 'isc'):.2f}, against "
+                       f"RF-z's {mm('system', 'RF-z'):.3f} / {mm('cluster', 'RF-z'):.3f} and {mm('system', 'RF-z', 'isc'):.2f} / "
+                       f"{mm('cluster', 'RF-z', 'isc'):.2f} (paired interval-score test p = {pv:.4f}). The random-fold version covered "
+                       f"{mm('system', 'CV+-RFsigma'):.3f} / {mm('cluster', 'CV+-RFsigma'):.3f}. " + RFSIG_VERDICT(m, pv)))
+    return E
+
+
+RFSIG = {}
+
+
+def EXTRA_HOOK(V):
+    E = []
+    rp = TAB / "table_randfolds.csv"
+    if rp.exists():
+        t = pd.read_csv(rp).set_index(["method", "assignment"])
+        q = lambda m, a, k="mean_coverage": float(t.loc[(m, a), k])
+        claim(abs(q("FCP", "random") - q("FCP", "balanced (main)")) < 0.03, "FCP coverage robust to fold assignment (within 3 points)")
+        claim(q("SCP", "random") < 0.8 and q("CV+", "random") < 0.8, "random-calibrated still under-cover with random assignment")
+        E += [("h2", "9.6. Randomized assignment of clusters to outer folds"),
+              ("p", "In the cluster protocol the size-balanced assignment of ten clusters to five folds is identical for every seed "
+                    "(Section 13), so seed-to-seed variation there reflects only model randomness. We therefore repeated the "
+                    "cluster protocol with a fully random cluster-to-fold assignment, a different partition for each of the ten "
+                    "seeds (Supplementary Table S9). Mean coverage was "
+                    f"{q('FCP', 'random'):.3f} for FCP (balanced: {q('FCP', 'balanced (main)'):.3f}), {q('SCP', 'random'):.3f} for "
+                    f"SCP ({q('SCP', 'balanced (main)'):.3f}), {q('CV+', 'random'):.3f} for CV+ and {q('GSCP', 'random'):.3f} for GSCP. "
+                    f"The average seed SD of FCP's coverage rose from {q('FCP', 'balanced (main)', 'mean_seed_sd'):.3f} to "
+                    f"{q('FCP', 'random', 'mean_seed_sd'):.3f}, as expected once the partition varies. The conclusions of Section 7 "
+                    "do not depend on the fold-assignment scheme.")]
+    mp = TAB / "table_mondrian.csv"
+    if mp.exists():
+        t = pd.read_csv(mp).set_index(["protocol", "method"])
+        q = lambda p, m, k="mean_coverage": float(t.loc[(p, m), k])
+        claim(q("cluster", "MCP") < q("cluster", "FCP") - 0.03, "Mondrian below FCP under cluster shift")
+        claim(q("cluster", "MCP") >= q("cluster", "SCP"), "Mondrian at least as good as SCP under cluster shift")
+        E += [("h2", "9.7. Novelty-conditional (Mondrian) calibration"),
+              ("p", "If coverage fails mainly for novel alloys, calibrating separately within novelty tertiles (Mondrian conformal "
+                    "prediction, MCP) might suffice without grouping. With random calibration splits, MCP covered "
+                    f"{q('system', 'MCP'):.3f} (system) and {q('cluster', 'MCP'):.3f} (cluster), against {q('system', 'SCP'):.3f} / "
+                    f"{q('cluster', 'SCP'):.3f} for SCP and {q('system', 'FCP'):.3f} / {q('cluster', 'FCP'):.3f} for FCP; in the "
+                    f"highest novelty tertile under cluster holdout it reached {q('cluster', 'MCP', 'cov_high_novelty'):.3f} "
+                    f"(FCP {q('cluster', 'FCP', 'cov_high_novelty'):.3f}). Conditioning on distance helps, because the most novel "
+                    "calibration alloys are somewhat closer to the deployment regime. It does not substitute for family-level "
+                    "calibration: a randomly held-out alloy that looks novel still has relatives of its own family in the training "
+                    "data, which a genuinely new family does not.")]
+    return E
+
+
+def RFSIG_VERDICT(m, pv):
+    cov_ok = m.loc[("system", "FCP-RFsigma"), "cov"] >= 0.895 and m.loc[("cluster", "FCP-RFsigma"), "cov"] >= 0.88
+    eff_ok = (m.loc[("system", "FCP-RFsigma"), "isc"] <= m.loc[("system", "RF-z"), "isc"] * 1.02 and
+              m.loc[("cluster", "FCP-RFsigma"), "isc"] <= m.loc[("cluster", "RF-z"), "isc"] * 1.02)
+    if cov_ok and eff_ok:
+        return ("The hypothesis was supported: family-level calibration of the tree spread kept near-nominal coverage at "
+                "RF-z's efficiency, and unlike RF-z it can be set to any requested level.")
+    if cov_ok:
+        return ("Coverage was near nominal, but RF-z's efficiency was not reached, so the hypothesis was only partly supported.")
+    return ("The hypothesis was not supported: normalizing by tree spread lowered coverage below that of FCP. RF-z's apparent "
+            "efficiency therefore cannot be transferred into a calibrated method by this route; it rests on its systematic "
+            "over-width, which happens to suit these datasets.")
 
 
 def screening(V):
