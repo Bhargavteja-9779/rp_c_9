@@ -1,0 +1,7 @@
+task,rows,rows_with_alt_spelling,SCP_random_cov_all,SCP_random_cov_excl,CV+_random_cov_all,CV+_random_cov_excl,FCP_random_cov_all,FCP_random_cov_excl
+mpea_hv,418,0,,,,,,
+mpea_ys,760,0,,,,,,
+steel_ys,312,0,,,,,,
+superhard_k,2319,0,,,,,,
+expt_hf,2135,0,,,,,,
+supercon_tc,4007,199,0.8996506114299976,0.8967174369747898,0.9129772897429499,0.9101102941176471,0.9621911654604443,0.9613970588235293

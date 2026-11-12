@@ -483,7 +483,17 @@ def discussion(V):
             ]
 
 
+DUPS = 0
+
+
 def limitations(V):
+    global DUPS
+    a = pd.read_csv(TAB / "table_duplicate_spelling_audit.csv").set_index("task")
+    DUPS = int(a.loc["supercon_tc", "rows_with_alt_spelling"])
+    ex = a.loc["supercon_tc"]
+    claim(max(abs(ex[f"{m}_random_cov_all"] - ex[f"{m}_random_cov_excl"]) for m in ["SCP", "CV+", "FCP"]) <= 0.005,
+          "duplicate spellings change random coverage by <= 0.005")
+    claim(int(a.drop("supercon_tc").rows_with_alt_spelling.sum()) == 0, "no duplicate spellings outside supercon")
     return [("h1", "13. Limitations"),
             ("bullets", [
                 "No new finite-sample theorem is proved for the full normalized, family-weighted CV+ construction. Validity on new "
@@ -503,6 +513,14 @@ def limitations(V):
                 "Energy consumption was not measured. All runs used CPUs only, and per-fold costs are reported as wall time. "
                 "Interval formation scales as O(*n* log *n*) per test alloy, which was negligible here but would call for an "
                 "approximation (e.g. a pooled quantile of normalized scores) for databases with 10^{5} or more alloys.",
+                "No prospective validation was performed: no new alloy was synthesized and tested. The chronological test "
+                "(Section 9.3) is the closest available proxy.",
+                "FCP-RFσ was formulated after the main results (Section 9.5) and should be confirmed on independent data before "
+                "it is relied upon. The alloy-family threshold (1 at.%) and the number of composition clusters (10) were fixed "
+                "and not varied.",
+                f"In the superconductor data, {DUPS} compositions appear under more than one formula spelling. They cannot cross "
+                "folds in the family-holdout protocols, but can in the random protocol; excluding them changed random-protocol "
+                "coverage by at most 0.004 (code/scripts/audit_duplicate_spellings.py).",
                 "Hyper-parameters were fixed defaults and were not tuned per dataset. Tuning would raise point accuracy for every "
                 "method alike and is unlikely to change the calibration comparison, but this was not tested.",
             ])]
@@ -1040,12 +1058,13 @@ if __name__ == "__main__":
     V = load()
     spec, bib = build(V)
     (HERE / "spec.json").write_text(json.dumps(spec, ensure_ascii=False))
-    (HERE.parent / "claim_audit.json").write_text(json.dumps(CLAIMS, indent=1, ensure_ascii=False))
     (HERE.parent / "highlights.txt").write_text("\n".join(highlights(V)) + "\n")
+    uniq = list({c["claim"]: c for c in CLAIMS}.values())
+    (HERE.parent / "claim_audit.json").write_text(json.dumps(uniq, indent=1, ensure_ascii=False))
     hs = {"meta": {"title": "Highlights", "line_numbers": False},
           "blocks": [{"type": "heading", "level": 1, "text": "Highlights"},
                      {"type": "bullets", "items": [runs(h) for h in highlights(V)]}]}
     (HERE / "highlights_spec.json").write_text(json.dumps(hs, ensure_ascii=False))
-    print("blocks", len(spec["blocks"]), "references", len(bib.order), "claims", len(CLAIMS))
+    print("blocks", len(spec["blocks"]), "references", len(bib.order), "unique claims", len({c["claim"] for c in CLAIMS}))
     unused = sorted(set(S.CITE_KEYS) | set(S.MANUAL) - set(bib.order))
     print("uncited keys:", [k for k in unused if k not in bib.order])

@@ -278,5 +278,33 @@
  {
   "claim": "extreme-property families remain under-covered by FCP",
   "holds": true
+ },
+ {
+  "claim": "duplicate spellings change random coverage by <= 0.005",
+  "holds": true
+ },
+ {
+  "claim": "no duplicate spellings outside supercon",
+  "holds": true
+ },
+ {
+  "claim": "highlight <= 85 characters: Random-split 90% conformal intervals cover only 72–87% of new-family alloys (75)",
+  "holds": true
+ },
+ {
+  "claim": "highlight <= 85 characters: Family-grouped CV+ calibration restores mean coverage near 90% for new families (79)",
+  "holds": true
+ },
+ {
+  "claim": "highlight <= 85 characters: Leakage-free scale from ensemble spread and novelty adapts the interval width (77)",
+  "holds": true
+ },
+ {
+  "claim": "highlight <= 85 characters: Benchmark: 6 datasets, 3 shift protocols, 17 interval methods, 10 seeds (71)",
+  "holds": true
+ },
+ {
+  "claim": "highlight <= 85 characters: Remaining misses concentrate in alloy families with extreme property values (75)",
+  "holds": true
  }
 ]
