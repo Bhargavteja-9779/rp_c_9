@@ -4,7 +4,7 @@
   "holds": true
  },
  {
-  "claim": "abstract has 236 words (<= 250)",
+  "claim": "abstract has 246 words (<= 250)",
   "holds": true
  },
  {
@@ -221,6 +221,22 @@
  },
  {
   "claim": "FCP[RF] shortfall significantly smaller than CV+[RF]",
+  "holds": true
+ },
+ {
+  "claim": "FCP-RFsigma mean coverage >= 0.9 under both shifts",
+  "holds": true
+ },
+ {
+  "claim": "FCP-RFsigma vs RF-z interval score not significantly different",
+  "holds": true
+ },
+ {
+  "claim": "FCP-RFsigma interval score better than LightGBM FCP",
+  "holds": true
+ },
+ {
+  "claim": "FCP-RFsigma better calibrated than RF-z in-distribution",
   "holds": true
  },
  {

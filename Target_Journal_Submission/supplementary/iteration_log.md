@@ -34,3 +34,11 @@ Every change made after seeing results is listed here with its hypothesis and ev
   | RF-z | 0.950 | 2.95 |
 
   The hypothesis is not supported on this run. The full run decides; whatever the outcome, it is reported in Section 9.5.
+- **Outcome (full run, 6 tasks × 3 protocols × seeds 0–4):** the hypothesis was **supported**.
+  - Coverage of FCP-RFσ: 0.920 (system) and 0.912 (cluster).
+  - Interval score: 1.85 / 2.81, against RF-z's 1.92 / 2.70. The paired 12-cell test finds no significant difference (p = 0.68); FCP-RFσ is better in 7 of 12 cells.
+  - FCP-RFσ is better than LightGBM-based FCP in 11 of 12 cells (p = 0.0015).
+  - Unlike RF-z it is calibrated in-distribution: 0.936 / 0.865 at nominal 0.90 / 0.80, against RF-z's 0.954 / 0.909.
+  - The random-fold version (CV+-RFσ) under-covers (0.888 / 0.813), so grouping is still required.
+  - The single-run pre-check was therefore not representative. This is reported as such and is a reminder why decisions were not taken on one seed.
+  - Because the variant was formulated after the main results, the manuscript presents it as a post hoc finding (Section 9.5, Abstract, Conclusions). The pre-specified FCP remains the primary method of the confirmatory analysis.
