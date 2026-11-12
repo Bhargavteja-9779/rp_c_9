@@ -943,14 +943,17 @@ def robustness_sections(V):
         claim(q("mpea_hv", "FCP") < 0.8 and q("mpea_hv", "SCP") < 0.8, "temporal HV: all fail")
         claim(q("mpea_hv", "FCP", "cov_seen_system") < q("mpea_hv", "FCP", "cov_unseen_system"), "temporal HV failure concentrated in seen systems")
         claim(q("mpea_hv", "FCP", "bias") > 50, "temporal HV: positive bias > 50 HV")
+        claim(q("mpea_ys", "RF-z") >= 0.88 and q("mpea_ys", "GP") >= 0.88, "temporal YS: RF-z and GP also near nominal")
         E += [("h2", "9.3. Chronological deployment test"),
               ("p", "Family holdouts are constructed shifts. A more realistic test trains on alloys published before 2019 and "
                     "predicts those first reported in 2019, the most recent year in the MPEA database (10 seeds; Table {{tab:temporal}}). "
                     f"For yield strength, {q('mpea_ys', 'FCP', 'frac_unseen') * 100:.0f}% of the 2019 alloys belong to chemical systems "
                     f"absent from earlier years. FCP covered {q('mpea_ys', 'FCP'):.3f} of them overall and "
                     f"{q('mpea_ys', 'FCP', 'cov_unseen_system'):.3f} of those in new systems, against {q('mpea_ys', 'SCP'):.3f} and "
-                    f"{q('mpea_ys', 'SCP', 'cov_unseen_system'):.3f} for SCP. Under a genuine chronological shift whose main component "
-                    "is family novelty, family-level calibration therefore delivered nominal coverage."),
+                    f"{q('mpea_ys', 'SCP', 'cov_unseen_system'):.3f} for SCP and {q('mpea_ys', 'CV+'):.3f} overall for CV+. The "
+                    f"uncalibrated RF-z ({q('mpea_ys', 'RF-z'):.3f}) and the GP ({q('mpea_ys', 'GP'):.3f}) also reached the nominal "
+                    "level in this test, so FCP was not unique here. Under a genuine chronological shift whose main component is "
+                    "family novelty, family-level calibration delivered nominal coverage where random-split calibration did not."),
               ("p", f"Hardness behaved differently. Every method failed (FCP {q('mpea_hv', 'FCP'):.3f}, SCP {q('mpea_hv', 'SCP'):.3f}, "
                     f"CV+ {q('mpea_hv', 'CV+'):.3f}). The failure was concentrated in chemical systems that *were* present in the "
                     f"training years (FCP: {q('mpea_hv', 'FCP', 'cov_seen_system'):.3f} in seen vs "

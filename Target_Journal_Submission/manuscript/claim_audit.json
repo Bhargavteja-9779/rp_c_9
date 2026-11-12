@@ -1,6 +1,10 @@
 [
  {
-  "claim": "abstract has 208 words (<= 250)",
+  "claim": "abstract temporal sentence supported by table_temporal",
+  "holds": true
+ },
+ {
+  "claim": "abstract has 236 words (<= 250)",
   "holds": true
  },
  {
@@ -168,6 +172,30 @@
   "holds": true
  },
  {
+  "claim": "temporal: FCP near nominal for MPEA YS, SCP not",
+  "holds": true
+ },
+ {
+  "claim": "temporal YS: FCP fixes unseen systems",
+  "holds": true
+ },
+ {
+  "claim": "temporal HV: all fail",
+  "holds": true
+ },
+ {
+  "claim": "temporal HV failure concentrated in seen systems",
+  "holds": true
+ },
+ {
+  "claim": "temporal HV: positive bias > 50 HV",
+  "holds": true
+ },
+ {
+  "claim": "temporal YS: RF-z and GP also near nominal",
+  "holds": true
+ },
+ {
   "claim": "FCP coverage >= 0.9 for all sensitivity settings",
   "holds": true
  },
@@ -193,6 +221,22 @@
  },
  {
   "claim": "FCP[RF] shortfall significantly smaller than CV+[RF]",
+  "holds": true
+ },
+ {
+  "claim": "FCP coverage robust to fold assignment (within 3 points)",
+  "holds": true
+ },
+ {
+  "claim": "random-calibrated still under-cover with random assignment",
+  "holds": true
+ },
+ {
+  "claim": "Mondrian below FCP under cluster shift",
+  "holds": true
+ },
+ {
+  "claim": "Mondrian at least as good as SCP under cluster shift",
   "holds": true
  },
  {
