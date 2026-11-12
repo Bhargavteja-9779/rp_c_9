@@ -1,0 +1,26 @@
+| parameter | value | method | coverage | width | interval_score | default |
+|---|---|---|---|---|---|---|
+| K | 3.000 | FCP | 0.932 | 2.219 | 2.871 | False |
+| K | 5.000 | FCP | 0.925 | 2.099 | 2.744 | True |
+| K | 10.000 | FCP | 0.921 | 1.996 | 2.665 | False |
+| K | 3.000 | FCP-W | 0.949 | 2.476 | 2.954 | False |
+| K | 5.000 | FCP-W | 0.949 | 2.338 | 2.831 | True |
+| K | 10.000 | FCP-W | 0.945 | 2.251 | 2.756 | False |
+| family_frac | 0.500 | FCP | 0.923 | 2.166 | 2.869 | False |
+| family_frac | 0.700 | FCP | 0.925 | 2.099 | 2.744 | True |
+| family_frac | 0.900 | FCP | 0.934 | 2.113 | 2.714 | False |
+| family_frac | 0.500 | FCP-W | 0.946 | 2.413 | 2.921 | False |
+| family_frac | 0.700 | FCP-W | 0.949 | 2.338 | 2.831 | True |
+| family_frac | 0.900 | FCP-W | 0.950 | 2.348 | 2.823 | False |
+| n_members | 3.000 | FCP | 0.937 | 2.251 | 2.817 | False |
+| n_members | 6.000 | FCP | 0.925 | 2.099 | 2.744 | True |
+| n_members | 12.000 | FCP | 0.921 | 2.033 | 2.717 | False |
+| n_members | 3.000 | FCP-W | 0.953 | 2.468 | 2.919 | False |
+| n_members | 6.000 | FCP-W | 0.949 | 2.338 | 2.831 | True |
+| n_members | 12.000 | FCP-W | 0.946 | 2.287 | 2.787 | False |
+| novelty_k | 1.000 | FCP | 0.926 | 2.107 | 2.746 | False |
+| novelty_k | 5.000 | FCP | 0.925 | 2.099 | 2.744 | True |
+| novelty_k | 15.000 | FCP | 0.925 | 2.096 | 2.753 | False |
+| novelty_k | 1.000 | FCP-W | 0.950 | 2.331 | 2.827 | False |
+| novelty_k | 5.000 | FCP-W | 0.949 | 2.338 | 2.831 | True |
+| novelty_k | 15.000 | FCP-W | 0.948 | 2.358 | 2.848 | False |

@@ -1,0 +1,554 @@
+{
+  "unit_of_analysis": "cell = (task, shift protocol); value = mean over outer-split seeds",
+  "alpha_level": 0.1,
+  "tests": {
+    "H1_random_calibration_undercovers_under_shift": {
+      "test": "one-sided one-sample Wilcoxon signed-rank of cell coverage vs 0.90",
+      "results": {
+        "SCP": {
+          "n": 12,
+          "statistic": 0.0,
+          "p": 0.000244140625,
+          "median": 0.8025072898742989,
+          "ci_lo": 0.6937669621146756,
+          "ci_hi": 0.8582236842105262,
+          "rank_biserial": -1.0
+        },
+        "CV+": {
+          "n": 12,
+          "statistic": 3.0,
+          "p": 0.001220703125,
+          "median": 0.824216075393702,
+          "ci_lo": 0.7334803850161917,
+          "ci_hi": 0.8762739234449759,
+          "rank_biserial": -0.9230769230769231
+        },
+        "CQR": {
+          "n": 12,
+          "statistic": 0.0,
+          "p": 0.000244140625,
+          "median": 0.8257035472528509,
+          "ci_lo": 0.722523783377968,
+          "ci_hi": 0.8590131578947368,
+          "rank_biserial": -1.0
+        },
+        "WCP": {
+          "n": 12,
+          "statistic": 12.0,
+          "p": 0.01708984375,
+          "median": 0.8707595693779904,
+          "ci_lo": 0.840333569579687,
+          "ci_hi": 0.8958955146893461,
+          "rank_biserial": -0.6923076923076923
+        }
+      }
+    },
+    "H2_FCP_vs_baselines_coverage_shortfall": {
+      "test": "two-sided Wilcoxon signed-rank on paired cell shortfall max(0, 0.9 - coverage); Holm over baselines; median_diff < 0 favours FCP",
+      "results": {
+        "SCP": {
+          "n": 12,
+          "n_eff": 12,
+          "statistic": 0.0,
+          "p": 0.00048828125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.0974927101257011,
+          "ci_lo": -0.1873981247103283,
+          "ci_hi": -0.04177631578947377,
+          "p_holm": 0.00390625
+        },
+        "CV+": {
+          "n": 12,
+          "n_eff": 10,
+          "statistic": 0.0,
+          "p": 0.001953125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.07578392460629796,
+          "ci_lo": -0.15917347802937365,
+          "ci_hi": -0.023726076555024067,
+          "p_holm": 0.009765625
+        },
+        "CQR": {
+          "n": 12,
+          "n_eff": 12,
+          "statistic": 0.0,
+          "p": 0.00048828125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.07429645274714913,
+          "ci_lo": -0.16348683420404736,
+          "ci_hi": -0.040986842105263266,
+          "p_holm": 0.00390625
+        },
+        "WCP": {
+          "n": 12,
+          "n_eff": 10,
+          "statistic": 3.0,
+          "p": 0.009765625,
+          "rank_biserial": -0.8909090909090909,
+          "median_diff": -0.029240430622009594,
+          "ci_lo": -0.04543836115744815,
+          "ci_hi": -0.004665071770334872,
+          "p_holm": 0.01953125
+        },
+        "GP": {
+          "n": 12,
+          "n_eff": 10,
+          "statistic": 0.0,
+          "p": 0.001953125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.03017892549791512,
+          "ci_lo": -0.06141012043027266,
+          "ci_hi": -0.007240562908415404,
+          "p_holm": 0.009765625
+        },
+        "RF-z": {
+          "n": 12,
+          "n_eff": 3,
+          "statistic": 1.0,
+          "p": 0.5,
+          "rank_biserial": 0.6666666666666666,
+          "median_diff": 0.0,
+          "ci_lo": 0.0,
+          "ci_hi": 0.0,
+          "p_holm": 0.5
+        },
+        "Ens-z": {
+          "n": 12,
+          "n_eff": 12,
+          "statistic": 0.0,
+          "p": 0.00048828125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.42534327622334533,
+          "ci_lo": -0.45966230149869314,
+          "ci_hi": -0.3899798835044737,
+          "p_holm": 0.00390625
+        },
+        "GSCP": {
+          "n": 12,
+          "n_eff": 9,
+          "statistic": 0.0,
+          "p": 0.00390625,
+          "rank_biserial": -1.0,
+          "median_diff": -0.010387989203778702,
+          "ci_lo": -0.04880536130536134,
+          "ci_hi": -0.0006557377049180579,
+          "p_holm": 0.01171875
+        }
+      }
+    },
+    "H3_FCP_vs_baselines_interval_score": {
+      "test": "two-sided Wilcoxon signed-rank on paired cell mean Winkler interval score / SD(y); Holm; median_diff < 0 favours FCP",
+      "results": {
+        "SCP": {
+          "n": 12,
+          "n_eff": 12,
+          "statistic": 0.0,
+          "p": 0.00048828125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.2655416990818289,
+          "ci_lo": -0.6862226643381134,
+          "ci_hi": -0.17858745436950968,
+          "p_holm": 0.00341796875
+        },
+        "CV+": {
+          "n": 12,
+          "n_eff": 12,
+          "statistic": 10.0,
+          "p": 0.02099609375,
+          "rank_biserial": -0.7435897435897436,
+          "median_diff": -0.11340816829885464,
+          "ci_lo": -0.37006937874799795,
+          "ci_hi": -0.05214986572623559,
+          "p_holm": 0.0419921875
+        },
+        "CQR": {
+          "n": 12,
+          "n_eff": 12,
+          "statistic": 8.0,
+          "p": 0.01220703125,
+          "rank_biserial": -0.7948717948717948,
+          "median_diff": -0.45973855440514133,
+          "ci_lo": -0.5141762015274816,
+          "ci_hi": -0.1207984575635126,
+          "p_holm": 0.03662109375
+        },
+        "WCP": {
+          "n": 1,
+          "statistic": NaN,
+          "p": NaN,
+          "rank_biserial": -1.0,
+          "median_diff": -0.1804227247035617,
+          "ci_lo": NaN,
+          "ci_hi": NaN,
+          "p_holm": NaN
+        },
+        "GP": {
+          "n": 12,
+          "n_eff": 12,
+          "statistic": 0.0,
+          "p": 0.00048828125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.780460922064171,
+          "ci_lo": -0.9412169733479326,
+          "ci_hi": -0.5729806568230477,
+          "p_holm": 0.00341796875
+        },
+        "RF-z": {
+          "n": 12,
+          "n_eff": 12,
+          "statistic": 16.0,
+          "p": 0.0771484375,
+          "rank_biserial": 0.5897435897435898,
+          "median_diff": 0.1463017242046204,
+          "ci_lo": -0.07104431810393425,
+          "ci_hi": 0.7573993790908318,
+          "p_holm": 0.0771484375
+        },
+        "Ens-z": {
+          "n": 12,
+          "n_eff": 12,
+          "statistic": 0.0,
+          "p": 0.00048828125,
+          "rank_biserial": -1.0,
+          "median_diff": -1.5350663537200997,
+          "ci_lo": -2.154881221464973,
+          "ci_hi": -0.6721505522098932,
+          "p_holm": 0.00341796875
+        },
+        "GSCP": {
+          "n": 12,
+          "n_eff": 12,
+          "statistic": 0.0,
+          "p": 0.00048828125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.3717027704144238,
+          "ci_lo": -0.48658689662032095,
+          "ci_hi": -0.1851223152162103,
+          "p_holm": 0.00341796875
+        }
+      }
+    },
+    "H4_ablation": {
+      "test": "two-sided Wilcoxon signed-rank on paired cells (uncorrected; exploratory)",
+      "results": {
+        "FCP_vs_GCV+_interval_score_sd": {
+          "n": 12,
+          "n_eff": 12,
+          "statistic": 29.0,
+          "p": 0.4697265625,
+          "rank_biserial": -0.2564102564102564,
+          "median_diff": -0.050363300856637094,
+          "ci_lo": -0.14046163786948468,
+          "ci_hi": 0.07549419382527933
+        },
+        "FCP_vs_GCV+_cov_novelty_high": {
+          "n": 12,
+          "n_eff": 12,
+          "statistic": 2.0,
+          "p": 0.00146484375,
+          "rank_biserial": 0.9487179487179487,
+          "median_diff": 0.037023138073455586,
+          "ci_lo": 0.015369437955457144,
+          "ci_hi": 0.05374726340929442
+        },
+        "GCV+_vs_CV+_coverage": {
+          "n": 12,
+          "n_eff": 12,
+          "statistic": 0.0,
+          "p": 0.00048828125,
+          "rank_biserial": 1.0,
+          "median_diff": 0.09139470669917388,
+          "ci_lo": 0.050675837320574346,
+          "ci_hi": 0.15397179058427618
+        },
+        "FCP_vs_NCV+_coverage": {
+          "n": 12,
+          "n_eff": 12,
+          "statistic": 9.0,
+          "p": 0.01611328125,
+          "rank_biserial": 0.7692307692307693,
+          "median_diff": 0.040185350671761266,
+          "ci_lo": 0.015324017009737456,
+          "ci_hi": 0.07337875864672727
+        },
+        "FCP-W_vs_FCP_family_coverage": {
+          "n": 12,
+          "n_eff": 12,
+          "statistic": 5.0,
+          "p": 0.0048828125,
+          "rank_biserial": 0.8717948717948718,
+          "median_diff": 0.04411624225623101,
+          "ci_lo": 0.00997885462002962,
+          "ci_hi": 0.07363927571324291
+        }
+      }
+    },
+    "H2_per_protocol": {
+      "system": {
+        "SCP": {
+          "n": 6,
+          "n_eff": 6,
+          "statistic": 0.0,
+          "p": 0.03125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.04177631578947377,
+          "ci_lo": -0.09961821619857558,
+          "ci_hi": -0.006822804790484416
+        },
+        "CV+": {
+          "n": 6,
+          "n_eff": 4,
+          "statistic": 0.0,
+          "p": 0.125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.023726076555024067,
+          "ci_lo": -0.07578392460629796,
+          "ci_hi": 0.0
+        },
+        "CQR": {
+          "n": 6,
+          "n_eff": 6,
+          "statistic": 0.0,
+          "p": 0.03125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.0423145933014355,
+          "ci_lo": -0.09228497565158411,
+          "ci_hi": -0.011466916713878728
+        },
+        "WCP": {
+          "n": 6,
+          "n_eff": 4,
+          "statistic": 0.0,
+          "p": 0.125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.023127248075479334,
+          "ci_lo": -0.06661380413224227,
+          "ci_hi": 0.0
+        },
+        "GSCP": {
+          "n": 6,
+          "n_eff": 3,
+          "statistic": 0.0,
+          "p": 0.25,
+          "rank_biserial": -1.0,
+          "median_diff": -0.0006557377049180579,
+          "ci_lo": -0.020718150288277615,
+          "ci_hi": 0.0
+        }
+      },
+      "cluster": {
+        "SCP": {
+          "n": 6,
+          "n_eff": 6,
+          "statistic": 0.0,
+          "p": 0.03125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.1873981247103283,
+          "ci_lo": -0.23019951539688388,
+          "ci_hi": -0.08483380994530315
+        },
+        "CV+": {
+          "n": 6,
+          "n_eff": 6,
+          "statistic": 0.0,
+          "p": 0.03125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.15917347802937365,
+          "ci_lo": -0.19668062200956932,
+          "ci_hi": -0.07383485395247508
+        },
+        "CQR": {
+          "n": 6,
+          "n_eff": 6,
+          "statistic": 0.0,
+          "p": 0.03125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.16348683420404736,
+          "ci_lo": -0.1954253501348716,
+          "ci_hi": -0.05934278613740046
+        },
+        "WCP": {
+          "n": 6,
+          "n_eff": 6,
+          "statistic": 2.0,
+          "p": 0.09375,
+          "rank_biserial": -0.8095238095238095,
+          "median_diff": -0.03407097546583149,
+          "ci_lo": -0.05823094713057769,
+          "ci_hi": 0.007033646178383091
+        },
+        "GSCP": {
+          "n": 6,
+          "n_eff": 6,
+          "statistic": 0.0,
+          "p": 0.03125,
+          "rank_biserial": -1.0,
+          "median_diff": -0.044474499196362094,
+          "ci_lo": -0.15556642970819795,
+          "ci_hi": -0.010387989203778702
+        }
+      }
+    },
+    "task_level_replication": {
+      "shortfall FCP vs SCP": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -0.11385145053393547,
+        "ci_lo": -0.15780991038119188,
+        "ci_hi": -0.053663032500397195
+      },
+      "interval_score FCP vs SCP": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -0.28545709794293006,
+        "ci_lo": -1.0934837610924573,
+        "ci_hi": -0.1939693643239202
+      },
+      "shortfall FCP vs CV+": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -0.08500829196687698,
+        "ci_lo": -0.13487770600167653,
+        "ci_hi": -0.04471347960781652
+      },
+      "interval_score FCP vs CV+": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 2.0,
+        "p": 0.09375,
+        "rank_biserial": -0.8095238095238095,
+        "median_diff": -0.10216726682362431,
+        "ci_lo": -0.6836720436723633,
+        "ci_hi": 0.00455672332182111
+      },
+      "shortfall FCP vs CQR": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -0.10200536736774879,
+        "ci_lo": -0.1391789728551957,
+        "ci_hi": -0.04097638784866439
+      },
+      "interval_score FCP vs CQR": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 1.0,
+        "p": 0.0625,
+        "rank_biserial": -0.9047619047619048,
+        "median_diff": -0.35583077603744195,
+        "ci_lo": -0.511778452590592,
+        "ci_hi": -0.03985431770250436
+      },
+      "shortfall FCP vs WCP": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 1.0,
+        "p": 0.0625,
+        "rank_biserial": -0.9047619047619048,
+        "median_diff": -0.027594698259231526,
+        "ci_lo": -0.05535262646340802,
+        "ci_hi": -0.0045573395902342995
+      },
+      "interval_score FCP vs WCP": {
+        "n": 0,
+        "statistic": NaN,
+        "p": NaN,
+        "rank_biserial": 0.0,
+        "median_diff": NaN,
+        "ci_lo": NaN,
+        "ci_hi": NaN
+      },
+      "shortfall FCP vs GP": {
+        "n": 6,
+        "n_eff": 5,
+        "statistic": 0.0,
+        "p": 0.0625,
+        "rank_biserial": -1.0,
+        "median_diff": -0.032909610880922424,
+        "ci_lo": -0.09040715828639595,
+        "ci_hi": -0.008333333333333331
+      },
+      "interval_score FCP vs GP": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -0.7724286323552201,
+        "ci_lo": -1.1175805454620729,
+        "ci_hi": -0.4452419699789527
+      },
+      "shortfall FCP vs RF-z": {
+        "n": 6,
+        "n_eff": 3,
+        "statistic": 1.0,
+        "p": 0.5,
+        "rank_biserial": 0.6666666666666666,
+        "median_diff": 0.0,
+        "ci_lo": -8.012820512820484e-05,
+        "ci_hi": 0.0032606024936455147
+      },
+      "interval_score FCP vs RF-z": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 2.0,
+        "p": 0.09375,
+        "rank_biserial": 0.8095238095238095,
+        "median_diff": 0.39735771419211774,
+        "ci_lo": -0.04719045946370204,
+        "ci_hi": 0.964174350420153
+      },
+      "shortfall FCP vs Ens-z": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -0.4270630904183536,
+        "ci_lo": -0.46341986153418124,
+        "ci_hi": -0.38548086623787003
+      },
+      "interval_score FCP vs Ens-z": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -1.7985961797376715,
+        "ci_lo": -2.27805251915513,
+        "ci_hi": -0.4817134079032419
+      },
+      "shortfall FCP vs GSCP": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -0.02640588578088579,
+        "ci_lo": -0.07997656910710707,
+        "ci_hi": -0.009518948162774349
+      },
+      "interval_score FCP vs GSCP": {
+        "n": 6,
+        "n_eff": 6,
+        "statistic": 0.0,
+        "p": 0.03125,
+        "rank_biserial": -1.0,
+        "median_diff": -0.308911414653968,
+        "ci_lo": -1.0171904074236686,
+        "ci_hi": -0.18105648485950865
+      }
+    }
+  }
+}

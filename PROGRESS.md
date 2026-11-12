@@ -18,10 +18,10 @@ Branch: claude/autonomous-research-discovery-795xcu. All deliverables are under 
 - [x] Phase 0 journal selection (docs written)
 - [x] Phase 1-4 topic + prior art (to be written into literature/ docs)
 - [x] Phase 9-10 implementation (tests pass)
-- [~] Phase 11-19 experiments running (v2 scale model, see supplementary/iteration_log.md)
-- [~] Phase 20-23 figures/tables/manuscript (draft built by manuscript/tools/build_manuscript.py + build_docx.js)
-- [~] Phase 24-33 reviews: review_01 done
-- [ ] Phase 34-42 audits, docx, cover letter, risk report
+- [x] Phase 11-19 experiments complete (all stages; iteration log documents v2 clamp and post hoc FCP-RFsigma)
+- [x] Phase 20-23 figures/tables/manuscript
+- [x] Phase 24-33 reviews 01-10 done
+- [x] Phase 34-42 audits, DOCX/PDF, cover letter, risk report — decision: READY FOR SUBMISSION (author admin items remain)
 
 ## Open issues found during analysis (to be handled in review rounds)
 - Cluster protocol: greedy size-balanced assignment of 10 distinct-size clusters to 5 outer folds is deterministic,
@@ -36,3 +36,5 @@ Branch: claude/autonomous-research-discovery-795xcu. All deliverables are under 
 - Manuscript: `cd manuscript/tools && python3 build_manuscript.py && node build_docx.js spec.json ../Final_Manuscript.docx`
 - Remaining: Sections 9 (robustness, generalization incl. basemodel/randfolds/mondrian, sensitivity) and 10 (efficiency) text;
   reviews 5-10; final audit; cover letter; risk report; final DOCX/PDF.
+
+## STATUS: COMPLETE (2026-11-12). Nothing further to run; see REVIEW/final_audit.md section D for author-only items.
