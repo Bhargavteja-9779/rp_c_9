@@ -1,0 +1,289 @@
+task,protocol,dimension,group,method,n,coverage,width_sd
+mpea_hv,cluster,alloy_class,3d-transition,CV+,267.0,0.7322097378277154,1.5691291816959314
+mpea_hv,cluster,alloy_class,3d-transition,FCP,267.0,0.9471910112359551,2.881133500941204
+mpea_hv,cluster,alloy_class,3d-transition,FCP-RFsigma,267.0,0.8981273408239699,2.457975798732571
+mpea_hv,cluster,alloy_class,3d-transition,GSCP,267.0,0.8423220973782772,2.38257315534855
+mpea_hv,cluster,alloy_class,3d-transition,RF-z,267.0,0.9464419475655431,2.523014774781608
+mpea_hv,cluster,alloy_class,3d-transition,SCP,267.0,0.6719101123595506,1.43636587286904
+mpea_hv,cluster,alloy_class,mixed,CV+,55.0,0.7963636363636364,1.5857700126492622
+mpea_hv,cluster,alloy_class,mixed,FCP,55.0,0.9581818181818182,2.9563540755859377
+mpea_hv,cluster,alloy_class,mixed,FCP-RFsigma,55.0,0.909090909090909,2.5457091595422434
+mpea_hv,cluster,alloy_class,mixed,GSCP,55.0,0.8763636363636363,2.5474125353880117
+mpea_hv,cluster,alloy_class,mixed,RF-z,55.0,0.9163636363636364,2.592498308050115
+mpea_hv,cluster,alloy_class,mixed,SCP,55.0,0.7490909090909091,1.4867570752107793
+mpea_hv,cluster,alloy_class,refractory,CV+,96.0,0.6385416666666667,1.5831419551364476
+mpea_hv,cluster,alloy_class,refractory,FCP,96.0,0.95625,3.1443280101836644
+mpea_hv,cluster,alloy_class,refractory,FCP-RFsigma,96.0,0.76875,2.5097779628806385
+mpea_hv,cluster,alloy_class,refractory,GSCP,96.0,0.796875,2.3907955095246236
+mpea_hv,cluster,alloy_class,refractory,RF-z,96.0,0.915625,2.466954379918607
+mpea_hv,cluster,alloy_class,refractory,SCP,96.0,0.6614583333333333,1.4812175153845062
+mpea_hv,cluster,delta_tertile,high delta,CV+,140.0,0.6357142857142857,1.6239287100275857
+mpea_hv,cluster,delta_tertile,high delta,FCP,140.0,0.8942857142857144,2.889622278059905
+mpea_hv,cluster,delta_tertile,high delta,FCP-RFsigma,140.0,0.7957142857142857,2.5451631643482706
+mpea_hv,cluster,delta_tertile,high delta,GSCP,140.0,0.8150000000000001,2.4865419669658415
+mpea_hv,cluster,delta_tertile,high delta,RF-z,140.0,0.9321428571428572,2.7780023918971484
+mpea_hv,cluster,delta_tertile,high delta,SCP,140.0,0.5785714285714285,1.4747607090805395
+mpea_hv,cluster,delta_tertile,low delta,CV+,142.0,0.7133802816901409,1.5323939166595308
+mpea_hv,cluster,delta_tertile,low delta,FCP,142.0,0.9845070422535211,3.128514736203462
+mpea_hv,cluster,delta_tertile,low delta,FCP-RFsigma,142.0,0.8549295774647888,2.2960093384041462
+mpea_hv,cluster,delta_tertile,low delta,GSCP,142.0,0.7908450704225352,2.304514353951494
+mpea_hv,cluster,delta_tertile,low delta,RF-z,142.0,0.902112676056338,2.2755138752030435
+mpea_hv,cluster,delta_tertile,low delta,SCP,142.0,0.673943661971831,1.4265441490033888
+mpea_hv,cluster,delta_tertile,mid delta,CV+,136.0,0.8110294117647058,1.567694958324314
+mpea_hv,cluster,delta_tertile,mid delta,FCP,136.0,0.9735294117647058,2.830304385418246
+mpea_hv,cluster,delta_tertile,mid delta,FCP-RFsigma,136.0,0.9617647058823529,2.6093827750795184
+mpea_hv,cluster,delta_tertile,mid delta,GSCP,136.0,0.9058823529411765,2.429516008841451
+mpea_hv,cluster,delta_tertile,mid delta,RF-z,136.0,0.9735294117647058,2.507475493655875
+mpea_hv,cluster,delta_tertile,mid delta,SCP,136.0,0.7897058823529411,1.4591355899983998
+mpea_hv,cluster,phase,BCC,CV+,83.0,0.7108433734939759,1.5780054075687207
+mpea_hv,cluster,phase,BCC,FCP,83.0,0.9530120481927711,2.7514889489812524
+mpea_hv,cluster,phase,BCC,FCP-RFsigma,83.0,0.8048192771084338,2.409403318730104
+mpea_hv,cluster,phase,BCC,GSCP,83.0,0.8638554216867469,2.4180650775287083
+mpea_hv,cluster,phase,BCC,RF-z,83.0,0.9506024096385541,2.436835421988097
+mpea_hv,cluster,phase,BCC,SCP,83.0,0.7301204819277108,1.4780558907401784
+mpea_hv,cluster,phase,FCC,CV+,53.0,0.7735849056603774,1.5447374118984556
+mpea_hv,cluster,phase,FCC,FCP,53.0,1.0,3.0577724188205653
+mpea_hv,cluster,phase,FCC,FCP-RFsigma,53.0,0.9245283018867925,2.290640491511771
+mpea_hv,cluster,phase,FCC,GSCP,53.0,0.8320754716981134,2.448646868991973
+mpea_hv,cluster,phase,FCC,RF-z,53.0,0.930188679245283,2.072492672082392
+mpea_hv,cluster,phase,FCC,SCP,53.0,0.718867924528302,1.4479906740531847
+mpea_hv,cluster,phase,other,CV+,282.0,0.7113475177304964,1.5791168022794329
+mpea_hv,cluster,phase,other,FCP,282.0,0.9407801418439716,2.9903620103660495
+mpea_hv,cluster,phase,other,FCP-RFsigma,282.0,0.8787234042553191,2.538467393504392
+mpea_hv,cluster,phase,other,GSCP,282.0,0.8290780141843971,2.3946574657706026
+mpea_hv,cluster,phase,other,RF-z,282.0,0.9319148936170214,2.6275195767243016
+mpea_hv,cluster,phase,other,SCP,282.0,0.6574468085106384,1.447007319196048
+mpea_hv,cluster,vec_regime,6.87-8 (mixed),CV+,156.0,0.8288461538461538,1.5552382056743874
+mpea_hv,cluster,vec_regime,6.87-8 (mixed),FCP,156.0,0.976923076923077,3.01514585499229
+mpea_hv,cluster,vec_regime,6.87-8 (mixed),FCP-RFsigma,156.0,0.9589743589743589,2.593032487120145
+mpea_hv,cluster,vec_regime,6.87-8 (mixed),GSCP,156.0,0.8852564102564102,2.408709810253285
+mpea_hv,cluster,vec_regime,6.87-8 (mixed),RF-z,156.0,0.9564102564102563,2.5176707694141625
+mpea_hv,cluster,vec_regime,6.87-8 (mixed),SCP,156.0,0.7653846153846153,1.4395776336749606
+mpea_hv,cluster,vec_regime,VEC<6.87 (BCC-favoured),CV+,192.0,0.6010416666666667,1.6015298400636346
+mpea_hv,cluster,vec_regime,VEC<6.87 (BCC-favoured),FCP,192.0,0.9135416666666666,2.8252517379732778
+mpea_hv,cluster,vec_regime,VEC<6.87 (BCC-favoured),FCP-RFsigma,192.0,0.775,2.4798622229464153
+mpea_hv,cluster,vec_regime,VEC<6.87 (BCC-favoured),GSCP,192.0,0.7770833333333333,2.396326290774654
+mpea_hv,cluster,vec_regime,VEC<6.87 (BCC-favoured),RF-z,192.0,0.9223958333333334,2.667749427855987
+mpea_hv,cluster,vec_regime,VEC<6.87 (BCC-favoured),SCP,192.0,0.5828125,1.4682358148357024
+mpea_hv,cluster,vec_regime,VEC>=8 (FCC-favoured),CV+,70.0,0.7985714285714286,1.5435082932028537
+mpea_hv,cluster,vec_regime,VEC>=8 (FCC-favoured),FCP,70.0,0.9942857142857143,3.155807440235619
+mpea_hv,cluster,vec_regime,VEC>=8 (FCC-favoured),FCP-RFsigma,70.0,0.9314285714285715,2.236937309664382
+mpea_hv,cluster,vec_regime,VEC>=8 (FCC-favoured),GSCP,70.0,0.89,2.4273958944360188
+mpea_hv,cluster,vec_regime,VEC>=8 (FCC-favoured),RF-z,70.0,0.9242857142857142,2.1156491729239018
+mpea_hv,cluster,vec_regime,VEC>=8 (FCC-favoured),SCP,70.0,0.7542857142857142,1.442897448111291
+mpea_hv,system,alloy_class,3d-transition,CV+,267.0,0.8741573033707866,1.4775832062638041
+mpea_hv,system,alloy_class,3d-transition,FCP,267.0,0.9367041198501873,1.8687405534700283
+mpea_hv,system,alloy_class,3d-transition,FCP-RFsigma,267.0,0.9295880149812735,1.8504631108562364
+mpea_hv,system,alloy_class,3d-transition,GSCP,267.0,0.8925093632958803,1.8065957375367148
+mpea_hv,system,alloy_class,3d-transition,RF-z,267.0,0.9423220973782771,1.9353119588868584
+mpea_hv,system,alloy_class,3d-transition,SCP,267.0,0.8426966292134832,1.5264087255813579
+mpea_hv,system,alloy_class,mixed,CV+,55.0,0.7927272727272727,1.4845967614202413
+mpea_hv,system,alloy_class,mixed,FCP,55.0,0.8654545454545455,1.8505934992392934
+mpea_hv,system,alloy_class,mixed,FCP-RFsigma,55.0,0.8945454545454545,2.0508316975091256
+mpea_hv,system,alloy_class,mixed,GSCP,55.0,0.8163636363636364,1.7657635190610435
+mpea_hv,system,alloy_class,mixed,RF-z,55.0,0.9345454545454546,2.3450816894840085
+mpea_hv,system,alloy_class,mixed,SCP,55.0,0.7981818181818181,1.569235688857128
+mpea_hv,system,alloy_class,refractory,CV+,96.0,0.9625,1.4735707483482336
+mpea_hv,system,alloy_class,refractory,FCP,96.0,0.9802083333333333,1.8450491667388047
+mpea_hv,system,alloy_class,refractory,FCP-RFsigma,96.0,0.9666666666666666,1.6654138677074983
+mpea_hv,system,alloy_class,refractory,GSCP,96.0,0.9708333333333334,1.7993581196513513
+mpea_hv,system,alloy_class,refractory,RF-z,96.0,0.9666666666666666,1.749142121923149
+mpea_hv,system,alloy_class,refractory,SCP,96.0,0.9458333333333334,1.53689558789071
+mpea_hv,system,delta_tertile,high delta,CV+,140.0,0.8942857142857144,1.493180849701658
+mpea_hv,system,delta_tertile,high delta,FCP,140.0,0.9421428571428571,1.945144115011224
+mpea_hv,system,delta_tertile,high delta,FCP-RFsigma,140.0,0.9485714285714286,1.9919201372531172
+mpea_hv,system,delta_tertile,high delta,GSCP,140.0,0.8692857142857143,1.8072946397577716
+mpea_hv,system,delta_tertile,high delta,RF-z,140.0,0.9550000000000001,1.9994546203033032
+mpea_hv,system,delta_tertile,high delta,SCP,140.0,0.86,1.5354744200157462
+mpea_hv,system,delta_tertile,low delta,CV+,142.0,0.9133802816901408,1.463724780244403
+mpea_hv,system,delta_tertile,low delta,FCP,142.0,0.9514084507042254,1.8071498689314165
+mpea_hv,system,delta_tertile,low delta,FCP-RFsigma,142.0,0.9253521126760564,1.582118651812961
+mpea_hv,system,delta_tertile,low delta,GSCP,142.0,0.932394366197183,1.7859632432463475
+mpea_hv,system,delta_tertile,low delta,RF-z,142.0,0.9394366197183098,1.7045943581638485
+mpea_hv,system,delta_tertile,low delta,SCP,142.0,0.8859154929577464,1.5292066600664642
+mpea_hv,system,delta_tertile,mid delta,CV+,136.0,0.8419117647058825,1.4760006767576621
+mpea_hv,system,delta_tertile,mid delta,FCP,136.0,0.9176470588235294,1.8303355349393484
+mpea_hv,system,delta_tertile,mid delta,FCP-RFsigma,136.0,0.9264705882352942,1.9354371874166172
+mpea_hv,system,delta_tertile,mid delta,GSCP,136.0,0.8992647058823529,1.8057970944861814
+mpea_hv,system,delta_tertile,mid delta,RF-z,136.0,0.9463235294117647,2.144480764318419
+mpea_hv,system,delta_tertile,mid delta,SCP,136.0,0.8345588235294118,1.5388772391413998
+mpea_hv,system,phase,BCC,CV+,83.0,0.9518072289156626,1.4707294053406748
+mpea_hv,system,phase,BCC,FCP,83.0,0.9855421686746988,1.8002410646350007
+mpea_hv,system,phase,BCC,FCP-RFsigma,83.0,0.9831325301204819,1.6859993083102502
+mpea_hv,system,phase,BCC,GSCP,83.0,0.9662650602409638,1.7864243699478233
+mpea_hv,system,phase,BCC,RF-z,83.0,0.9722891566265061,1.7954920496612115
+mpea_hv,system,phase,BCC,SCP,83.0,0.9349397590361445,1.5323686748713867
+mpea_hv,system,phase,FCC,CV+,53.0,0.9283018867924528,1.468430276606181
+mpea_hv,system,phase,FCC,FCP,53.0,0.9792452830188679,1.7975480936342894
+mpea_hv,system,phase,FCC,FCP-RFsigma,53.0,0.9358490566037736,1.510186188132396
+mpea_hv,system,phase,FCC,GSCP,53.0,0.9528301886792454,1.8056136354848076
+mpea_hv,system,phase,FCC,RF-z,53.0,0.9547169811320755,1.629429571172554
+mpea_hv,system,phase,FCC,SCP,53.0,0.881132075471698,1.52261465733979
+mpea_hv,system,phase,other,CV+,282.0,0.8553191489361703,1.4813226400304107
+mpea_hv,system,phase,other,FCP,282.0,0.9152482269503546,1.8906774216817783
+mpea_hv,system,phase,other,FCP-RFsigma,282.0,0.9184397163120568,1.9389053712793227
+mpea_hv,system,phase,other,GSCP,282.0,0.8712765957446809,1.80228967932917
+mpea_hv,system,phase,other,RF-z,282.0,0.9379432624113475,2.050495823599319
+mpea_hv,system,phase,other,SCP,282.0,0.8347517730496454,1.5372903978777972
+mpea_hv,system,vec_regime,6.87-8 (mixed),CV+,156.0,0.8442307692307691,1.4765980429759529
+mpea_hv,system,vec_regime,6.87-8 (mixed),FCP,156.0,0.910897435897436,1.8296842014667873
+mpea_hv,system,vec_regime,6.87-8 (mixed),FCP-RFsigma,156.0,0.9358974358974359,1.946542548274915
+mpea_hv,system,vec_regime,6.87-8 (mixed),GSCP,156.0,0.8762820512820513,1.792323641586404
+mpea_hv,system,vec_regime,6.87-8 (mixed),RF-z,156.0,0.9576923076923076,2.196952849182607
+mpea_hv,system,vec_regime,6.87-8 (mixed),SCP,156.0,0.8237179487179487,1.5380824718842836
+mpea_hv,system,vec_regime,VEC<6.87 (BCC-favoured),CV+,192.0,0.9166666666666666,1.4848253799152729
+mpea_hv,system,vec_regime,VEC<6.87 (BCC-favoured),FCP,192.0,0.953125,1.9010447182496375
+mpea_hv,system,vec_regime,VEC<6.87 (BCC-favoured),FCP-RFsigma,192.0,0.9427083333333334,1.8664659925831124
+mpea_hv,system,vec_regime,VEC<6.87 (BCC-favoured),GSCP,192.0,0.9052083333333334,1.8016722349782
+mpea_hv,system,vec_regime,VEC<6.87 (BCC-favoured),RF-z,192.0,0.95,1.8724104131940233
+mpea_hv,system,vec_regime,VEC<6.87 (BCC-favoured),SCP,192.0,0.8890625,1.5379540734076569
+mpea_hv,system,vec_regime,VEC>=8 (FCC-favoured),CV+,70.0,0.8814285714285715,1.4599223163428339
+mpea_hv,system,vec_regime,VEC>=8 (FCC-favoured),FCP,70.0,0.9528571428571428,1.8204252701262091
+mpea_hv,system,vec_regime,VEC>=8 (FCC-favoured),FCP-RFsigma,70.0,0.9028571428571428,1.4961002450670364
+mpea_hv,system,vec_regime,VEC>=8 (FCC-favoured),GSCP,70.0,0.9414285714285715,1.8098982536270944
+mpea_hv,system,vec_regime,VEC>=8 (FCC-favoured),RF-z,70.0,0.9142857142857143,1.5913997977613543
+mpea_hv,system,vec_regime,VEC>=8 (FCC-favoured),SCP,70.0,0.8642857142857142,1.5167574478093484
+mpea_ys,cluster,alloy_class,3d-transition,CV+,309.0,0.6621359223300971,1.4933810839876807
+mpea_ys,cluster,alloy_class,3d-transition,FCP,309.0,0.8750809061488674,2.765951114357818
+mpea_ys,cluster,alloy_class,3d-transition,FCP-RFsigma,309.0,0.887378640776699,2.3721729844826727
+mpea_ys,cluster,alloy_class,3d-transition,GSCP,309.0,0.8071197411003237,2.1899866733903854
+mpea_ys,cluster,alloy_class,3d-transition,RF-z,309.0,0.93042071197411,2.868424020781286
+mpea_ys,cluster,alloy_class,3d-transition,SCP,309.0,0.6546925566343043,1.5032241151615042
+mpea_ys,cluster,alloy_class,mixed,CV+,65.0,0.876923076923077,1.5425996427779016
+mpea_ys,cluster,alloy_class,mixed,FCP,65.0,0.9815384615384616,2.394945489453515
+mpea_ys,cluster,alloy_class,mixed,FCP-RFsigma,65.0,0.9969230769230769,2.322252206315114
+mpea_ys,cluster,alloy_class,mixed,GSCP,65.0,0.9415384615384615,2.1830700598603023
+mpea_ys,cluster,alloy_class,mixed,RF-z,65.0,1.0,2.792549713954954
+mpea_ys,cluster,alloy_class,mixed,SCP,65.0,0.8646153846153846,1.5595739351509192
+mpea_ys,cluster,alloy_class,refractory,CV+,386.0,0.9051813471502591,1.5512457640950694
+mpea_ys,cluster,alloy_class,refractory,FCP,386.0,0.9585492227979275,2.226639920299281
+mpea_ys,cluster,alloy_class,refractory,FCP-RFsigma,386.0,0.9357512953367875,1.8793800983491633
+mpea_ys,cluster,alloy_class,refractory,GSCP,386.0,0.9422279792746113,2.242083914553966
+mpea_ys,cluster,alloy_class,refractory,RF-z,386.0,0.9474093264248704,2.112046615064398
+mpea_ys,cluster,alloy_class,refractory,SCP,386.0,0.8873056994818652,1.581186126642165
+mpea_ys,cluster,delta_tertile,high delta,CV+,247.0,0.7959514170040486,1.5119950274912304
+mpea_ys,cluster,delta_tertile,high delta,FCP,247.0,0.9080971659919028,2.598986315073886
+mpea_ys,cluster,delta_tertile,high delta,FCP-RFsigma,247.0,0.8914979757085021,2.0647738205726545
+mpea_ys,cluster,delta_tertile,high delta,GSCP,247.0,0.8615384615384615,2.1521730895714395
+mpea_ys,cluster,delta_tertile,high delta,RF-z,247.0,0.9291497975708503,2.405891690877005
+mpea_ys,cluster,delta_tertile,high delta,SCP,247.0,0.771255060728745,1.5006568157672397
+mpea_ys,cluster,delta_tertile,low delta,CV+,258.0,0.7829457364341085,1.5174231197293788
+mpea_ys,cluster,delta_tertile,low delta,FCP,258.0,0.9410852713178295,2.589869944586104
+mpea_ys,cluster,delta_tertile,low delta,FCP-RFsigma,258.0,0.9511627906976745,2.285758008512139
+mpea_ys,cluster,delta_tertile,low delta,GSCP,258.0,0.8864341085271319,2.187780913059983
+mpea_ys,cluster,delta_tertile,low delta,RF-z,258.0,0.9577519379844961,2.675197048870261
+mpea_ys,cluster,delta_tertile,low delta,SCP,258.0,0.7763565891472868,1.554372432017118
+mpea_ys,cluster,delta_tertile,mid delta,CV+,255.0,0.8329411764705883,1.5511633725213336
+mpea_ys,cluster,delta_tertile,mid delta,FCP,255.0,0.9298039215686276,2.194891352392557
+mpea_ys,cluster,delta_tertile,mid delta,FCP-RFsigma,255.0,0.9199999999999999,1.9986818184346185
+mpea_ys,cluster,delta_tertile,mid delta,GSCP,255.0,0.9129411764705881,2.3059435227166993
+mpea_ys,cluster,delta_tertile,mid delta,RF-z,255.0,0.9474509803921569,2.347657494071371
+mpea_ys,cluster,delta_tertile,mid delta,SCP,255.0,0.824313725490196,1.5863375737202574
+mpea_ys,cluster,phase,BCC,CV+,287.0,0.9209059233449477,1.547897914033054
+mpea_ys,cluster,phase,BCC,FCP,287.0,0.9662020905923345,2.2260180938878156
+mpea_ys,cluster,phase,BCC,FCP-RFsigma,287.0,0.9554006968641116,1.9115816224869235
+mpea_ys,cluster,phase,BCC,GSCP,287.0,0.9567944250871079,2.2590555114572544
+mpea_ys,cluster,phase,BCC,RF-z,287.0,0.9602787456445994,2.1408374642647345
+mpea_ys,cluster,phase,BCC,SCP,287.0,0.9076655052264808,1.5815963129588737
+mpea_ys,cluster,phase,FCC,CV+,90.0,0.7177777777777778,1.4812425309268176
+mpea_ys,cluster,phase,FCC,FCP,90.0,0.9233333333333335,2.71251775356457
+mpea_ys,cluster,phase,FCC,FCP-RFsigma,90.0,0.9355555555555556,2.3291150326468304
+mpea_ys,cluster,phase,FCC,GSCP,90.0,0.8311111111111111,2.1656807429661957
+mpea_ys,cluster,phase,FCC,RF-z,90.0,0.9777777777777776,2.8216909301668465
+mpea_ys,cluster,phase,FCC,SCP,90.0,0.71,1.492578444113003
+mpea_ys,cluster,phase,other,CV+,383.0,0.7365535248041775,1.5220523957246832
+mpea_ys,cluster,phase,other,FCP,383.0,0.8976501305483028,2.5766046204176303
+mpea_ys,cluster,phase,other,FCP-RFsigma,383.0,0.8924281984334204,2.2223088380847082
+mpea_ys,cluster,phase,other,GSCP,383.0,0.8483028720626631,2.1952731810213835
+mpea_ys,cluster,phase,other,RF-z,383.0,0.9258485639686684,2.6494418049199795
+mpea_ys,cluster,phase,other,SCP,383.0,0.7221932114882507,1.5351336826742121
+mpea_ys,cluster,vec_regime,6.87-8 (mixed),CV+,174.0,0.6316091954022989,1.5074813097145618
+mpea_ys,cluster,vec_regime,6.87-8 (mixed),FCP,174.0,0.8425287356321839,2.611967179192104
+mpea_ys,cluster,vec_regime,6.87-8 (mixed),FCP-RFsigma,174.0,0.8896551724137931,2.424932469544255
+mpea_ys,cluster,vec_regime,6.87-8 (mixed),GSCP,174.0,0.8051724137931033,2.2069973263668725
+mpea_ys,cluster,vec_regime,6.87-8 (mixed),RF-z,174.0,0.914367816091954,2.933178768028887
+mpea_ys,cluster,vec_regime,6.87-8 (mixed),SCP,174.0,0.6402298850574712,1.5260080849962065
+mpea_ys,cluster,vec_regime,VEC<6.87 (BCC-favoured),CV+,466.0,0.8678111587982832,1.5517470655241545
+mpea_ys,cluster,vec_regime,VEC<6.87 (BCC-favoured),FCP,466.0,0.953862660944206,2.389207862118126
+mpea_ys,cluster,vec_regime,VEC<6.87 (BCC-favoured),FCP-RFsigma,466.0,0.9214592274678111,1.9643482727285924
+mpea_ys,cluster,vec_regime,VEC<6.87 (BCC-favoured),GSCP,466.0,0.9150214592274677,2.233873528617919
+mpea_ys,cluster,vec_regime,VEC<6.87 (BCC-favoured),RF-z,466.0,0.9465665236051501,2.237528708329008
+mpea_ys,cluster,vec_regime,VEC<6.87 (BCC-favoured),SCP,466.0,0.8489270386266095,1.5724072099379287
+mpea_ys,cluster,vec_regime,VEC>=8 (FCC-favoured),CV+,120.0,0.8058333333333334,1.4590726354072
+mpea_ys,cluster,vec_regime,VEC>=8 (FCC-favoured),FCP,120.0,0.9425000000000001,2.5165017288341143
+mpea_ys,cluster,vec_regime,VEC>=8 (FCC-favoured),FCP-RFsigma,120.0,0.9666666666666666,2.2672001565515054
+mpea_ys,cluster,vec_regime,VEC>=8 (FCC-favoured),GSCP,120.0,0.8983333333333334,2.158726898854944
+mpea_ys,cluster,vec_regime,VEC>=8 (FCC-favoured),RF-z,120.0,0.9833333333333332,2.750393862708356
+mpea_ys,cluster,vec_regime,VEC>=8 (FCC-favoured),SCP,120.0,0.7833333333333333,1.4828269636097964
+mpea_ys,system,alloy_class,3d-transition,CV+,309.0,0.8090614886731391,1.5181358229587005
+mpea_ys,system,alloy_class,3d-transition,FCP,309.0,0.8851132686084142,1.9803942232525507
+mpea_ys,system,alloy_class,3d-transition,FCP-RFsigma,309.0,0.9035598705501618,2.084066590017921
+mpea_ys,system,alloy_class,3d-transition,GSCP,309.0,0.8466019417475728,1.855541637121987
+mpea_ys,system,alloy_class,3d-transition,RF-z,309.0,0.926537216828479,2.5423713789795586
+mpea_ys,system,alloy_class,3d-transition,SCP,309.0,0.7815533980582524,1.534094550627068
+mpea_ys,system,alloy_class,mixed,CV+,65.0,0.9,1.5059050029279983
+mpea_ys,system,alloy_class,mixed,FCP,65.0,0.9507692307692308,1.8489922642463834
+mpea_ys,system,alloy_class,mixed,FCP-RFsigma,65.0,0.96,1.9218282388592685
+mpea_ys,system,alloy_class,mixed,GSCP,65.0,0.9538461538461538,1.9534939929854722
+mpea_ys,system,alloy_class,mixed,RF-z,65.0,0.9907692307692308,2.337096240750255
+mpea_ys,system,alloy_class,mixed,SCP,65.0,0.8969230769230769,1.526738011121953
+mpea_ys,system,alloy_class,refractory,CV+,386.0,0.9113989637305699,1.4911614042305932
+mpea_ys,system,alloy_class,refractory,FCP,386.0,0.944559585492228,1.798829788210833
+mpea_ys,system,alloy_class,refractory,FCP-RFsigma,386.0,0.916580310880829,1.6283831289521327
+mpea_ys,system,alloy_class,refractory,GSCP,386.0,0.9352331606217616,1.90412519233699
+mpea_ys,system,alloy_class,refractory,RF-z,386.0,0.944559585492228,1.9179089889511733
+mpea_ys,system,alloy_class,refractory,SCP,386.0,0.9085492227979275,1.5335873010380525
+mpea_ys,system,delta_tertile,high delta,CV+,247.0,0.8295546558704453,1.5046997109330174
+mpea_ys,system,delta_tertile,high delta,FCP,247.0,0.9085020242914978,1.973165348427593
+mpea_ys,system,delta_tertile,high delta,FCP-RFsigma,247.0,0.9012145748987855,1.8797078082949046
+mpea_ys,system,delta_tertile,high delta,GSCP,247.0,0.8825910931174089,1.9122774023813804
+mpea_ys,system,delta_tertile,high delta,RF-z,247.0,0.9348178137651821,2.289302123817449
+mpea_ys,system,delta_tertile,high delta,SCP,247.0,0.8307692307692308,1.534664004936717
+mpea_ys,system,delta_tertile,low delta,CV+,258.0,0.8922480620155039,1.5050038974630495
+mpea_ys,system,delta_tertile,low delta,FCP,258.0,0.9352713178294574,1.8774282465458594
+mpea_ys,system,delta_tertile,low delta,FCP-RFsigma,258.0,0.934108527131783,1.8940883070271597
+mpea_ys,system,delta_tertile,low delta,GSCP,258.0,0.9069767441860466,1.8640301997324802
+mpea_ys,system,delta_tertile,low delta,RF-z,258.0,0.9534883720930234,2.2650434780582778
+mpea_ys,system,delta_tertile,low delta,SCP,258.0,0.8682170542635659,1.533627073304851
+mpea_ys,system,delta_tertile,mid delta,CV+,255.0,0.8831372549019608,1.500487303418217
+mpea_ys,system,delta_tertile,mid delta,FCP,255.0,0.9184313725490195,1.7832403205489704
+mpea_ys,system,delta_tertile,mid delta,FCP-RFsigma,255.0,0.9090196078431372,1.7430928931571164
+mpea_ys,system,delta_tertile,mid delta,GSCP,255.0,0.912156862745098,1.8905078028927331
+mpea_ys,system,delta_tertile,mid delta,RF-z,255.0,0.9349019607843138,2.070502115947677
+mpea_ys,system,delta_tertile,mid delta,SCP,255.0,0.8678431372549019,1.5313729056288572
+mpea_ys,system,phase,BCC,CV+,287.0,0.9331010452961672,1.4922155434031632
+mpea_ys,system,phase,BCC,FCP,287.0,0.9529616724738675,1.7720767457731608
+mpea_ys,system,phase,BCC,FCP-RFsigma,287.0,0.9268292682926829,1.60865273447825
+mpea_ys,system,phase,BCC,GSCP,287.0,0.9407665505226481,1.9045096614536479
+mpea_ys,system,phase,BCC,RF-z,287.0,0.9533101045296167,1.9010216383199006
+mpea_ys,system,phase,BCC,SCP,287.0,0.9233449477351916,1.5375403423268863
+mpea_ys,system,phase,FCC,CV+,90.0,0.9166666666666666,1.5067770959649978
+mpea_ys,system,phase,FCC,FCP,90.0,0.9622222222222222,1.8910715165616754
+mpea_ys,system,phase,FCC,FCP-RFsigma,90.0,0.96,1.9131851590328472
+mpea_ys,system,phase,FCC,GSCP,90.0,0.9266666666666667,1.8392284200678302
+mpea_ys,system,phase,FCC,RF-z,90.0,0.9633333333333333,2.3226527109236463
+mpea_ys,system,phase,FCC,SCP,90.0,0.8722222222222223,1.5184448017199845
+mpea_ys,system,phase,other,CV+,383.0,0.8093994778067884,1.5109668326997643
+mpea_ys,system,phase,other,FCP,383.0,0.8872062663185378,1.9521988195378246
+mpea_ys,system,phase,other,FCP-RFsigma,383.0,0.8955613577023499,1.9936848577250637
+mpea_ys,system,phase,other,GSCP,383.0,0.8647519582245431,1.8882688485992847
+mpea_ys,system,phase,other,RF-z,383.0,0.926892950391645,2.41040450994168
+mpea_ys,system,phase,other,SCP,383.0,0.8015665796344648,1.533430221056826
+mpea_ys,system,vec_regime,6.87-8 (mixed),CV+,174.0,0.7448275862068965,1.531911575926895
+mpea_ys,system,vec_regime,6.87-8 (mixed),FCP,174.0,0.8477011494252874,1.9743759819302205
+mpea_ys,system,vec_regime,6.87-8 (mixed),FCP-RFsigma,174.0,0.8896551724137931,2.218208032053023
+mpea_ys,system,vec_regime,6.87-8 (mixed),GSCP,174.0,0.803448275862069,1.8605960842646057
+mpea_ys,system,vec_regime,6.87-8 (mixed),RF-z,174.0,0.9224137931034482,2.7194709054595445
+mpea_ys,system,vec_regime,6.87-8 (mixed),SCP,174.0,0.7281609195402299,1.5408172683466386
+mpea_ys,system,vec_regime,VEC<6.87 (BCC-favoured),CV+,466.0,0.9,1.4938904889155356
+mpea_ys,system,vec_regime,VEC<6.87 (BCC-favoured),FCP,466.0,0.9390557939914164,1.8430070938784286
+mpea_ys,system,vec_regime,VEC<6.87 (BCC-favoured),FCP-RFsigma,466.0,0.9124463519313306,1.6824717735786734
+mpea_ys,system,vec_regime,VEC<6.87 (BCC-favoured),GSCP,466.0,0.9278969957081544,1.913393209412868
+mpea_ys,system,vec_regime,VEC<6.87 (BCC-favoured),RF-z,466.0,0.9424892703862661,1.9982467059214504
+mpea_ys,system,vec_regime,VEC<6.87 (BCC-favoured),SCP,466.0,0.8957081545064378,1.5335312888467318
+mpea_ys,system,vec_regime,VEC>=8 (FCC-favoured),CV+,120.0,0.9275,1.4989209539303994
+mpea_ys,system,vec_regime,VEC>=8 (FCC-favoured),FCP,120.0,0.9566666666666667,1.8674323650602371
+mpea_ys,system,vec_regime,VEC>=8 (FCC-favoured),FCP-RFsigma,120.0,0.9616666666666667,1.8954271296002119
+mpea_ys,system,vec_regime,VEC>=8 (FCC-favoured),GSCP,120.0,0.9366666666666668,1.8328903784032486
+mpea_ys,system,vec_regime,VEC>=8 (FCC-favoured),RF-z,120.0,0.9633333333333333,2.278716491493721
+mpea_ys,system,vec_regime,VEC>=8 (FCC-favoured),SCP,120.0,0.8866666666666667,1.5209174981040587

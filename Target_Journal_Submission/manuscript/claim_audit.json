@@ -8,7 +8,7 @@
   "holds": true
  },
  {
-  "claim": "abstract has 235 words (<= 250)",
+  "claim": "abstract has 248 words (<= 250)",
   "holds": true
  },
  {
@@ -224,6 +224,70 @@
   "holds": true
  },
  {
+  "claim": "FCP coverage with RF members within 1.5 points of LGBM (system)",
+  "holds": true
+ },
+ {
+  "claim": "random-fold CV+ with RF members under-covers (system)",
+  "holds": true
+ },
+ {
+  "claim": "FCP coverage with RF members within 1.5 points of LGBM (cluster)",
+  "holds": true
+ },
+ {
+  "claim": "random-fold CV+ with RF members under-covers (cluster)",
+  "holds": true
+ },
+ {
+  "claim": "RF-z interval score significantly better than FCP[RF]",
+  "holds": true
+ },
+ {
+  "claim": "FCP[RF] shortfall significantly smaller than CV+[RF]",
+  "holds": true
+ },
+ {
+  "claim": "FCP-RFsigma mean coverage >= 0.9 under both shifts",
+  "holds": true
+ },
+ {
+  "claim": "FCP-RFsigma vs RF-z interval score not significantly different",
+  "holds": true
+ },
+ {
+  "claim": "FCP-RFsigma interval score better than LightGBM FCP",
+  "holds": true
+ },
+ {
+  "claim": "FCP-RFsigma better calibrated than RF-z in-distribution",
+  "holds": true
+ },
+ {
+  "claim": "confirm temporal elongation statement",
+  "holds": true
+ },
+ {
+  "claim": "confirm temporal UTS: no failure",
+  "holds": true
+ },
+ {
+  "claim": "FCP coverage >= 0.9 for all sensitivity settings",
+  "holds": true
+ },
+ {
+  "claim": "FCP coverage robust to fold assignment",
+  "holds": true
+ },
+ {
+  "claim": "random-calibrated still under-cover with random assignment",
+  "holds": true
+ },
+ {
+  "claim": "Mondrian between SCP and FCP",
+  "holds": true
+ },
+ {
   "claim": "FCP cost within 10% of random-fold CV+",
   "holds": true
  },
@@ -272,7 +336,7 @@
   "holds": true
  },
  {
-  "claim": "highlight <= 85 characters: Benchmark: 6 datasets, 3 shift protocols, 17 interval methods, 10 seeds (71)",
+  "claim": "highlight <= 85 characters: Pre-registered test on five new tasks confirms both failure and remedy (70)",
   "holds": true
  }
 ]

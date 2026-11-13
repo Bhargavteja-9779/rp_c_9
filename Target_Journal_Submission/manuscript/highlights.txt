@@ -2,4 +2,4 @@ Random-split 90% conformal intervals cover only 72–87% of new-family alloys
 Family-grouped CV+ calibration restores mean coverage near 90% for new families
 A family-subsampled variant carries a finite-sample family-level guarantee
 In high-entropy alloys, random-split misses peak between BCC and FCC VEC limits
-Benchmark: 6 datasets, 3 shift protocols, 17 interval methods, 10 seeds
+Pre-registered test on five new tasks confirms both failure and remedy

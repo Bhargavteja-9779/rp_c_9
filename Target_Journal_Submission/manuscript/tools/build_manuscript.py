@@ -488,6 +488,10 @@ def discussion(V):
 DUPS = 0
 
 
+def fmt_signed(x, d=3):
+    return f"{x:+.{d}f}".replace("-", "−")
+
+
 def confirm_stats():
     p = RES / "statistics_confirm.json"
     return json.load(open(p)) if p.exists() else None
@@ -520,17 +524,41 @@ def confirm_section(V):
            + ", ".join(f"{m} {c['C2'][m]['p_holm']:.4f}" for m in c["C2"]) + "). "
            f"C3 (FCP ≥ 0.88 under both shifts) was {yn(ok['C3'])}: {c['C3']['system']:.3f} and {c['C3']['cluster']:.3f}. "
            f"For FCP-RFσ, C4 (coverage ≥ 0.88) was {yn(ok['C4'])} ({c['C4']['system']:.3f} and {c['C4']['cluster']:.3f}), "
-           f"C5 (lower interval score than FCP) was {yn(ok['C5'])} (median paired difference {c5['median_diff']:+.3f} SD, "
+           f"C5 (lower interval score than FCP) was {yn(ok['C5'])} (median paired difference {fmt_signed(c5['median_diff'])} SD, "
            f"p = {c5['p']:.4f}), and C6 (better in-distribution calibration than RF-z) was {yn(ok['C6'])} "
            f"({c6['alpha=0.1']['FCP-RFsigma']:.3f} vs {c6['alpha=0.1']['RF-z']:.3f} at nominal 0.90; "
            f"{c6['alpha=0.2']['FCP-RFsigma']:.3f} vs {c6['alpha=0.2']['RF-z']:.3f} at 0.80). ")
+    cr = pd.read_csv(RES / "confirm_results.csv")
+    rnd = cr[(cr.protocol == "random") & cr.method.isin(["FCP-RFsigma", "RF-z"])]
+    dev = {}
+    for a in (0.1, 0.2):
+        P = rnd[rnd.alpha == a].groupby(["task", "method"]).coverage.mean().unstack()
+        dev[a] = int(((P["FCP-RFsigma"] - (1 - a)).abs() < (P["RF-z"] - (1 - a)).abs()).sum())
+    ntask = len(c["tasks"])
+    txt += (f"Two qualifications apply. C5 was met narrowly (p = {c5['p']:.3f} over 10 cells that come from only {ntask} "
+            f"tasks), and C6 held for the mean but not for every task: FCP-RFσ was closer to nominal than RF-z on "
+            f"{dev[0.1]} of {ntask} tasks at α = 0.1 and {dev[0.2]} of {ntask} at α = 0.2, over-covering for steel tensile "
+            "strength. ")
     if c["promoted"]:
-        txt += ("By the pre-registered rule, FCP-RFσ is therefore promoted from a post hoc observation to the recommended "
-                "variant for random-forest models.")
+        txt += ("By the pre-registered rule, FCP-RFσ is nevertheless promoted from a post hoc observation to the recommended "
+                "variant for random-forest models; Table {{tab:confirm}} gives the per-protocol results.")
     else:
         txt += ("By the pre-registered rule, FCP-RFσ therefore remains a post hoc observation; the criteria it failed are "
                 "reported above.")
     E = [("h2", "9.5. Pre-registered confirmatory study"), ("p", txt), ("table_confirm", None)]
+    tp = TAB / "table_confirm_temporal.csv"
+    if tp.exists():
+        T = pd.read_csv(tp).set_index(["task", "method"])
+        tq = lambda t, m: float(T.loc[(t, m), "coverage"])
+        E.append(("p", "In the pre-registered chronological test (train < 2019, test 2019), MPEA tensile strength showed little "
+                       f"shift: SCP, CV+, FCP and FCP-RFσ all covered at least {min(tq('mpea_uts', m) for m in ['SCP', 'CV+', 'FCP', 'FCP-RFsigma']):.2f} "
+                       f"(FCP {tq('mpea_uts', 'FCP'):.3f}), although WCP ({tq('mpea_uts', 'WCP'):.3f}) and RF-z ({tq('mpea_uts', 'RF-z'):.3f}) did not. For elongation, FCP ({tq('mpea_elong', 'FCP'):.3f}) and FCP-RFσ "
+                       f"({tq('mpea_elong', 'FCP-RFsigma'):.3f}) reached nominal coverage, whereas SCP ({tq('mpea_elong', 'SCP'):.3f}), "
+                       f"CV+ ({tq('mpea_elong', 'CV+'):.3f}) and RF-z ({tq('mpea_elong', 'RF-z'):.3f}) fell short "
+                       "(Supplementary Material)."))
+        claim(tq("mpea_elong", "FCP") >= 0.9 and tq("mpea_elong", "FCP-RFsigma") >= 0.9 and
+              max(tq("mpea_elong", m) for m in ["SCP", "CV+", "RF-z"]) < 0.9, "confirm temporal elongation statement")
+        claim(min(tq("mpea_uts", m) for m in ["SCP", "CV+", "FCP", "FCP-RFsigma"]) >= 0.9, "confirm temporal UTS: no failure")
     rows = []
     for m in ["SCP", "CV+", "CQR", "WCP", "GP", "RF-z", "GSCP", "MCP", "FCP", "FCP-W", "FCP-RFsigma"]:
         r = [m.replace("RFsigma", "RFσ")]
@@ -542,7 +570,9 @@ def confirm_section(V):
         rows.append(r)
     TB["table_confirm"] = {"type": "table", "font_size": 14,
         "caption": runs("**Table {{tab:confirm}}.** Pre-registered confirmatory study on five new tasks (α = 0.1, 10 seeds). "
-                        "Cov: mean coverage over tasks; Min: worst task; IS: mean interval score / SD(y)."),
+                        "Cov: mean coverage over tasks; Min: worst task; IS: mean interval score / SD(y); ∞: some intervals unbounded "
+                        "(FCP-W under cluster holdout has G = 8 < 9 training families, Eq. 10; WCP when density-ratio weights "
+                        "concentrate on a few calibration alloys)."),
         "header": ["Method", "Cov", "Min", "IS", "Cov", "Min", "IS", "Cov", "Min", "IS"],
         "rows": [["", "Random", "", "", "Unseen system", "", "", "Unseen cluster", "", ""]] + rows,
         "col_widths": [0.13] + [0.0966] * 9}
@@ -658,7 +688,8 @@ def conclusion(V):
                 "Random-forest tree-spread intervals were an unexpectedly strong but uncalibrated competitor; their robustness "
                 "comes from systematic over-coverage in-distribution. Normalizing family-grouped CV+ by that tree spread (FCP-RFσ, "
                 "formulated post hoc) reached the same efficiency with calibrated coverage and is the best-performing calibrated "
-                "variant found here.",
+                "variant found here" + (", a finding that met all of its pre-registered criteria on five new tasks."
+                                        if (confirm_stats() or {}).get("promoted") else "."),
                 "Remaining failures concentrate in families with extreme property values and, metallurgically, in multiphase "
                 "alloys and the VEC band between BCC- and FCC-stable compositions, where small composition changes alter the "
                 "phase constitution. Interval estimates for such candidates should be treated with additional caution, and a "
@@ -892,7 +923,8 @@ NUMBERING = {}
 
 
 def SENS_HOOK(V):
-    return []
+    """Sections 9.4-9.6 (appended to Section 9 by robustness_sections)."""
+    return basemodel_section(V) + confirm_section(V) + additional_checks(V)
 
 
 def additional_checks(V):
@@ -1024,8 +1056,11 @@ def RFSIG_VERDICT(m, pv):
     return (f"The hypothesis was supported. FCP-RFσ's interval score was statistically indistinguishable from RF-z's and "
             f"better than that of the LightGBM-based FCP in {w_fcp} of 12 shift cells (p = {p_fcp:.4f}). Unlike RF-z, it stayed "
             f"calibrated in-distribution: {rs1:.3f} and {rs:.3f} at nominal 0.90 and 0.80, against {rz1:.3f} and {rz:.3f} for RF-z. "
-            "Because this variant was formulated after the main results, it is reported as a post hoc finding to be confirmed "
-            "on further data. It is, however, the best-performing calibrated method in this study.")
+            + ("Because this variant was formulated after the main results, it was tested afterwards in a pre-registered "
+               "confirmatory study on new tasks (Section 9.5)."
+               if confirm_stats() is not None else
+               "Because this variant was formulated after the main results, it is reported as a post hoc finding to be confirmed "
+               "on further data. It is, however, the best-performing calibrated method in this study."))
 
 
 def screening(V):
