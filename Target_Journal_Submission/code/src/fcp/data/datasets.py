@@ -116,3 +116,34 @@ def load_years(name):
         df = df[df[col].notna() & df["test_type"].isin(["C", "T"]) & df["test_temp_C"].notna()]
         return df.groupby(["formula", "processing", "test_type", "test_temp_C"], as_index=False)["year"].min()["year"].to_numpy()
     raise KeyError(name)
+
+
+def load_mpea_descriptors(name):
+    """Metallurgical descriptors aligned with load_task rows for MPEA tasks: reported phase (mode over merged rows),
+    valence-electron concentration VEC, atomic-size mismatch delta (%), refractory fraction and alloy class."""
+    from pymatgen.core import Composition, Element
+    df = _mpea()
+    if name == "mpea_hv":
+        df = df[df["HV"].notna()]; keys = ["formula", "processing"]
+    else:
+        col = {"mpea_ys": "YS (MPa)", "mpea_uts": "UTS (MPa)", "mpea_elong": "Elongation (%)"}[name]
+        df = df[df[col].notna() & df["test_type"].isin(["C", "T"]) & df["test_temp_C"].notna()]
+        keys = ["formula", "processing", "test_type", "test_temp_C"]
+    ph = df.groupby(keys, as_index=False)["BCC/FCC/other"].agg(lambda x: x.mode().iloc[0] if x.notna().any() else "unknown")
+    REFR = {"Nb", "Mo", "Ta", "W", "Hf", "Zr", "V", "Re"}
+    rows = []
+    for f in ph["formula"]:
+        c = Composition(f).fractional_composition
+        vec = 0.0; rbar = 0.0; refr = 0.0
+        rad = {}
+        for e, x in c.items():
+            g = Element(e.symbol).group
+            vec += x * (g if g <= 12 else g - 10)
+            r = Element(e.symbol).metallic_radius or Element(e.symbol).atomic_radius
+            rad[e.symbol] = float(r); rbar += x * float(r)
+            refr += x if e.symbol in REFR else 0.0
+        delta = 100 * np.sqrt(sum(x * (1 - rad[e.symbol] / rbar) ** 2 for e, x in c.items()))
+        rows.append({"vec": vec, "delta": delta, "refractory_frac": refr,
+                     "alloy_class": "refractory" if refr >= 0.5 else ("3d-transition" if refr < 0.1 else "mixed")})
+    out = pd.concat([ph.reset_index(drop=True), pd.DataFrame(rows)], axis=1).rename(columns={"BCC/FCC/other": "phase"})
+    return out

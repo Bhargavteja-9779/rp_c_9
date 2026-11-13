@@ -740,6 +740,65 @@ def fig_graphical_abstract(cm, out):
     plt.close(fig)
 
 
+def metallurgy_analysis(out, cfg):
+    """Coverage and width of 90% intervals for MPEA alloys from unseen chemical systems, broken down by metallurgical
+    descriptors: alloy class (refractory / 3d-transition / mixed), reported phase, VEC regime and atomic-size mismatch."""
+    from experiments import runner as R
+    from fcp.data.datasets import load_mpea_descriptors
+    rows = []
+    for task in ["mpea_hv", "mpea_ys"]:
+        desc = load_mpea_descriptors(task)
+        vreg = np.where(desc.vec < 6.87, "VEC<6.87 (BCC-favoured)", np.where(desc.vec < 8.0, "6.87-8 (mixed)", "VEC>=8 (FCC-favoured)"))
+        dq = pd.qcut(desc.delta, 3, labels=["low delta", "mid delta", "high delta"]).astype(str).values
+        for protocol in ["system", "cluster"]:
+            for seed in cfg["seeds"]:
+                r = load_merged(R.CACHE, task, protocol, seed)
+                if r is None:
+                    continue
+                f = R.CACHE / f"rfsigma_{task}_{protocol}_{seed}_rfsigma.pkl"
+                extra = pickle.loads(f.read_bytes()) if f.exists() else None
+                y = r["y"]; sd = y.std()
+                for m in ["SCP", "CV+", "GSCP", "FCP", "RF-z", "FCP-RFsigma"]:
+                    src = extra if m == "FCP-RFsigma" else r
+                    if src is None or (m, 0.1) not in src["lo"]:
+                        continue
+                    lo, hi = src["lo"][(m, 0.1)], src["hi"][(m, 0.1)]
+                    cov = (y >= lo) & (y <= hi); w = (hi - lo) / sd
+                    for dim, lab in [("alloy_class", desc.alloy_class.values), ("phase", desc.phase.values),
+                                     ("vec_regime", vreg), ("delta_tertile", dq)]:
+                        for g in np.unique(lab):
+                            msk = lab == g
+                            rows.append({"task": task, "protocol": protocol, "seed": seed, "method": m, "dimension": dim,
+                                         "group": g, "n": int(msk.sum()), "coverage": cov[msk].mean(), "width_sd": w[msk].mean()})
+    if not rows:
+        return
+    d = pd.DataFrame(rows)
+    t = d.groupby(["task", "protocol", "dimension", "group", "method"]).agg(n=("n", "mean"), coverage=("coverage", "mean"),
+                                                                           width_sd=("width_sd", "mean")).reset_index()
+    t.to_csv(out / "tables" / "table_metallurgy.csv", index=False); _md(t, out / "tables" / "table_metallurgy.md")
+    # figure: coverage by alloy class and VEC regime, system protocol, SCP vs FCP vs FCP-RFsigma
+    sub = t[(t.protocol == "system") & t.method.isin(["SCP", "FCP", "FCP-RFsigma"])]
+    fig, axes = plt.subplots(1, 4, figsize=(7.2, 2.7), sharey=True)
+    panels = [("mpea_hv", "alloy_class"), ("mpea_ys", "alloy_class"), ("mpea_hv", "vec_regime"), ("mpea_ys", "vec_regime")]
+    for ax, (task, dim) in zip(axes, panels):
+        s_ = sub[(sub.task == task) & (sub.dimension == dim)]
+        groups = [g for g in (["3d-transition", "mixed", "refractory"] if dim == "alloy_class" else
+                              ["VEC<6.87 (BCC-favoured)", "6.87-8 (mixed)", "VEC>=8 (FCC-favoured)"]) if g in s_.group.values]
+        for k, (m, c) in enumerate([("SCP", C_ORANGE), ("FCP", C_BLUE), ("FCP-RFsigma", C_AQUA)]):
+            v = s_[s_.method == m].set_index("group").reindex(groups).coverage
+            ax.bar(np.arange(len(groups)) + (k - 1) * 0.27, v, width=0.25, color=c, label=m.replace("RFsigma", "RFσ"))
+        ax.axhline(0.9, color=C_RED, ls="--", lw=1); ax.set_ylim(0.6, 1.0)
+        short = {"3d-transition": "3d", "mixed": "mixed", "refractory": "refr.", "VEC<6.87 (BCC-favoured)": "<6.87",
+                 "6.87-8 (mixed)": "6.87–8", "VEC>=8 (FCC-favoured)": "≥8"}
+        ax.set_xticks(range(len(groups))); ax.set_xticklabels([short[g] for g in groups], fontsize=7)
+        ax.set_title(("Hardness" if task == "mpea_hv" else "Yield strength") + (" · class" if dim == "alloy_class" else " · VEC"),
+                     fontsize=7.5)
+    axes[0].set_ylabel("Coverage, unseen chemical systems")
+    h, l = axes[0].get_legend_handles_labels()
+    fig.legend(h, l, loc="lower center", bbox_to_anchor=(0.5, 0.98), ncol=3, fontsize=7)
+    _save(fig, out, "fig13_metallurgy")
+
+
 def run(cfg, out):
     out = Path(out)
     _style()
@@ -760,6 +819,7 @@ def run(cfg, out):
     screening_analysis(out, cfg)
     mondrian_analysis(df, out)
     temporal_analysis(out, cfg)
+    metallurgy_analysis(out, cfg)
     for name in ["generalization_results.csv"]:
         p = out / name
         if p.exists():
