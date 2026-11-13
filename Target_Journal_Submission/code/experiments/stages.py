@@ -40,7 +40,7 @@ def main(cfg, out, n_jobs):
     c_base = copy.deepcopy(cfg); c_base["methods"] = ["Ens-z", "SCP", "WCP", "CQR", "GSCP", "GP", "RF-z"]
     _parallel_runs("main", jobs, c_base, n_jobs)
     # (b) all CV+ variants with the v2 scale model, for every task / protocol / seed
-    c_cv = copy.deepcopy(cfg); c_cv["methods"] = list(CV_VARIANTS)
+    c_cv = copy.deepcopy(cfg); c_cv["methods"] = [m for m in CV_VARIANTS if m != "FCP-S"]
     _parallel_runs("main", jobs, c_cv, n_jobs, variant="cvplus_v2")
     rows = []
     for t, p, s in jobs:
@@ -194,6 +194,20 @@ def rfsigma(cfg, out, n_jobs):
     _save_rows(rows, out / "rfsigma_results.csv")
 
 
+def fcps(cfg, out, n_jobs):
+    """Theory check: the family-subsampled FCP-S covered by Proposition 1, next to FCP and FCP-W (same fold models).
+    Unseen-system protocol only: with 10 composition clusters a training set has 8 clusters, below the G >= 9 needed
+    for finite family-weighted quantiles at alpha = 0.1 (Eq. 10), so FCP-W and FCP-S are infinite there by construction."""
+    c2 = copy.deepcopy(cfg); c2["methods"] = ["FCP", "FCP-W", "FCP-S"]
+    jobs = [(t, "system", s) for t in cfg["tasks"] for s in cfg["seeds"]]
+    from joblib import Parallel, delayed
+    Parallel(n_jobs=n_jobs)(delayed(_one)("fcps", t, p, s, c2, "fcps", {}) for t, p, s in jobs)
+    rows = []
+    for t, p, s in jobs:
+        rows += R.metrics_rows(R.run_one("fcps", t, p, s, c2, variant="fcps"))
+    _save_rows(rows, out / "fcps_results.csv")
+
+
 CONFIRM_TASKS = ["mpea_uts", "mpea_elong", "steel_uts", "superhard_g", "expt_gap"]
 
 
@@ -202,7 +216,7 @@ def confirm(cfg, out, n_jobs):
     from fcp.evaluation.protocol import CV_VARIANTS
     c_base = copy.deepcopy(cfg)
     c_base["methods"] = ["Ens-z", "SCP", "WCP", "CQR", "GSCP", "GP", "RF-z", "MCP", "FCP-RFsigma", "CV+-RFsigma"]
-    c_cv = copy.deepcopy(cfg); c_cv["methods"] = list(CV_VARIANTS)
+    c_cv = copy.deepcopy(cfg); c_cv["methods"] = [m for m in CV_VARIANTS if m != "FCP-S"]
     jobs = [(t, p, s) for t in CONFIRM_TASKS for p in cfg["protocols"] for s in cfg["seeds"]]
     jobs += [(t, "temporal", s) for t in ["mpea_uts", "mpea_elong"] for s in cfg["seeds"]]
     from joblib import Parallel, delayed

@@ -1,0 +1,50 @@
+{
+  "all_cells_above_bound": true,
+  "mean": {
+    "coverage": {
+      "FCP": 0.938706395943238,
+      "FCP-S": 0.9779193759456917,
+      "FCP-W": 0.980319388214125
+    },
+    "family_coverage": {
+      "FCP": 0.928969661896778,
+      "FCP-S": 0.9680193786777294,
+      "FCP-W": 0.9752667519889436
+    },
+    "width_sd": {
+      "FCP": 2.8114030031384942,
+      "FCP-S": Infinity,
+      "FCP-W": Infinity
+    },
+    "interval_score_sd": {
+      "FCP": 3.240559369527135,
+      "FCP-S": Infinity,
+      "FCP-W": Infinity
+    }
+  },
+  "min_task_family_coverage": {
+    "FCP": 0.9196092740000061,
+    "FCP-S": 0.9568393852989437,
+    "FCP-W": 0.9600616742203433
+  },
+  "min_bound": 0.760758665794637,
+  "max_bound": 0.7718177548144669,
+  "FCP-S vs FCP-W family_coverage (task x seed)": {
+    "n": 2,
+    "statistic": NaN,
+    "p": NaN,
+    "rank_biserial": -1.0,
+    "median_diff": -0.0072473733112143335,
+    "ci_lo": NaN,
+    "ci_hi": NaN
+  },
+  "FCP-S vs FCP-W interval_score (task x seed)": {
+    "n": 0,
+    "statistic": NaN,
+    "p": NaN,
+    "rank_biserial": 0.0,
+    "median_diff": NaN,
+    "ci_lo": NaN,
+    "ci_hi": NaN
+  }
+}

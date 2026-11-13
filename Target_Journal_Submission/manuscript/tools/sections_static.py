@@ -230,7 +230,7 @@ def method(V):
                                                                         {"frac": [["1 − K/G"], ["K + 1"]]}]}]),
         ("p", "(Proposition 1; proof in Supplementary Note S1). FCP-W replaces the single random draw by its expectation "
               "(weights 1/*n*_{g}), which is the pooled construction of Dunn et al. [@dunn2023]. The unweighted FCP targets "
-              "alloy-level coverage. Neither is literally covered by Proposition 1, so both are assessed empirically below. "
+              "alloy-level coverage. Neither is literally covered by Proposition 1, so both are assessed empirically below, and FCP-S itself is evaluated in Section 9.6. "
               "Proposition 1 also explains why random-split calibration fails: a randomly held-out calibration alloy shares its "
               "family with training alloys, so its score is not exchangeable with that of an alloy from a new family, and the "
               "coverage loss is bounded only by the distance between the two score distributions [@barber2023]."),

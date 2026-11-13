@@ -31,6 +31,7 @@ CV_VARIANTS = {
     "FCP-W": (True, "both", True),
     "FCP-W[spread]": (True, "spread", True),
     "FCP-W[novelty]": (True, "novelty", True),
+    "FCP-S": (True, "both", "subsample"),   # family-subsampled FCP, covered by Proposition 1 (stage `fcps`)
 }
 
 

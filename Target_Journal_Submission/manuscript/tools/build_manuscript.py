@@ -871,7 +871,7 @@ def additional_checks(V):
     mq = lambda p, m, k="mean_coverage": float(mo.loc[(p, m), k])
     claim(mq("cluster", "MCP") < mq("cluster", "FCP") - 0.03 and mq("cluster", "MCP") >= mq("cluster", "SCP"), "Mondrian between SCP and FCP")
     return [("h2", "9.6. Additional checks"),
-            ("p", "Three further checks are summarized here; full results are in the Supplementary Material. (i) **Sensitivity.** "
+            ("p", ("Four" if (RES / "statistics_fcps.json").exists() else "Three") + " further checks are summarized here; full results are in the Supplementary Material. (i) **Sensitivity.** "
                   "Varying the number of folds (*K* ∈ {3, 10}), ensemble members (*M* ∈ {3, 12}), family fraction (φ ∈ {0.5, 0.9}) "
                   f"and *k*_{{nn}} ∈ {{1, 15}} one at a time kept FCP's coverage between {g['cov'].min():.3f} and {g['cov'].max():.3f} "
                   f"(interval score {g['isc'].min():.2f}–{g['isc'].max():.2f}; Supplementary Fig. {SFIG['sens']}), so validity does "
@@ -882,7 +882,34 @@ def additional_checks(V):
                   f"(MCP, separate quantiles in novelty tertiles) covered {mq('system', 'MCP'):.3f} (system) and "
                   f"{mq('cluster', 'MCP'):.3f} (cluster), between SCP ({mq('cluster', 'SCP'):.3f}) and FCP ({mq('cluster', 'FCP'):.3f}) "
                   "under cluster holdout: conditioning on distance helps, but a randomly held-out alloy that looks novel still has "
-                  "relatives of its own family in the training data, which a genuinely new family does not.")]
+                  "relatives of its own family in the training data, which a genuinely new family does not.")] + fcps_check()
+
+
+def fcps_check():
+    """(iv) Empirical check of Proposition 1: FCP-S (one random calibration alloy per family)."""
+    p = RES / "statistics_fcps.json"
+    if not p.exists():
+        return []
+    f = json.load(open(p))
+    t = pd.read_csv(TAB / "table_fcps.csv"); t = t[t.alpha == 0.1]
+    mean = f["mean"]; mn = f["min_task_family_coverage"]
+    fc = lambda m: mean["family_coverage"][m]
+    isc = lambda m: mean["interval_score_sd"][m]
+    w = f["FCP-S vs FCP-W interval_score (task x seed)"]
+    above = f["all_cells_above_bound"]
+    price = np.isfinite(isc("FCP-S")) and np.isfinite(isc("FCP-W")) and isc("FCP-S") > isc("FCP-W") and w["p"] < 0.05
+    txt = ("(iv) **Proposition 1 in practice.** FCP-S, the family-subsampled variant covered by Proposition 1, was run on the six "
+           f"tasks under unseen-system holdout (10 seeds; *G* = {int(t.G_train.min())}–{int(t.G_train.max())} training families, for "
+           f"which the bound evaluates to {f['min_bound']:.3f}–{f['max_bound']:.3f} at α = 0.1). Its family-level coverage averaged "
+           f"{fc('FCP-S'):.3f} (worst task {mn['FCP-S']:.3f}), against {fc('FCP-W'):.3f} for FCP-W and {fc('FCP'):.3f} for FCP; "
+           + ("every task-level mean exceeded the bound. " if above else "some task-level means fell below the bound (Supplementary Material). ")
+           + (f"Keeping only one calibration alloy per family costs efficiency: the interval score of FCP-S exceeded that of "
+              f"FCP-W ({isc('FCP-S'):.2f} vs {isc('FCP-W'):.2f}; paired Wilcoxon over task–seed cells, p = {w['p']:.2g}). The "
+              "guarantee is thus available at a measurable price, and the deterministic weights of FCP-W are the practical choice "
+              "when family-level coverage is the target." if price else
+              f"The interval scores of FCP-S and FCP-W were {isc('FCP-S'):.2f} and {isc('FCP-W'):.2f} (paired Wilcoxon over task–seed "
+              f"cells, p = {w['p']:.2g}), so in these data the guarantee comes without a detectable loss of efficiency."))
+    return [("p", txt)]
 
 
 def basemodel_section(V):

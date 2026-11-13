@@ -95,6 +95,7 @@ def main():
                    ("table_confirm_summary.csv", "Pre-registered confirmatory study: summary over the five new tasks (Section 9.5)."),
                    ("table_confirm_cells.csv", "Pre-registered confirmatory study: per task and protocol."),
                    ("table_confirm_temporal.csv", "Confirmatory chronological test for MPEA tensile strength and elongation."),
+                   ("table_fcps.csv", "Empirical check of Proposition 1 (Section 9.6): family-subsampled FCP-S vs FCP-W and FCP under unseen-system holdout, with the finite-sample bound evaluated at the number of training families G (10 seeds)."),
                    ("table_worst_families_FCP.csv", "Families with the lowest FCP coverage under unseen-system holdout (≥ 5 alloys; means over seeds)."),
                    ("efficiency_results.csv", "Isolated-process wall time and peak memory for one outer fold (Section 10)."),
                    ("table_error_correlations.csv", "Spearman correlation of within-family coverage with novelty (nov), target extremity (z) and family size (n), system protocol."),

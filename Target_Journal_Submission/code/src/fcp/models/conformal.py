@@ -47,6 +47,26 @@ def weighted_lower(V, w, w_inf, level):
     return -weighted_upper(-V, w, w_inf, 1 - level)
 
 
+def calibration_weights(groups, mode, seed=0):
+    """Weights of the calibration points in the CV+ quantile.
+    False       : unit weight per alloy (FCP).
+    True        : 1/n_g per alloy, i.e. unit mass per family (FCP-W; pooled CDF of Dunn et al. 2023).
+    "subsample" : one alloy drawn uniformly at random per family gets weight 1, all others 0 (FCP-S, Proposition 1)."""
+    groups = np.asarray(groups)
+    n = len(groups)
+    _, inv, cnt = np.unique(groups, return_inverse=True, return_counts=True)
+    if mode == "subsample":
+        key = np.random.default_rng(seed + 7919).random(n)
+        order = np.lexsort((key, inv))                  # within each family, a uniformly random alloy comes first
+        first = np.r_[True, inv[order][1:] != inv[order][:-1]]
+        w = np.zeros(n)
+        w[order[first]] = 1.0
+        return w
+    if mode:
+        return 1.0 / cnt[inv]
+    return np.ones(n)
+
+
 def assign_folds(n, K, groups=None, seed=0, balanced=True):
     """Random fold assignment. If groups is given, whole groups are assigned, so no family is split across folds.
     balanced=True : greedy size balancing after a seeded shuffle (deterministic when all group sizes differ, e.g.
@@ -125,11 +145,7 @@ class CrossFit:
             ca = self.folds == k
             sig_cal[ca] = self.scale_models[sigma_mode][k].predict(self.cal["s"][ca], self.cal["d"][ca])
         S = np.abs(self.y - self.cal["mu"]) / sig_cal
-        if family_weights:
-            _, inv, cnt = np.unique(self.groups, return_inverse=True, return_counts=True)
-            w = 1.0 / cnt[inv]
-        else:
-            w = np.ones(n)
+        w = calibration_weights(self.groups, family_weights, self.seed)
         w_inf = 1.0
         nt = len(self.test[0]["mu"])
         mu_t = np.stack([t["mu"] for t in self.test])          # (K, nt)

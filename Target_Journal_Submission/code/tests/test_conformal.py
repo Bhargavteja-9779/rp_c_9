@@ -125,3 +125,15 @@ def test_inverted_interval_counts_as_empty():
     m = interval_metrics(y, lo, hi, 0.1, np.array(["a", "b"]), np.array([0.0, 1.0]), 1.0)
     assert m["coverage"] == 0.5 and m["empty_rate"] == 0.5
     assert m["width_sd"] == 1.0  # (0 + 2) / 2
+
+
+def test_family_subsample_weights():
+    g = np.repeat(["a", "b", "c", "d"], [1, 5, 20, 3])
+    w = C.calibration_weights(g, "subsample", seed=3)
+    assert set(np.unique(w)) <= {0.0, 1.0}
+    for f in "abcd":
+        assert w[g == f].sum() == 1.0                   # exactly one alloy per family
+    assert np.isclose(C.calibration_weights(g, True).sum(), 4.0)  # FCP-W: unit mass per family
+    assert C.calibration_weights(g, False).sum() == len(g)
+    picks = np.array([np.argmax(C.calibration_weights(g, "subsample", seed=s)[g == "c"]) for s in range(400)])
+    assert len(np.unique(picks)) > 15                   # the draw is (approximately) uniform within a family

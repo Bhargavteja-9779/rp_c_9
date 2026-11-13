@@ -850,6 +850,36 @@ def confirm_analysis(out):
         tt.to_csv(out / "tables" / "table_confirm_temporal.csv", index=False); _md(tt, out / "tables" / "table_confirm_temporal.md")
 
 
+def fcps_analysis(out, cfg):
+    """Theory check (Proposition 1): FCP-S vs FCP-W vs FCP under the unseen-system protocol, with the finite-sample
+    lower bound 1 - 2a - min{2(1 - 1/K)/(G/K + 1), (1 - K/G)/(K + 1)} evaluated at G = training families per outer fold."""
+    p = out / "fcps_results.csv"
+    if not p.exists():
+        return
+    f = pd.read_csv(p)
+    K = cfg["K"]
+    rows = []
+    for (task, a, meth), g in f.groupby(["task", "alpha", "method"]):
+        G = 0.8 * g.n_test_families.mean()          # 5 outer folds: about 4/5 of the families are used for training
+        bound = 1 - 2 * a - min(2 * (1 - 1 / K) / (G / K + 1), (1 - K / G) / (K + 1))
+        rows.append({"task": task, "alpha": a, "method": meth, "G_train": round(G), "bound": bound,
+                     "coverage": g.coverage.mean(), "family_coverage": g.family_coverage.mean(),
+                     "min_seed_family_coverage": g.family_coverage.min(), "width_sd": g.width_sd.mean(),
+                     "interval_score_sd": g.interval_score_sd.mean(), "inf_rate": g.inf_rate.mean()})
+    t = pd.DataFrame(rows).sort_values(["alpha", "task", "method"])
+    t.to_csv(out / "tables" / "table_fcps.csv", index=False); _md(t, out / "tables" / "table_fcps.md")
+    a1 = t[t.alpha == 0.1]
+    P = f[f.alpha == 0.1].pivot_table(index=["task", "seed"], columns="method", values="family_coverage")
+    Q = f[f.alpha == 0.1].pivot_table(index=["task", "seed"], columns="method", values="interval_score_sd")
+    res = {"all_cells_above_bound": bool((a1.family_coverage >= a1.bound).all()),
+           "mean": a1.groupby("method")[["coverage", "family_coverage", "width_sd", "interval_score_sd"]].mean().to_dict(),
+           "min_task_family_coverage": a1.groupby("method").family_coverage.min().to_dict(),
+           "min_bound": float(a1.bound.min()), "max_bound": float(a1.bound.max()),
+           "FCP-S vs FCP-W family_coverage (task x seed)": T.paired_wilcoxon(P["FCP-S"].values, P["FCP-W"].values),
+           "FCP-S vs FCP-W interval_score (task x seed)": T.paired_wilcoxon(Q["FCP-S"].values, Q["FCP-W"].values)}
+    (out / "statistics_fcps.json").write_text(json.dumps(res, indent=2, default=float))
+
+
 def run(cfg, out):
     out = Path(out)
     _style()
@@ -872,6 +902,7 @@ def run(cfg, out):
     temporal_analysis(out, cfg)
     metallurgy_analysis(out, cfg)
     confirm_analysis(out)
+    fcps_analysis(out, cfg)
     for name in ["generalization_results.csv"]:
         p = out / name
         if p.exists():
