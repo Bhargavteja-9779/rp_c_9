@@ -1,6 +1,6 @@
 """Executes experiment runs and caches each (experiment, task, protocol, seed, variant) result, so interrupted
 runs resume where they stopped. Per-point bounds are kept in results/cache (not versioned); metrics go to CSV."""
-import json, pickle, time, hashlib
+import json, os, pickle, time, hashlib
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -10,7 +10,9 @@ from fcp.evaluation.protocol import run_protocol
 from fcp.evaluation.metrics import interval_metrics, point_metrics
 
 ROOT = Path(__file__).resolve().parents[1]
-CACHE = ROOT / "results" / "cache"
+# The results directory is passed through the environment (set by run_all.py) so that joblib worker processes, which
+# re-import this module, use the same cache as the parent (quick mode must never write into the full-run cache).
+CACHE = Path(os.environ.get("FCP_RESULTS_DIR", ROOT / "results")) / "cache"
 
 
 def load_task(name, cfg):
