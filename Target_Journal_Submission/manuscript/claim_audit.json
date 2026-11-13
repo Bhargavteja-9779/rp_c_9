@@ -320,6 +320,18 @@
   "holds": true
  },
  {
+  "claim": "conclusion: C1-C3 met",
+  "holds": true
+ },
+ {
+  "claim": "conclusion: FCP-S above bound",
+  "holds": true
+ },
+ {
+  "claim": "conclusion: no detectable efficiency loss of FCP-S",
+  "holds": true
+ },
+ {
   "claim": "highlight <= 85 characters: Random-split 90% conformal intervals cover only 72–87% of new-family alloys (75)",
   "holds": true
  },

@@ -64,7 +64,7 @@ def intro(V):
               "normalized by a scale that grows with ensemble disagreement and compositional novelty, and the scale model is "
               "fitted only on family-out-of-bag residuals, so calibration labels are never reused. A family-weighted variant "
               "(FCP-W) targets equal coverage across families instead of across alloys. We evaluate both against eight "
-              "established interval methods on six public datasets, under three split protocols of increasing extrapolation "
+              "established interval methods on six public datasets, confirm the findings on five further tasks, under three split protocols of increasing extrapolation "
               "difficulty. None of the ingredients is new on its own: grouped cross-validation, CV+, normalized scores and "
               "hierarchical exchangeability are all established. What this work adds is their combination for the alloy-family "
               "deployment shift, an explicit statement of what is (and is not) guaranteed, a scale model that cannot leak "
@@ -73,13 +73,17 @@ def intro(V):
         ("bullets", [
             "A calibration procedure, FCP / FCP-W, whose calibration step reproduces the deployment shift of alloy design "
             "(prediction for an unseen alloy family). It states its estimand explicitly (alloy-level vs family-level coverage) "
-            "and the finite-sample condition under which the family-level interval is finite (Section 4).",
+            "and the finite-sample condition under which the family-level interval is finite. A family-subsampled variant "
+            "(FCP-S) has a finite-sample family-level coverage guarantee (Proposition 1; Section 4).",
             "A benchmark of interval coverage under alloy-family extrapolation: "
             f"{V['n_tasks']} tasks, 3 split protocols, {V['n_seeds']} outer-split seeds and 17 interval methods. It shows how far "
             "random-split calibration and model-based uncertainty fall below nominal coverage (Section 7).",
-            "Evidence of the practical consequence for alloy screening (false discoveries among lower-bound selections) and a "
-            "chronological deployment test that delineates what family-level calibration can and cannot correct (Sections 7.5 "
-            "and 9.3).",
+            "Evidence of the practical consequence for alloy screening (false discoveries among lower-bound selections), a "
+            "metallurgical interpretation of where random-split intervals fail (valence-electron-concentration regime, phase "
+            "constitution, alloy class), and a chronological deployment test that delineates what family-level calibration can "
+            "and cannot correct (Sections 7.5, 7.6 and 9.3).",
+            "A pre-registered confirmatory study on five tasks not used during development, with hypotheses, success criteria "
+            "and a promotion rule committed before any run (Section 9.5).",
             "Ablation, robustness, sensitivity and efficiency experiments that isolate which component matters and what it costs, "
             "together with an error analysis of the alloy families on which intervals still fail (Sections 8–11).",
             "A fully reproducible code base in which every number, table and figure is regenerated from public data by a single "

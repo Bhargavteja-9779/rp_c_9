@@ -619,6 +619,25 @@ def metallurgy_section(V):
                      "transition, ≥ 8 FCC-favoured); means over 10 seeds (FCP-RFσ: 5 seeds)."))]
 
 
+FB = json.load(open(RES / "statistics_fcps.json")) if (RES / "statistics_fcps.json").exists() else {"min_bound": float("nan"), "max_bound": float("nan")}
+
+
+def CONCL_CONFIRM():
+    c = confirm_stats()
+    f = RES / "statistics_fcps.json"
+    sm = pd.read_csv(TAB / "table_confirm_summary.csv").set_index(["protocol", "method"])
+    q = lambda p, m: float(sm.loc[(p, m), "mean_coverage"])
+    fs = json.load(open(f))
+    claim(c["criteria_met"]["C1"] and c["criteria_met"]["C2"] and c["criteria_met"]["C3"], "conclusion: C1-C3 met")
+    claim(fs["all_cells_above_bound"], "conclusion: FCP-S above bound")
+    claim(fs["FCP-S vs FCP-W interval_score (task x seed)"]["p"] > 0.05, "conclusion: no detectable efficiency loss of FCP-S")
+    return (f"Both findings replicated in a pre-registered confirmatory study on five new tasks: random-split SCP covered "
+            f"{q('system', 'SCP'):.3f} and {q('cluster', 'SCP'):.3f}, FCP {q('system', 'FCP'):.3f} and {q('cluster', 'FCP'):.3f}. "
+            f"A family-subsampled variant with a finite-sample family-level guarantee (Proposition 1) reached a family-level "
+            f"coverage of {fs['mean']['family_coverage']['FCP-S']:.3f} (FCP-W: {fs['mean']['family_coverage']['FCP-W']:.3f}) with no "
+            "detectable loss of efficiency.")
+
+
 def CONFIRM_LIMIT(V):
     c = confirm_stats()
     if c is None:
@@ -639,9 +658,10 @@ def limitations(V):
     claim(int(a.drop("supercon_tc").rows_with_alt_spelling.sum()) == 0, "no duplicate spellings outside supercon")
     return [("h1", "13. Limitations"),
             ("bullets", [
-                "No new finite-sample theorem is proved for the full normalized, family-weighted CV+ construction. Validity on new "
-                "families is assessed empirically on six datasets, and it rests on the families being approximately exchangeable "
-                "units. A design campaign that deliberately moves *away* from all known families (adaptive or feedback shift "
+                "The finite-sample guarantee (Proposition 1) covers only the family-subsampled FCP-S, and it is conservative "
+                f"({FB['min_bound']:.2f}–{FB['max_bound']:.2f} at α = 0.1 for the family counts here). For FCP and FCP-W, validity on new families is assessed "
+                "empirically on eleven datasets (six exploratory, five confirmatory), and all variants rest on the families being "
+                "approximately exchangeable units. A design campaign that deliberately moves *away* from all known families (adaptive or feedback shift "
                 "[@fannjiang2022]) violates this assumption.",
                 "Coverage is marginal over alloys (FCP) or over families (FCP-W), not conditional on an individual alloy. Families "
                 "with extreme properties remained under-covered (Section 11).",
@@ -683,6 +703,7 @@ def conclusion(V):
                 "eight baselines and improved the interval score relative to six (12 dataset-protocol cells, Holm-corrected). In "
                 "a lower-bound screen for high-performing alloys it cut false discoveries three- to four-fold relative to "
                 "split conformal prediction, at the cost of lower recall.",
+                CONCL_CONFIRM(),
                 "Grouping the calibration folds by family is the decisive ingredient. The ensemble-spread scale improves efficiency, "
                 "and the compositional-novelty scale equalizes coverage across novelty levels at a small efficiency cost.",
                 "Random-forest tree-spread intervals were an unexpectedly strong but uncalibrated competitor; their robustness "
@@ -829,7 +850,10 @@ def design(V):
                   "chemical systems while the test shift is composition clusters, together with a base-learner swap to random-forest "
                   "members and a random (unbalanced) assignment of clusters to outer folds. Exp. 6 (computational cost): wall time "
                   "and peak memory per outer fold. Exp. 7 (sensitivity): one-factor-at-a-time variation of *K*, *M*, φ and "
-                  "*k*_{nn}. Exp. 8 (error analysis): per-family coverage against novelty, property extremity and family size.")]
+                  "*k*_{nn}. Exp. 8 (error analysis): per-family coverage against novelty, property extremity and family size. "
+                  "Two experiments were added after the main results and are labelled as such: Exp. 9, a pre-registered "
+                  "confirmatory study on five new tasks (Section 9.5; plan in the Supplementary Material), and Exp. 10, an "
+                  "evaluation of the family-subsampled FCP-S covered by Proposition 1 (Section 9.6).")]
 
 
 def build(V):
