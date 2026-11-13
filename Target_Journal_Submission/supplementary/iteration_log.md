@@ -42,3 +42,21 @@ Every change made after seeing results is listed here with its hypothesis and ev
   - The random-fold version (CV+-RFσ) under-covers (0.888 / 0.813), so grouping is still required.
   - The single-run pre-check was therefore not representative. This is reported as such and is a reminder why decisions were not taken on one seed.
   - Because the variant was formulated after the main results, the manuscript presents it as a post hoc finding (Section 9.5, Abstract, Conclusions). The pre-specified FCP remains the primary method of the confirmatory analysis.
+
+## Iteration 3 — Pre-registered confirmatory study and FCP-S (Round 11)
+- **Plan:** `confirmatory_plan.md`, committed in `3ec309e` (2026-11-13 12:03:31 UTC) before the first confirmatory run (first cached result 12:06:02 UTC). No setting was changed and no run was repeated afterwards.
+- **Outcome (5 new tasks, 10 shift cells, 10 seeds):**
+  - C1 met: SCP 0.846 / 0.782, CV+ 0.858 / 0.796, CQR 0.852 / 0.809 (system / cluster).
+  - C2 met: p_Holm = 0.0078 against each of SCP, CV+, CQR and GSCP.
+  - C3 met: FCP 0.919 / 0.909.
+  - C4 met: FCP-RFσ 0.911 / 0.917.
+  - C5 met narrowly: median paired interval-score difference −0.221 SD, p = 0.0488.
+  - C6 met on the mean: |coverage − nominal| 0.035 vs 0.050 at α = 0.1 and 0.048 vs 0.100 at α = 0.2. Per task it holds on 3 of 5 tasks at each level; FCP-RFσ over-covers steel tensile strength.
+- **Decision (fixed rule):** FCP-RFσ is promoted to the recommended variant for random-forest models, with the qualifications above stated in Section 9.5.
+- **FCP-S (Proposition 1), added after Proposition 1 was written; not pre-registered:** 6 tasks × 10 seeds, unseen-system protocol.
+  - Family-level coverage: 0.922 (FCP-W 0.925, FCP 0.912).
+  - Every task is above its finite-sample bound (0.655–0.794).
+  - Interval score vs FCP-W: p = 0.63.
+- **Pipeline errors found and fixed:**
+  1. Sections 9.4–9.6 were dropped from an intermediate build by an empty hook.
+  2. Quick-mode joblib workers wrote to the full-run cache. Audit: no full-run entry was affected.

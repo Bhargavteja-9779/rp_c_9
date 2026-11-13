@@ -44,7 +44,7 @@ Branch: claude/autonomous-research-discovery-795xcu. All deliverables are under 
 - [x] Theory: Proposition 1 (family-subsampled FCP-S, finite-sample family-level guarantee via Barber et al. 2021 Thm 4);
       proof in supplementary/theory_note.md (Supplementary Note S1).
 - [x] Manuscript restructured: secondary checks moved to Supplementary (28 pages, 9 figures, 7 tables).
-- [ ] Pre-registered confirmatory study on 5 NEW tasks (plan committed before any run: supplementary/confirmatory_plan.md),
-      stage `confirm` (340 runs, ~5 h). Resume with: `cd Target_Journal_Submission/code && bash scripts/resume_all.sh`.
-      Then: rebuild manuscript/supplementary/highlights/cover letter, package, REVIEW/review_11.md, update risk report.
+- [x] Pre-registered confirmatory study on 5 NEW tasks: C1-C6 met; FCP-RFsigma promoted (C5 narrow, C6 on 3/5 tasks; stated).
+- [x] FCP-S (Proposition 1) implemented and evaluated (stage `fcps`): family coverage 0.922, all tasks above the bound.
+- [x] Review round 11 (REVIEW/review_11.md), risk report, final audit, iteration log, figure map; deliverables rebuilt.
 - [x] references re-verified (47/47; arXiv DOIs now checked against the arXiv API), Zhuo et al. 2018 added (band-gap data).
