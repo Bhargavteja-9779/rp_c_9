@@ -12,6 +12,20 @@ def main():
     g = V["g"]
     sp = __import__("pandas").read_csv(B.TAB / "table_screening_pooled.csv").set_index("method")
     P = lambda t: {"type": "para", "runs": runs(t)}
+    rcv = [g(p, m) for p in ["system", "cluster"] for m in B.RC]
+    lo, hi = min(rcv), max(rcv)
+    c = B.confirm_stats()
+    if c is not None:
+        sm = __import__("pandas").read_csv(B.TAB / "table_confirm_summary.csv").set_index(["protocol", "method"])
+        cq = lambda p, m: float(sm.loc[(p, m), "mean_coverage"])
+        conf = (" Third, before analysing five further tasks, we pre-registered hypotheses, success criteria and a promotion rule in the "
+                f"code repository. In that confirmatory study, random-split SCP covered {cq('system', 'SCP'):.2f} and "
+                f"{cq('cluster', 'SCP'):.2f} and FCP {cq('system', 'FCP'):.2f} and {cq('cluster', 'FCP'):.2f}; "
+                + ("all pre-registered criteria were met." if all(c["criteria_met"].values()) else
+                   "the criteria that were not met (" + ", ".join(k for k, v in c["criteria_met"].items() if not v)
+                   + ") are reported as such in the manuscript."))
+    else:
+        conf = ""
     blocks = [
         {"type": "para", "runs": runs("[Date]")},
         P("The Editor-in-Chief"), P("*Journal of Materials Research and Technology*"),
@@ -24,13 +38,19 @@ def main():
           "calibrated and validated on randomly held-out alloys. Our manuscript quantifies what this costs and proposes a remedy."),
         P(f"Across six public datasets (MPEA hardness and yield strength, steel yield strength, and three inorganic-compound "
           f"properties), nominal 90% conformal prediction intervals calibrated on random splits covered only "
-          f"{g('cluster', 'SCP') * 100:.0f}–{g('system', 'WCP') * 100:.0f}% of alloys from unseen alloy families. We introduce "
+          f"{lo * 100:.0f}–{hi * 100:.0f}% of alloys from unseen alloy families. We introduce "
           f"family-calibrated conformal prediction (FCP), which calibrates on whole held-out alloy families with a leakage-free, "
           f"novelty-aware scale. FCP restored mean coverage to {g('system', 'FCP'):.2f} (unseen chemical systems) and "
           f"{g('cluster', 'FCP'):.2f} (unseen composition clusters). In a lower-bound screening task for high-performing alloys it "
           f"reduced false discoveries from {sp.loc['SCP', 'fdp'] * 100:.1f}% to {sp.loc['FCP', 'fdp'] * 100:.1f}%. The paper reports "
           "the costs and limits openly. Intervals are wider; a random-forest heuristic is a strong uncalibrated competitor; and "
           "alloy families with extreme properties, such as maraging-type steels and refractory MPEAs, remain the hardest cases."),
+        P("Several features go beyond an empirical comparison. First, a family-subsampled variant of FCP has a finite-sample "
+          "guarantee of family-level coverage (Proposition 1, proved in the Supplementary Material), and it is evaluated "
+          "alongside the practical variants. Second, the failures of random-split calibration are interpreted "
+          "metallurgically: in multi-principal-element alloys they concentrate between the valence-electron-concentration "
+          "thresholds that separate BCC from FCC phase stability, and in multiphase alloys." + conf + " Finally, every number in "
+          "the manuscript is generated from code, and every directional claim is checked automatically against the results."),
         P("We believe the work fits the journal's scope because it addresses the reliability of data-driven alloy design, a topic "
           "the journal publishes regularly, and provides metallurgically interpretable guidance on when ML-based property "
           "predictions for new alloy systems can be trusted. All data are public, and every number, table and figure is "
