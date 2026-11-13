@@ -480,7 +480,8 @@ def discussion(V):
                   "the forest's tree spread, FCP-RFσ), or with a family-held-out calibration split (GSCP) when many families and "
                   "little compute are available; (iii) report the coverage obtained under a family-holdout "
                   "evaluation, not under random cross-validation; and (iv) treat alloys with predicted properties far outside the "
-                  "training range with extra caution, because that is where the remaining misses concentrate (Section 11)."),
+                  "training range, and alloys in the VEC transition band between BCC- and FCC-stable compositions, with extra caution, "
+                  "because that is where the remaining misses concentrate (Sections 7.6 and 11)."),
             ]
 
 
@@ -657,8 +658,10 @@ def conclusion(V):
                 "comes from systematic over-coverage in-distribution. Normalizing family-grouped CV+ by that tree spread (FCP-RFσ, "
                 "formulated post hoc) reached the same efficiency with calibrated coverage and is the best-performing calibrated "
                 "variant found here.",
-                "Remaining failures concentrate in families with extreme property values, where new strengthening or pairing "
-                "mechanisms are likely. Interval estimates for such candidates should be treated with additional caution.",
+                "Remaining failures concentrate in families with extreme property values and, metallurgically, in multiphase "
+                "alloys and the VEC band between BCC- and FCC-stable compositions, where small composition changes alter the "
+                "phase constitution. Interval estimates for such candidates should be treated with additional caution, and a "
+                "phase-boundary-aware difficulty signal is a natural next step.",
                 "FCP certifies coverage against the novelty encoded by the family definition, and nothing beyond it. "
                 "Calibrating on a finer family definition than the actual shift lowered coverage. A chronological test showed "
                 "nominal coverage when newly reported alloys came from new chemical systems, but no method, FCP included, "
