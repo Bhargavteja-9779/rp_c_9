@@ -45,7 +45,7 @@ def main():
     (out / "logs").mkdir(exist_ok=True)
     json.dump({"device": device_report(), "config": cfg, "mode": a.mode}, open(out / "logs" / "run_info.json", "w"), indent=2)
     stages = ["data", "main", "robustness", "generalization", "sensitivity", "efficiency", "basemodel", "randfolds",
-              "mondrian", "temporal", "rfsigma", "analysis"] if a.stage == "all" else a.stage.split(",")
+              "mondrian", "temporal", "rfsigma", "confirm", "analysis"] if a.stage == "all" else a.stage.split(",")
     from experiments import stages as S
     for st in stages:
         t0 = time.time()

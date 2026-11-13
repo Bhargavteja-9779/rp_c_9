@@ -15,6 +15,12 @@ TASKS = {
     "supercon_tc": ("Superconductor critical temperature", "K"),
     "superhard_k": ("Bulk modulus (Brgoch superhard set)", "GPa"),
     "expt_hf": ("Experimental formation enthalpy (Kingsbury)", "eV/atom"),
+    # confirmatory tasks (pre-registered in supplementary/confirmatory_plan.md)
+    "mpea_uts": ("MPEA ultimate tensile strength", "MPa"),
+    "mpea_elong": ("MPEA elongation", "%"),
+    "steel_uts": ("Steel tensile strength", "MPa"),
+    "superhard_g": ("Shear modulus (Brgoch superhard set)", "GPa"),
+    "expt_gap": ("Experimental band gap (Matbench)", "eV"),
 }
 
 
@@ -67,6 +73,31 @@ def load_task(name: str) -> pd.DataFrame:
         df = load_dataset("expt_formation_enthalpy_kingsbury", data_home=str(RAW))
         out = pd.DataFrame({"formula": df["formula"].astype(str), "y": df["expt_form_e"].astype(float)})
         return out.groupby("formula", as_index=False)["y"].median()
+    if name in ("mpea_uts", "mpea_elong"):
+        col = {"mpea_uts": "UTS (MPa)", "mpea_elong": "Elongation (%)"}[name]
+        df = _mpea()
+        df = df[df[col].notna() & df["test_type"].isin(["C", "T"]) & df["test_temp_C"].notna()].copy()
+        df["y"] = df[col].astype(float)
+        keys = ["formula", "processing", "test_type", "test_temp_C"]
+        out = df.groupby(keys, as_index=False)["y"].median()
+        return out.rename(columns={"processing": "cond_processing", "test_type": "cond_test_type",
+                                   "test_temp_C": "num_test_temp_C"})
+    if name == "steel_uts":
+        from matminer.datasets import load_dataset
+        df = load_dataset("steel_strength", data_home=str(RAW))
+        out = pd.DataFrame({"formula": df["formula"].astype(str), "y": df["tensile strength"].astype(float)})
+        return out.groupby("formula", as_index=False)["y"].median()
+    if name == "superhard_g":
+        from matminer.datasets import load_dataset
+        df = load_dataset("brgoch_superhard_training", data_home=str(RAW))
+        df = df[~df["suspect_value"].astype(bool)]
+        out = pd.DataFrame({"formula": df["formula"].astype(str), "y": df["shear_modulus"].astype(float)})
+        return out.groupby("formula", as_index=False)["y"].median()
+    if name == "expt_gap":
+        from matminer.datasets import load_dataset
+        df = load_dataset("matbench_expt_gap", data_home=str(RAW))
+        out = pd.DataFrame({"formula": df["composition"].astype(str), "y": df["gap expt"].astype(float)})
+        return out.groupby("formula", as_index=False)["y"].median()
     raise KeyError(name)
 
 
@@ -79,5 +110,9 @@ def load_years(name):
         return df.groupby(["formula", "processing"], as_index=False)["year"].min()["year"].to_numpy()
     if name == "mpea_ys":
         df = df[df["YS (MPa)"].notna() & df["test_type"].isin(["C", "T"]) & df["test_temp_C"].notna()]
+        return df.groupby(["formula", "processing", "test_type", "test_temp_C"], as_index=False)["year"].min()["year"].to_numpy()
+    if name in ("mpea_uts", "mpea_elong"):
+        col = {"mpea_uts": "UTS (MPa)", "mpea_elong": "Elongation (%)"}[name]
+        df = df[df[col].notna() & df["test_type"].isin(["C", "T"]) & df["test_temp_C"].notna()]
         return df.groupby(["formula", "processing", "test_type", "test_temp_C"], as_index=False)["year"].min()["year"].to_numpy()
     raise KeyError(name)

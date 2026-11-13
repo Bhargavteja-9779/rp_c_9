@@ -194,6 +194,27 @@ def rfsigma(cfg, out, n_jobs):
     _save_rows(rows, out / "rfsigma_results.csv")
 
 
+CONFIRM_TASKS = ["mpea_uts", "mpea_elong", "steel_uts", "superhard_g", "expt_gap"]
+
+
+def confirm(cfg, out, n_jobs):
+    """Pre-registered confirmatory study (supplementary/confirmatory_plan.md): 5 new tasks, unchanged configuration."""
+    from fcp.evaluation.protocol import CV_VARIANTS
+    c_base = copy.deepcopy(cfg)
+    c_base["methods"] = ["Ens-z", "SCP", "WCP", "CQR", "GSCP", "GP", "RF-z", "MCP", "FCP-RFsigma", "CV+-RFsigma"]
+    c_cv = copy.deepcopy(cfg); c_cv["methods"] = list(CV_VARIANTS)
+    jobs = [(t, p, s) for t in CONFIRM_TASKS for p in cfg["protocols"] for s in cfg["seeds"]]
+    jobs += [(t, "temporal", s) for t in ["mpea_uts", "mpea_elong"] for s in cfg["seeds"]]
+    from joblib import Parallel, delayed
+    Parallel(n_jobs=n_jobs)(delayed(_one)("confirm", t, p, s, c_base, "base", {}) for t, p, s in jobs)
+    Parallel(n_jobs=n_jobs)(delayed(_one)("confirm", t, p, s, c_cv, "cvplus_v2", {}) for t, p, s in jobs)
+    rows = []
+    for t, p, s in jobs:
+        rows += R.metrics_rows(R.run_one("confirm", t, p, s, c_base, variant="base"))
+        rows += R.metrics_rows(R.run_one("confirm", t, p, s, c_cv, variant="cvplus_v2"))
+    _save_rows(rows, out / "confirm_results.csv")
+
+
 def efficiency(cfg, out, n_jobs):
     """Wall time and peak resident memory of each method for one outer fold (separate processes)."""
     rows = []
