@@ -112,6 +112,30 @@
   "holds": true
  },
  {
+  "claim": "YS: SCP worst in the mixed-VEC band",
+  "holds": true
+ },
+ {
+  "claim": "HV: SCP worst in the mixed-VEC band",
+  "holds": true
+ },
+ {
+  "claim": "FCP improves mixed-VEC YS by > 8 points",
+  "holds": true
+ },
+ {
+  "claim": "FCP still below nominal in mixed-VEC YS",
+  "holds": true
+ },
+ {
+  "claim": "refractory easier than 3d (YS, SCP)",
+  "holds": true
+ },
+ {
+  "claim": "multiphase hardest (YS, SCP)",
+  "holds": true
+ },
+ {
   "claim": "grouping drives coverage",
   "holds": true
  },
@@ -193,66 +217,6 @@
  },
  {
   "claim": "temporal YS: RF-z and GP also near nominal",
-  "holds": true
- },
- {
-  "claim": "FCP coverage >= 0.9 for all sensitivity settings",
-  "holds": true
- },
- {
-  "claim": "FCP coverage with RF members within 1.5 points of LGBM (system)",
-  "holds": true
- },
- {
-  "claim": "random-fold CV+ with RF members under-covers (system)",
-  "holds": true
- },
- {
-  "claim": "FCP coverage with RF members within 1.5 points of LGBM (cluster)",
-  "holds": true
- },
- {
-  "claim": "random-fold CV+ with RF members under-covers (cluster)",
-  "holds": true
- },
- {
-  "claim": "RF-z interval score significantly better than FCP[RF]",
-  "holds": true
- },
- {
-  "claim": "FCP[RF] shortfall significantly smaller than CV+[RF]",
-  "holds": true
- },
- {
-  "claim": "FCP-RFsigma mean coverage >= 0.9 under both shifts",
-  "holds": true
- },
- {
-  "claim": "FCP-RFsigma vs RF-z interval score not significantly different",
-  "holds": true
- },
- {
-  "claim": "FCP-RFsigma interval score better than LightGBM FCP",
-  "holds": true
- },
- {
-  "claim": "FCP-RFsigma better calibrated than RF-z in-distribution",
-  "holds": true
- },
- {
-  "claim": "FCP coverage robust to fold assignment (within 3 points)",
-  "holds": true
- },
- {
-  "claim": "random-calibrated still under-cover with random assignment",
-  "holds": true
- },
- {
-  "claim": "Mondrian below FCP under cluster shift",
-  "holds": true
- },
- {
-  "claim": "Mondrian at least as good as SCP under cluster shift",
   "holds": true
  },
  {

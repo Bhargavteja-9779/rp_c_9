@@ -15,7 +15,8 @@ CITE_KEYS = {
     "hirschfeld2020": "10.1021/acs.jcim.0c00502", "bhattacharyya2026": "10.1214/26-EJS2506", "gibbs2025": "10.1093/jrsssb/qkaf008",
     "fannjiang2022": "10.1073/pnas.2204569119", "johansson2014": "10.1007/s10994-014-5453-0", "vovk2015": "10.1007/s10472-013-9368-4",
     "segal2025": "10.1038/s41524-025-01808-x", "morger2021": "10.1186/s13321-021-00511-5",
-    "morger2022": "10.1038/s41598-022-09309-3",
+    "morger2022": "10.1038/s41598-022-09309-3", "guo2011": "10.1063/1.3587228", "zhang2008": "10.1002/adem.200700240",
+    "wang2012": "10.1016/j.intermet.2012.03.005",
 }
 MANUAL = {
     "romano2019": "Y. Romano, E. Patterson, E.J. Candès, Conformalized quantile regression, in: Advances in Neural Information "
@@ -218,11 +219,21 @@ def method(V):
               "that the upper quantile of Eq. (8) is finite only if *G*/(*G* + 1) ≥ 1 − α, that is"),
         ("eq", ["G ≥ ", {"frac": [["1 − α"], ["α"]]}, "    (G ≥ 9 for α = 0.1)"]),
         ("p", "With fewer training families, FCP-W correctly returns an unbounded interval: so few families cannot certify a "
-              "90% family-level statement. We report this case explicitly rather than hiding it. We make no claim of a new "
-              "finite-sample theorem for the full normalized, weighted CV+ construction. The CV+ argument of Barber et al. "
-              "[@barber2021] guarantees 1 − 2α coverage for exchangeable *rows*, and Dunn et al. [@dunn2023] give guarantees for "
-              "pooled split-conformal sets in the two-layer model. FCP adopts the corresponding grouping, so its validity on new "
-              "families is assessed empirically below."),
+              "90% family-level statement. We report this case explicitly rather than hiding it."),
+        ("p", "**Finite-sample guarantee at the family level.** A guarantee follows if each family contributes a single, "
+              "randomly drawn calibration alloy (family-subsampled FCP, FCP-S). Let the families be exchangeable, let each fold "
+              "model depend on the set of training families symmetrically, and let the test alloy be drawn uniformly from a new "
+              "family. Then each unit (family, sampled alloy) is exchangeable with the test unit, and FCP-S is exactly the "
+              "*K*-fold CV+ procedure of Barber et al. [@barber2021] applied to *G* data points with the normalized score of Eq. (5). "
+              "Hence"),
+        ("eq", ["P", {"paren": ["Y ∈ Ĉ(X)"]}, " ≥ 1 − 2α − min", {"curly": [{"frac": [["2(1 − 1/K)"], ["G/K + 1"]]}, ", ",
+                                                                        {"frac": [["1 − K/G"], ["K + 1"]]}]}]),
+        ("p", "(Proposition 1; proof in Supplementary Note S1). FCP-W replaces the single random draw by its expectation "
+              "(weights 1/*n*_{g}), which is the pooled construction of Dunn et al. [@dunn2023]. The unweighted FCP targets "
+              "alloy-level coverage. Neither is literally covered by Proposition 1, so both are assessed empirically below. "
+              "Proposition 1 also explains why random-split calibration fails: a randomly held-out calibration alloy shares its "
+              "family with training alloys, so its score is not exchangeable with that of an alloy from a new family, and the "
+              "coverage loss is bounded only by the distance between the two score distributions [@barber2023]."),
         ("h2", "4.5. Algorithm and complexity"),
         ("p", "FCP requires *K* ensembles of *M* members, i.e. *KM* tree-ensemble fits, plus *K* nearest-neighbour indices. "
               "Forming the interval for *n*_{t} test alloys costs O(*n*_{t} *n* log *n*) for sorting the *n* candidate bounds per "
@@ -318,7 +329,7 @@ def setup(V):
         ("p", f"Pre-specified settings: LightGBM with {V['lgbm_trees']} trees, learning rate {V['lgbm_lr']}, {V['lgbm_leaves']} leaves, "
               f"row and column subsampling {V['lgbm_sub']} and {V['lgbm_col']}, minimum 5 alloys per leaf, L2 penalty 1; *M* = {V['M']} members; φ = {V['phi']}; *K* = {V['K']} "
               f"inner folds; *k*_{{nn}} = {V['knn']}; {V['pcs']} principal components. None of these was tuned on test folds, and "
-              "their influence is examined in Section 9.4. All computations ran on CPUs (4 cores, no GPU) with Python, "
+              "their influence is examined in Section 9.6. All computations ran on CPUs (4 cores, no GPU) with Python, "
               "scikit-learn [@pedregosa2011] and LightGBM. A single command (run_all.py) regenerates every number, table and "
               "figure from the public data."),
     ]

@@ -19,6 +19,12 @@ import sections_static as S
 import yaml
 
 CLAIMS = []
+# Supplementary figures (numbering shared with build_supplementary.py)
+SUPP_FIGS = [("alpha", "fig11_alpha_calibration", "Empirical versus nominal coverage at α ∈ {0.05, 0.1, 0.2} for key methods, averaged over datasets."),
+             ("sens", "fig10_sensitivity", "Coverage of FCP and FCP-W under one-factor-at-a-time variation of K, M, φ and k_nn (three alloy tasks, unseen-system protocol, five seeds); circled points are the pre-specified defaults."),
+             ("efficiency", "fig12_efficiency", "Wall time and peak memory for one outer fold (unseen-system protocol, single process)."),
+             ("parity", "fig7_parity_intervals_mpea_hv", "Measured versus predicted MPEA hardness with 90% intervals for test alloys from unseen composition clusters (seed 0): SCP (left) and FCP (right).")]
+SFIG = {k: f"S{i + 1}" for i, (k, _, _) in enumerate(SUPP_FIGS)}
 
 
 def claim(cond, text):
@@ -218,14 +224,12 @@ def results(V):
                 f"the difference was not significant (median paired difference {h3['RF-z']['median_diff']:+.3f} SD in favour of "
                 f"RF-z, p_Holm = {h3['RF-z']['p_holm']:.3f}). RF-z is not calibrated, however. It over-covered in the random protocol "
                 f"({g('random', 'RF-z'):.3f} at a nominal 0.90; {rfz80:.3f} at a nominal 0.80, against {fcp80:.3f} for FCP; "
-                "Fig. {{fig:alpha}}), and "
+                f"Supplementary Fig. {SFIG['alpha']}), and "
                 "individual datasets reached 0.98. Its apparent robustness therefore comes from intervals that are systematically "
                 "too wide in-distribution. That inflation happens to offset the extrapolation error under shift, but nothing "
                 "guarantees it. It depends on forest hyper-parameters such as max_features and leaf size, and it cannot be dialled "
-                "to a requested level. Section 9.5 asks the constructive question, whether family-level calibration of the forest's "
-                "own tree spread combines its efficiency with calibrated coverage, and finds that it does."),
-          ("fig", ("fig11_alpha_calibration", "Fig. {{fig:alpha}}. Empirical versus nominal coverage at α ∈ {0.05, 0.1, 0.2}. A calibrated "
-                   "method lies on the diagonal in the random protocol and stays near it under shift."))]
+                "to a requested level. Section 9.4 asks the constructive question, whether family-level calibration of the forest's "
+                "own tree spread combines its efficiency with calibrated coverage, and finds that it does.")]
     return E
 
 
@@ -301,16 +305,16 @@ def error_analysis(V):
     ys = wf[wf.task == "mpea_ys"]
     return [("h1", "11. Error analysis"),
             ("p", "To see where intervals still fail, coverage was computed for every test family with at least five alloys in the "
-                  "system protocol (all seeds pooled; Fig. {{fig:errors}}, Table {{tab:worst}}). The dominant failure mode was **property extremity**, not "
+                  "system protocol (all seeds pooled; Fig. {{fig:errors}}). The dominant failure mode was **property extremity**, not "
                   "compositional novelty. For FCP, within-family coverage decreased with the family's mean distance from the median "
                   f"target (|y − median|/IQR) in {len(neg)} of 6 tasks (Spearman ρ from {f.spearman_rho.min():.2f} to "
                   f"{f.spearman_rho.max():.2f}). The families in the most extreme sextile were covered {q['FCP']:.2f} of the time by "
                   f"FCP, against {q['SCP']:.2f} by SCP. FCP therefore reduced this failure substantially but did not remove it. The "
                   "association with novelty was weaker and of inconsistent sign, which suggests that, once calibration is family-level, "
                   "the remaining misses are dominated by regression toward the mean of the training labels for families with "
-                  "unusually high or low properties. Fig. {{fig:parity}} illustrates this for MPEA hardness: the uncovered alloys concentrate "
-                  "above about 800 HV."),
-            ("p", "Table {{tab:worst}} lists the families with the lowest FCP coverage. Several are metallurgically distinctive within their "
+                  f"unusually high or low properties. Supplementary Fig. {SFIG['parity']} illustrates this for MPEA hardness: the uncovered "
+                  "alloys concentrate above about 800 HV."),
+            ("p", "The families with the lowest FCP coverage are listed in the Supplementary Material. Several are metallurgically distinctive within their "
                   "datasets. Examples in the MPEA yield-strength data are the Cr–Fe–Ni–Ti and Al–Co–Cr–Fe–Mo–Ni systems and the "
                   "refractory Nb–Ta–Ti and Al–Mo–Nb–Ta–Ti–Zr systems. The ensemble predicted their strength levels poorly: the mean "
                   f"absolute error of the worst family exceeded {ys.abserr.max():.0f} MPa. An Fe–As–O–Sm (iron-pnictide) family "
@@ -321,10 +325,7 @@ def error_analysis(V):
             ("fig", ("fig9_error_analysis_families", "Fig. {{fig:errors}}. Within-family coverage (system holdout, families with ≥ 5 alloys, "
                      "all tasks and seeds pooled) against the family's mean target extremity (left) and mean novelty (right), in "
                      "sextiles.")),
-            ("fig", ("fig7_parity_intervals_mpea_hv", "Fig. {{fig:parity}}. Measured versus predicted MPEA hardness with 90% intervals for test "
-                     "alloys from unseen composition clusters (seed 0): split conformal prediction (left) and FCP (right). Crosses "
-                     "mark alloys outside their interval.")),
-            ("table7", None)]
+            ]
 
 
 # ------------------------------------------------------------------------------------------- tables
@@ -486,6 +487,116 @@ def discussion(V):
 DUPS = 0
 
 
+def confirm_stats():
+    p = RES / "statistics_confirm.json"
+    return json.load(open(p)) if p.exists() else None
+
+
+CTASK = {"mpea_uts": "MPEA tensile strength", "mpea_elong": "MPEA elongation", "steel_uts": "steel tensile strength",
+         "superhard_g": "shear modulus", "expt_gap": "experimental band gap"}
+
+
+def confirm_section(V):
+    c = confirm_stats()
+    if c is None:
+        return []
+    sm = pd.read_csv(TAB / "table_confirm_summary.csv").set_index(["protocol", "method"])
+    q = lambda p, m, k="mean_coverage": float(sm.loc[(p, m), k])
+    ok = c["criteria_met"]
+    yn = lambda b: "met" if b else "not met"
+    c5 = c["C5"]; c6 = c["C6"]
+    txt = ("To test whether the conclusions, and the post hoc FCP-RFσ, hold beyond the data that shaped them, a confirmatory "
+           "study was pre-registered (hypotheses, success criteria and a promotion rule committed to the repository before any "
+           "run; Supplementary Material) on five tasks never used in the exploratory work: "
+           + ", ".join(CTASK[t] for t in c["tasks"]) + ". Four of them are new properties of alloys or compounds already "
+           "present in Section 7; the band-gap set is an independent material class. The configuration was unchanged (10 seeds, "
+           f"three protocols; {c['n_cells']} new shift cells). "
+           f"C1 (random-calibrated methods under-cover; one-sided Wilcoxon) was {yn(ok['C1'])}: SCP covered {q('system', 'SCP'):.3f} "
+           f"and {q('cluster', 'SCP'):.3f} (p = {c['C1']['SCP']['p']:.4f}), CV+ {q('system', 'CV+'):.3f} and {q('cluster', 'CV+'):.3f} "
+           f"(p = {c['C1']['CV+']['p']:.4f}), CQR {q('system', 'CQR'):.3f} and {q('cluster', 'CQR'):.3f} (p = {c['C1']['CQR']['p']:.4f}). "
+           f"C2 (smaller shortfall for FCP than SCP, CV+, CQR and GSCP; Holm) was {yn(ok['C2'])} (p_Holm "
+           + ", ".join(f"{m} {c['C2'][m]['p_holm']:.4f}" for m in c["C2"]) + "). "
+           f"C3 (FCP ≥ 0.88 under both shifts) was {yn(ok['C3'])}: {c['C3']['system']:.3f} and {c['C3']['cluster']:.3f}. "
+           f"For FCP-RFσ, C4 (coverage ≥ 0.88) was {yn(ok['C4'])} ({c['C4']['system']:.3f} and {c['C4']['cluster']:.3f}), "
+           f"C5 (lower interval score than FCP) was {yn(ok['C5'])} (median paired difference {c5['median_diff']:+.3f} SD, "
+           f"p = {c5['p']:.4f}), and C6 (better in-distribution calibration than RF-z) was {yn(ok['C6'])} "
+           f"({c6['alpha=0.1']['FCP-RFsigma']:.3f} vs {c6['alpha=0.1']['RF-z']:.3f} at nominal 0.90; "
+           f"{c6['alpha=0.2']['FCP-RFsigma']:.3f} vs {c6['alpha=0.2']['RF-z']:.3f} at 0.80). ")
+    if c["promoted"]:
+        txt += ("By the pre-registered rule, FCP-RFσ is therefore promoted from a post hoc observation to the recommended "
+                "variant for random-forest models.")
+    else:
+        txt += ("By the pre-registered rule, FCP-RFσ therefore remains a post hoc observation; the criteria it failed are "
+                "reported above.")
+    E = [("h2", "9.5. Pre-registered confirmatory study"), ("p", txt), ("table_confirm", None)]
+    rows = []
+    for m in ["SCP", "CV+", "CQR", "WCP", "GP", "RF-z", "GSCP", "MCP", "FCP", "FCP-W", "FCP-RFsigma"]:
+        r = [m.replace("RFsigma", "RFσ")]
+        for p in ["random", "system", "cluster"]:
+            if (p, m) in sm.index:
+                r += [f"{q(p, m):.3f}", f"{q(p, m, 'min_cell'):.3f}", f2(q(p, m, 'mean_interval_score_sd'))]
+            else:
+                r += ["", "", ""]
+        rows.append(r)
+    TB["table_confirm"] = {"type": "table", "font_size": 14,
+        "caption": runs("**Table {{tab:confirm}}.** Pre-registered confirmatory study on five new tasks (α = 0.1, 10 seeds). "
+                        "Cov: mean coverage over tasks; Min: worst task; IS: mean interval score / SD(y)."),
+        "header": ["Method", "Cov", "Min", "IS", "Cov", "Min", "IS", "Cov", "Min", "IS"],
+        "rows": [["", "Random", "", "", "Unseen system", "", "", "Unseen cluster", "", ""]] + rows,
+        "col_widths": [0.13] + [0.0966] * 9}
+    return E
+
+
+def metallurgy_section(V):
+    t = pd.read_csv(TAB / "table_metallurgy.csv")
+    t = t[t.protocol == "system"]
+    q = lambda task, dim, g, m: float(t[(t.task == task) & (t.dimension == dim) & (t.group == g) & (t.method == m)].coverage.iloc[0])
+    w = lambda task, dim, g: float(t[(t.task == task) & (t.dimension == dim) & (t.group == g) & (t.method == "FCP")].width_sd.iloc[0])
+    mid, bcc, fcc = "6.87-8 (mixed)", "VEC<6.87 (BCC-favoured)", "VEC>=8 (FCC-favoured)"
+    claim(q("mpea_ys", "vec_regime", mid, "SCP") < min(q("mpea_ys", "vec_regime", bcc, "SCP"), q("mpea_ys", "vec_regime", fcc, "SCP")),
+          "YS: SCP worst in the mixed-VEC band")
+    claim(q("mpea_hv", "vec_regime", mid, "SCP") < min(q("mpea_hv", "vec_regime", bcc, "SCP"), q("mpea_hv", "vec_regime", fcc, "SCP")),
+          "HV: SCP worst in the mixed-VEC band")
+    claim(q("mpea_ys", "vec_regime", mid, "FCP") > q("mpea_ys", "vec_regime", mid, "SCP") + 0.08, "FCP improves mixed-VEC YS by > 8 points")
+    claim(q("mpea_ys", "vec_regime", mid, "FCP") < 0.9, "FCP still below nominal in mixed-VEC YS")
+    claim(q("mpea_ys", "alloy_class", "refractory", "SCP") > q("mpea_ys", "alloy_class", "3d-transition", "SCP"), "refractory easier than 3d (YS, SCP)")
+    claim(q("mpea_ys", "phase", "other", "SCP") < min(q("mpea_ys", "phase", "BCC", "SCP"), q("mpea_ys", "phase", "FCC", "SCP")), "multiphase hardest (YS, SCP)")
+    ws = [w("mpea_ys", "vec_regime", g) for g in [mid, bcc, fcc]]
+    return [("h2", "7.6. Metallurgical interpretation"),
+            ("p", "Where do random-split intervals fail, metallurgically? For the MPEA tasks, coverage under unseen-chemical-system "
+                  "holdout was broken down by alloy class, reported phase, valence-electron concentration (VEC) and atomic-size "
+                  "mismatch δ [@zhang2008] (Fig. {{fig:metallurgy}}; Supplementary Material). The failures were concentrated where the "
+                  "composition–property relation is least smooth. In the VEC band 6.87–8, between the empirical BCC- and "
+                  "FCC-stability limits of high-entropy alloys [@guo2011;@miracle2017], SCP covered only "
+                  f"{q('mpea_ys', 'vec_regime', mid, 'SCP'):.2f} (yield strength) and {q('mpea_hv', 'vec_regime', mid, 'SCP'):.2f} "
+                  f"(hardness), against {q('mpea_ys', 'vec_regime', bcc, 'SCP'):.2f} and {q('mpea_ys', 'vec_regime', fcc, 'SCP'):.2f} for "
+                  "BCC- and FCC-favoured yield-strength alloys. Alloys reported as multiphase were the hardest phase class "
+                  f"(SCP {q('mpea_ys', 'phase', 'other', 'SCP'):.2f}), and 3d-transition-metal alloys were harder than refractory ones "
+                  f"(SCP {q('mpea_ys', 'alloy_class', '3d-transition', 'SCP'):.2f} vs {q('mpea_ys', 'alloy_class', 'refractory', 'SCP'):.2f}). "
+                  "This is the regime of Al- or Ti-alloyed CoCrFeNi-type systems, where small composition changes move the alloy "
+                  "from FCC through FCC + BCC to BCC and the strength changes abruptly [@wang2012]; a new system in this band is "
+                  "extrapolation across a phase boundary that random calibration alloys rarely represent. FCP raised coverage "
+                  f"in the transition band to {q('mpea_ys', 'vec_regime', mid, 'FCP'):.2f} and "
+                  f"{q('mpea_hv', 'vec_regime', mid, 'FCP'):.2f} (FCP-RFσ {q('mpea_ys', 'vec_regime', mid, 'FCP-RFsigma'):.2f} and "
+                  f"{q('mpea_hv', 'vec_regime', mid, 'FCP-RFsigma'):.2f}), but its yield-strength intervals there were hardly wider "
+                  f"than elsewhere ({ws[0]:.2f} vs {ws[1]:.2f} and {ws[2]:.2f} SD), because neither of its difficulty signals "
+                  "encodes proximity to a phase boundary. A physically informed difficulty signal, such as the distance of VEC from "
+                  "the transition band, is a natural extension that should be tested prospectively rather than tuned here."),
+            ("fig", ("fig13_metallurgy", "Fig. {{fig:metallurgy}}. Coverage of 90% intervals for MPEA alloys from unseen chemical "
+                     "systems by alloy class (3d-transition, mixed, refractory) and VEC regime (< 6.87 BCC-favoured, 6.87–8 "
+                     "transition, ≥ 8 FCC-favoured); means over 10 seeds (FCP-RFσ: 5 seeds)."))]
+
+
+def CONFIRM_LIMIT(V):
+    c = confirm_stats()
+    if c is None:
+        return "it should be confirmed on independent data before it is relied upon."
+    if c["promoted"]:
+        return ("its pre-registered confirmation (Section 9.5) used new properties of partly the same alloys plus one "
+                "independent material set, so confirmation on further independent alloy data remains desirable.")
+    return "its pre-registered confirmation (Section 9.5) did not meet all criteria, so it remains a post hoc observation."
+
+
 def limitations(V):
     global DUPS
     a = pd.read_csv(TAB / "table_duplicate_spelling_audit.csv").set_index("task")
@@ -515,8 +626,7 @@ def limitations(V):
                 "approximation (e.g. a pooled quantile of normalized scores) for databases with 10^{5} or more alloys.",
                 "No prospective validation was performed: no new alloy was synthesized and tested. The chronological test "
                 "(Section 9.3) is the closest available proxy.",
-                "FCP-RFσ was formulated after the main results (Section 9.5) and should be confirmed on independent data before "
-                "it is relied upon. The alloy-family threshold (1 at.%) and the number of composition clusters (10) were fixed "
+                f"FCP-RFσ was formulated after the main results (Section 9.4); {CONFIRM_LIMIT(V)} The alloy-family threshold (1 at.%) and the number of composition clusters (10) were fixed "
                 "and not varied.",
                 f"In the superconductor data, {DUPS} compositions appear under more than one formula spelling. They cannot cross "
                 "folds in the family-holdout protocols, but can in the random protocol; excluding them changed random-protocol "
@@ -689,7 +799,7 @@ def build(V):
     blocks.append({"type": "label", "runs": runs("**Keywords:** " + "; ".join(KEYWORDS))})
     global TB
     TB = tables(V, bib)
-    for sec in [S.intro, S.related, S.gap, S.method, S.setup, design, results, screening, ablation, robustness_sections,
+    for sec in [S.intro, S.related, S.gap, S.method, S.setup, design, results, screening, metallurgy_section, ablation, robustness_sections,
                 computational, error_analysis, discussion, limitations, conclusion, declarations]:
         add(sec(V))
     blocks.append({"type": "heading", "level": 1, "text": "References"})
@@ -740,30 +850,35 @@ NUMBERING = {}
 
 
 def SENS_HOOK(V):
-    E = []
+    return []
+
+
+def additional_checks(V):
+    """Compact summary of three secondary checks; full tables and figures are in the Supplementary Material."""
     se = V["sensitivity"]
-    if se is not None:
-        d = se[(se.alpha == 0.1) & (se.method == "FCP")]
-        g = d.groupby(["parameter", "value"]).agg(cov=("coverage", "mean"), isc=("interval_score_sd", "mean"))
-        base = V["df"]; base = base[(base.alpha == 0.1) & (base.method == "FCP") & (base.protocol == "system") &
-                                    base.task.isin(d.task.unique()) & base.seed.isin(d.seed.unique())]
-        b_cov, b_is = base.coverage.mean(), base.interval_score_sd.mean()
-        claim(g["cov"].min() >= 0.9, "FCP coverage >= 0.9 for all sensitivity settings")
-        E += [("h2", "9.4. Sensitivity to FCP's settings"),
-              ("p", "Each of FCP's four settings was varied one at a time around its default on the three alloy tasks "
-                    "(unseen-system protocol, five seeds; Fig. {{fig:sens}}): *K* ∈ {3, 10}, *M* ∈ {3, 12}, φ ∈ {0.5, 0.9} and "
-                    f"*k*_{{nn}} ∈ {{1, 15}}. Coverage ranged from {g['cov'].min():.3f} to {g['cov'].max():.3f}, against "
-                    f"{b_cov:.3f} at the defaults, so no setting broke validity. The interval score ranged from "
-                    f"{g['isc'].min():.2f} to {g['isc'].max():.2f} ({b_is:.2f} at the defaults). More folds (*K* = 10) and more "
-                    "members (*M* = 12) gave slightly sharper intervals at proportionally higher cost, because each fold model then "
-                    "sees more families or the ensemble spread is estimated more precisely. FCP therefore needs no tuning to be "
-                    "valid, and the defaults are a reasonable cost–efficiency compromise."),
-              ("fig", ("fig10_sensitivity", "Fig. {{fig:sens}}. Coverage of FCP and FCP-W under one-factor-at-a-time variation "
-                       "of the number of folds K, ensemble members M, family fraction φ and k_nn (three alloy tasks, unseen-system "
-                       "protocol, five seeds)."))]
-    E += basemodel_section(V)
-    E += EXTRA_HOOK(V) if "EXTRA_HOOK" in globals() else []
-    return E
+    d = se[(se.alpha == 0.1) & (se.method == "FCP")]
+    g = d.groupby(["parameter", "value"]).agg(cov=("coverage", "mean"), isc=("interval_score_sd", "mean"))
+    claim(g["cov"].min() >= 0.9, "FCP coverage >= 0.9 for all sensitivity settings")
+    rf = pd.read_csv(TAB / "table_randfolds.csv").set_index(["method", "assignment"])
+    rq = lambda m, a, k="mean_coverage": float(rf.loc[(m, a), k])
+    claim(abs(rq("FCP", "random") - rq("FCP", "balanced (main)")) < 0.03, "FCP coverage robust to fold assignment")
+    claim(rq("SCP", "random") < 0.8 and rq("CV+", "random") < 0.8, "random-calibrated still under-cover with random assignment")
+    mo = pd.read_csv(TAB / "table_mondrian.csv").set_index(["protocol", "method"])
+    mq = lambda p, m, k="mean_coverage": float(mo.loc[(p, m), k])
+    claim(mq("cluster", "MCP") < mq("cluster", "FCP") - 0.03 and mq("cluster", "MCP") >= mq("cluster", "SCP"), "Mondrian between SCP and FCP")
+    return [("h2", "9.6. Additional checks"),
+            ("p", "Three further checks are summarized here; full results are in the Supplementary Material. (i) **Sensitivity.** "
+                  "Varying the number of folds (*K* ∈ {3, 10}), ensemble members (*M* ∈ {3, 12}), family fraction (φ ∈ {0.5, 0.9}) "
+                  f"and *k*_{{nn}} ∈ {{1, 15}} one at a time kept FCP's coverage between {g['cov'].min():.3f} and {g['cov'].max():.3f} "
+                  f"(interval score {g['isc'].min():.2f}–{g['isc'].max():.2f}; Supplementary Fig. {SFIG['sens']}), so validity does "
+                  "not hinge on tuning. (ii) **Randomized cluster-to-fold assignment.** The size-balanced assignment of ten clusters to "
+                  "five outer folds is identical for every seed; with a fully random assignment per seed, mean coverage was "
+                  f"{rq('FCP', 'random'):.3f} for FCP (balanced: {rq('FCP', 'balanced (main)'):.3f}), {rq('SCP', 'random'):.3f} for SCP "
+                  f"and {rq('CV+', 'random'):.3f} for CV+. (iii) **Novelty-conditional (Mondrian) calibration** with random splits "
+                  f"(MCP, separate quantiles in novelty tertiles) covered {mq('system', 'MCP'):.3f} (system) and "
+                  f"{mq('cluster', 'MCP'):.3f} (cluster), between SCP ({mq('cluster', 'SCP'):.3f}) and FCP ({mq('cluster', 'FCP'):.3f}) "
+                  "under cluster holdout: conditioning on distance helps, but a randomly held-out alloy that looks novel still has "
+                  "relatives of its own family in the training data, which a genuinely new family does not.")]
 
 
 def basemodel_section(V):
@@ -779,7 +894,7 @@ def basemodel_section(V):
         claim(q(p, "CV+ [RF]") < 0.88, f"random-fold CV+ with RF members under-covers ({p})")
     claim(t_rz["median_diff"] > 0 and t_rz["p"] < 0.01, "RF-z interval score significantly better than FCP[RF]")
     claim(t_cv["median_diff"] < 0 and t_cv["p"] < 0.01, "FCP[RF] shortfall significantly smaller than CV+[RF]")
-    E = [("h2", "9.5. Base-learner swap: random-forest members"),
+    E = [("h2", "9.4. Base-learner swap and random-forest tree spread"),
          ("p", "Is the effect of family-level calibration specific to LightGBM, and can it be combined with the efficiency of "
                "random forests? FCP and the main baselines were re-run with the ensemble members replaced by random forests "
                "(6 members of 50 trees, all tasks and protocols, seeds 0–4). Coverage with forest members was practically "
@@ -816,43 +931,6 @@ def basemodel_section(V):
 
 
 RFSIG = {}
-
-
-def EXTRA_HOOK(V):
-    E = []
-    rp = TAB / "table_randfolds.csv"
-    if rp.exists():
-        t = pd.read_csv(rp).set_index(["method", "assignment"])
-        q = lambda m, a, k="mean_coverage": float(t.loc[(m, a), k])
-        claim(abs(q("FCP", "random") - q("FCP", "balanced (main)")) < 0.03, "FCP coverage robust to fold assignment (within 3 points)")
-        claim(q("SCP", "random") < 0.8 and q("CV+", "random") < 0.8, "random-calibrated still under-cover with random assignment")
-        E += [("h2", "9.6. Randomized assignment of clusters to outer folds"),
-              ("p", "In the cluster protocol the size-balanced assignment of ten clusters to five folds is identical for every seed "
-                    "(Section 13), so seed-to-seed variation there reflects only model randomness. We therefore repeated the "
-                    "cluster protocol with a fully random cluster-to-fold assignment, a different partition for each of the ten "
-                    "seeds (Supplementary Material). Mean coverage was "
-                    f"{q('FCP', 'random'):.3f} for FCP (balanced: {q('FCP', 'balanced (main)'):.3f}), {q('SCP', 'random'):.3f} for "
-                    f"SCP ({q('SCP', 'balanced (main)'):.3f}), {q('CV+', 'random'):.3f} for CV+ and {q('GSCP', 'random'):.3f} for GSCP. "
-                    f"The average seed SD of FCP's coverage rose from {q('FCP', 'balanced (main)', 'mean_seed_sd'):.3f} to "
-                    f"{q('FCP', 'random', 'mean_seed_sd'):.3f}, as expected once the partition varies. The conclusions of Section 7 "
-                    "do not depend on the fold-assignment scheme.")]
-    mp = TAB / "table_mondrian.csv"
-    if mp.exists():
-        t = pd.read_csv(mp).set_index(["protocol", "method"])
-        q = lambda p, m, k="mean_coverage": float(t.loc[(p, m), k])
-        claim(q("cluster", "MCP") < q("cluster", "FCP") - 0.03, "Mondrian below FCP under cluster shift")
-        claim(q("cluster", "MCP") >= q("cluster", "SCP"), "Mondrian at least as good as SCP under cluster shift")
-        E += [("h2", "9.7. Novelty-conditional (Mondrian) calibration"),
-              ("p", "If coverage fails mainly for novel alloys, calibrating separately within novelty tertiles (Mondrian conformal "
-                    "prediction, MCP) might suffice without grouping. With random calibration splits, MCP covered "
-                    f"{q('system', 'MCP'):.3f} (system) and {q('cluster', 'MCP'):.3f} (cluster), against {q('system', 'SCP'):.3f} / "
-                    f"{q('cluster', 'SCP'):.3f} for SCP and {q('system', 'FCP'):.3f} / {q('cluster', 'FCP'):.3f} for FCP; in the "
-                    f"highest novelty tertile under cluster holdout it reached {q('cluster', 'MCP', 'cov_high_novelty'):.3f} "
-                    f"(FCP {q('cluster', 'FCP', 'cov_high_novelty'):.3f}). Conditioning on distance helps, because the most novel "
-                    "calibration alloys are somewhat closer to the deployment regime. It does not substitute for family-level "
-                    "calibration: a randomly held-out alloy that looks novel still has relatives of its own family in the training "
-                    "data, which a genuinely new family does not.")]
-    return E
 
 
 def RFSIG_VERDICT(m, pv):
@@ -1011,7 +1089,7 @@ def robustness_sections(V):
                             "does not occur in the training years."),
             "header": ["Task", "Method", "Coverage", "Seen systems", "Unseen systems"], "rows": rows,
             "col_widths": [0.26, 0.14, 0.22, 0.19, 0.19]}
-    E += SENS_HOOK(V) if "SENS_HOOK" in globals() else []
+    E += SENS_HOOK(V)
     return E
 
 
@@ -1036,7 +1114,7 @@ def computational(V):
          ("p", "FCP's cost is dominated by fitting *K* = 5 family-bagged ensembles of *M* = 6 members, i.e. 30 LightGBM models per "
                f"outer fold. It was therefore within {(ratio_cv - 1).abs().max() * 100:.0f}% of random-fold CV+, which fits the same "
                f"number of models, and {ratio_scp.min():.1f}–{ratio_scp.max():.1f} times as expensive as split conformal prediction "
-               f"(Table {{{{tab:cost}}}}). In absolute terms, one outer fold took {t['FCP'].min():.1f}–{t['FCP'].max():.1f} s on a single CPU "
+               f"(Supplementary Material). In absolute terms, one outer fold took {t['FCP'].min():.1f}–{t['FCP'].max():.1f} s on a single CPU "
                f"thread for about {int(V['ds'].n.min() * 0.8):,}–{int(V['ds'].n.max() * 0.8):,} training alloys (80% of each task), less than the Gaussian process on the four larger tasks. Forming the "
                "intervals is a weighted quantile over the *n* calibration bounds per test alloy, which adds O(*n* log *n*) per "
                "alloy and is negligible at these sizes. No GPU is required. The extra cost relative to split conformal prediction "
@@ -1047,10 +1125,7 @@ def computational(V):
         e = ep.set_index(["task", "method"])
         E[-1] = (E[-1][0], E[-1][1] + f" Measured in isolated processes, the peak resident memory of FCP was "
                  f"{e.xs('FCP', level='method').peak_rss_mb.max():.0f} MB, against {e.xs('GP', level='method').peak_rss_mb.max():.0f} MB "
-                 "for the GP (Fig. {{fig:efficiency}}).")
-        E.append(("fig", ("fig12_efficiency", "Fig. {{fig:efficiency}}. Wall time and peak memory for one outer fold (unseen-system "
-                         "protocol, single process).")))
-    E.append(("table_cost", None))
+                 "for the GP (Supplementary Fig. {SFIG['efficiency']}).")
     return E
 
 

@@ -799,6 +799,57 @@ def metallurgy_analysis(out, cfg):
     _save(fig, out, "fig13_metallurgy")
 
 
+def confirm_analysis(out):
+    """Evaluates the pre-registered hypotheses C1-C6 (supplementary/confirmatory_plan.md) exactly as specified."""
+    p = out / "confirm_results.csv"
+    if not p.exists():
+        return
+    d = pd.read_csv(p)
+    d = d[d.protocol.isin(["random", "system", "cluster"])]
+    tasks = sorted(d.task.unique())
+    cm = d[d.alpha == 0.1].groupby(["task", "protocol", "method"]).agg(
+        coverage=("coverage", "mean"), isc=("interval_score_sd", "mean"), width=("width_sd", "mean")).reset_index()
+    sh = cm[cm.protocol.isin(["system", "cluster"])]
+    cov = sh.pivot_table(index=["task", "protocol"], columns="method", values="coverage")
+    isc = sh.pivot_table(index=["task", "protocol"], columns="method", values="isc")
+    res = {"n_cells": int(len(cov)), "tasks": tasks}
+    res["C1"] = {m: T.one_sample_wilcoxon(cov[m].values, 0.9, alternative="less") for m in ["SCP", "CV+", "CQR"]}
+    short = (0.9 - cov).clip(lower=0)
+    c2 = {m: T.paired_wilcoxon(short["FCP"].values, short[m].values) for m in ["SCP", "CV+", "CQR", "GSCP"]}
+    for m, ph in zip(c2, T.holm([c2[m]["p"] for m in c2])):
+        c2[m]["p_holm"] = float(ph)
+    res["C2"] = c2
+    prot_mean = sh.groupby(["protocol", "method"]).coverage.mean()
+    res["C3"] = {p_: float(prot_mean[(p_, "FCP")]) for p_ in ["system", "cluster"]}
+    res["C4"] = {p_: float(prot_mean[(p_, "FCP-RFsigma")]) for p_ in ["system", "cluster"]}
+    res["C5"] = T.paired_wilcoxon(isc["FCP-RFsigma"].values, isc["FCP"].values)
+    rnd = d[d.protocol == "random"].groupby(["method", "alpha"]).coverage.mean()
+    res["C6"] = {f"alpha={a}": {"FCP-RFsigma": float(rnd[("FCP-RFsigma", a)]), "RF-z": float(rnd[("RF-z", a)])} for a in [0.1, 0.2]}
+    ok = {
+        "C1": all(res["C1"][m]["p"] < 0.05 for m in res["C1"]),
+        "C2": all(c2[m]["p_holm"] < 0.05 and c2[m]["median_diff"] <= 0 for m in c2),
+        "C3": all(v >= 0.88 for v in res["C3"].values()),
+        "C4": all(v >= 0.88 for v in res["C4"].values()),
+        "C5": res["C5"]["median_diff"] < 0 and res["C5"]["p"] < 0.05,
+        "C6": all(abs(v["FCP-RFsigma"] - (1 - float(k.split("=")[1]))) < abs(v["RF-z"] - (1 - float(k.split("=")[1])))
+                  for k, v in res["C6"].items()),
+    }
+    res["criteria_met"] = ok
+    res["promoted"] = bool(ok["C4"] and ok["C5"] and ok["C6"])
+    # extra (exploratory) reporting: RF-z comparison and all-method summary
+    res["exploratory_FCP-RFsigma_vs_RF-z_isc"] = T.paired_wilcoxon(isc["FCP-RFsigma"].values, isc["RF-z"].values)
+    (out / "statistics_confirm.json").write_text(json.dumps(res, indent=2, default=float))
+    summ = cm.groupby(["protocol", "method"]).agg(mean_coverage=("coverage", "mean"), min_cell=("coverage", "min"),
+                                                  mean_interval_score_sd=("isc", "mean"), mean_width_sd=("width", "mean")).reset_index()
+    summ.to_csv(out / "tables" / "table_confirm_summary.csv", index=False); _md(summ, out / "tables" / "table_confirm_summary.md")
+    cm.to_csv(out / "tables" / "table_confirm_cells.csv", index=False)
+    # temporal part of the confirmatory study
+    tp = pd.read_csv(p); tp = tp[(tp.protocol == "temporal") & (tp.alpha == 0.1)]
+    if len(tp):
+        tt = tp.groupby(["task", "method"]).agg(coverage=("coverage", "mean"), coverage_sd=("coverage", "std")).reset_index()
+        tt.to_csv(out / "tables" / "table_confirm_temporal.csv", index=False); _md(tt, out / "tables" / "table_confirm_temporal.md")
+
+
 def run(cfg, out):
     out = Path(out)
     _style()
@@ -820,6 +871,7 @@ def run(cfg, out):
     mondrian_analysis(df, out)
     temporal_analysis(out, cfg)
     metallurgy_analysis(out, cfg)
+    confirm_analysis(out)
     for name in ["generalization_results.csv"]:
         p = out / name
         if p.exists():
