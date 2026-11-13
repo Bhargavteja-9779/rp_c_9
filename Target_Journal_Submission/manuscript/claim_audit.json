@@ -1,10 +1,14 @@
 [
  {
+  "claim": "abstract: mixed-VEC band worst for SCP and improved by FCP (YS)",
+  "holds": true
+ },
+ {
   "claim": "abstract temporal sentence supported by table_temporal",
   "holds": true
  },
  {
-  "claim": "abstract has 246 words (<= 250)",
+  "claim": "abstract has 235 words (<= 250)",
   "holds": true
  },
  {
@@ -260,15 +264,15 @@
   "holds": true
  },
  {
-  "claim": "highlight <= 85 characters: Leakage-free scale from ensemble spread and novelty adapts the interval width (77)",
+  "claim": "highlight <= 85 characters: A family-subsampled variant carries a finite-sample family-level guarantee (74)",
+  "holds": true
+ },
+ {
+  "claim": "highlight <= 85 characters: In high-entropy alloys, random-split misses peak between BCC and FCC VEC limits (79)",
   "holds": true
  },
  {
   "claim": "highlight <= 85 characters: Benchmark: 6 datasets, 3 shift protocols, 17 interval methods, 10 seeds (71)",
-  "holds": true
- },
- {
-  "claim": "highlight <= 85 characters: Remaining misses concentrate in alloy families with extreme property values (75)",
   "holds": true
  }
 ]

@@ -705,29 +705,64 @@ def temporal_sentence(V):
     ok = (T.loc[("mpea_ys", "FCP"), "coverage"] >= 0.88 and T.loc[("mpea_hv", "FCP"), "coverage"] < 0.8
           and T.loc[("mpea_hv", "SCP"), "coverage"] < 0.8)
     claim(ok, "abstract temporal sentence supported by table_temporal")
-    return ("In a chronological test, FCP reached nominal coverage where new alloys came from new chemical systems but, like "
-            "every method, not where new processing routes shifted known systems. ")
+    return ("In a chronological test, FCP held nominal coverage for new chemical systems but, like all methods, failed for "
+            "new processing routes of known systems. ")
+
+
+def abstract_metallurgy():
+    t = pd.read_csv(TAB / "table_metallurgy.csv")
+    t = t[(t.protocol == "system") & (t.task == "mpea_ys") & (t.dimension == "vec_regime")]
+    q = lambda g, m: float(t[(t.group == g) & (t.method == m)].coverage.iloc[0])
+    mid, bcc, fcc = "6.87-8 (mixed)", "VEC<6.87 (BCC-favoured)", "VEC>=8 (FCC-favoured)"
+    claim(q(mid, "SCP") < min(q(bcc, "SCP"), q(fcc, "SCP")) and q(mid, "FCP") > q(mid, "SCP") + 0.05,
+          "abstract: mixed-VEC band worst for SCP and improved by FCP (YS)")
+    return (f"In multi-principal-element alloys, random-split intervals failed most between the BCC and FCC "
+            f"valence-electron-concentration thresholds (yield-strength coverage {q(mid, 'SCP'):.2f}; FCP {q(mid, 'FCP'):.2f}). ")
+
+
+def abstract_confirm():
+    c = confirm_stats()
+    if c is None:
+        return ""
+    sm = pd.read_csv(TAB / "table_confirm_summary.csv").set_index(["protocol", "method"])
+    q = lambda p, m: float(sm.loc[(p, m), "mean_coverage"])
+    ok = c["criteria_met"]
+    out = ("A pre-registered confirmatory study on five new tasks "
+           + (f"reproduced both the failure (SCP {q('system', 'SCP'):.2f} and {q('cluster', 'SCP'):.2f}) and the remedy "
+              f"(FCP {q('system', 'FCP'):.2f} and {q('cluster', 'FCP'):.2f}). " if ok["C1"] and ok["C3"] else
+              f"gave SCP coverage {q('system', 'SCP'):.2f} and {q('cluster', 'SCP'):.2f} and FCP coverage "
+              f"{q('system', 'FCP'):.2f} and {q('cluster', 'FCP'):.2f}; not all pre-registered criteria were met. "))
+    if c["promoted"]:
+        out += ("Family-level calibration of random-forest tree spread, found post hoc, met its pre-registered criteria: "
+                "forest efficiency without in-distribution over-coverage. ")
+    else:
+        out += ("Family-level calibration of random-forest tree spread, found post hoc, failed some pre-registered criteria "
+                "and remains exploratory. ")
+    return out
 
 
 def abstract(V):
     g = V["g"]
-    a = (f"Machine-learning models are increasingly used to screen alloys from chemical systems that have never been measured, "
+    conf = abstract_confirm()
+    a = (f"Machine-learning models are used to screen alloys from never-measured chemical systems, "
          f"yet their uncertainty estimates are validated on randomly held-out alloys. We show that this practice fails under "
          f"alloy-family extrapolation. Across {V['n_tasks']} public datasets (multi-principal-element alloy hardness and yield "
-         f"strength, steel yield strength, and three inorganic-compound properties), nominal 90% conformal intervals calibrated "
+         f"strength, steel yield strength, three inorganic-compound properties), nominal 90% conformal intervals calibrated "
          f"on random splits covered only {rc_range(V, 'system')} of alloys from unseen "
          f"chemical systems and {rc_range(V, 'cluster')} from unseen composition clusters. "
          f"We propose family-calibrated conformal prediction (FCP): CV+ intervals whose calibration folds hold out whole alloy "
          f"families, with scores normalized by a leakage-free scale built from family-bagged ensemble disagreement and "
-         f"compositional novelty. A family-weighted variant targets family-level coverage, and the finite-sample condition for "
-         f"its validity is stated explicitly. In {V['n_runs']} evaluation runs (6 datasets × 3 split protocols × 10 seeds) against eight interval "
-         f"methods, FCP restored mean coverage to {g('system', 'FCP'):.3f} and {g('cluster', 'FCP'):.3f}. It reduced the coverage "
+         f"compositional novelty. A family-subsampled variant has a finite-sample family-level coverage guarantee. "
+         f"In {V['n_runs']} runs (6 datasets × 3 split protocols × 10 seeds) against eight interval "
+         f"methods, FCP restored mean coverage to {g('system', 'FCP'):.3f} and {g('cluster', 'FCP'):.3f}, reducing the coverage "
          f"shortfall relative to seven baselines and the interval score relative to six (Holm-corrected Wilcoxon tests). "
-         f"Ablations identify family-grouped calibration as the decisive component. Uncalibrated random-forest tree-spread "
-         f"intervals were competitive under shift but over-covered in-distribution; calibrating that spread at the family level "
-         f"(a post hoc variant) matched their efficiency while staying calibrated. {temporal_sentence(V)}"
-         f"Remaining failures concentrate in families with extreme property values. "
-         f"All results are reproducible from public data.")
+         f"Family-grouped calibration is the decisive component. "
+         + abstract_metallurgy()
+         + (conf if conf else
+            "Uncalibrated random-forest tree-spread intervals were competitive under shift but over-covered in-distribution; "
+            "calibrating that spread at the family level (a post hoc variant) matched their efficiency while staying calibrated. ")
+         + temporal_sentence(V)
+         + "All results are reproducible from public data.")
     n = len(a.split())
     claim(n <= 250, f"abstract has {n} words (<= 250)")
     return a
@@ -741,9 +776,12 @@ def highlights(V):
     g = V["g"]
     h = [f"Random-split 90% conformal intervals cover only {min(g(p, m) for p in ['system', 'cluster'] for m in RC) * 100:.0f}–{max(g(p, m) for p in ['system', 'cluster'] for m in RC) * 100:.0f}% of new-family alloys",
          "Family-grouped CV+ calibration restores mean coverage near 90% for new families",
-         "Leakage-free scale from ensemble spread and novelty adapts the interval width",
-         "Benchmark: 6 datasets, 3 shift protocols, 17 interval methods, 10 seeds",
-         "Remaining misses concentrate in alloy families with extreme property values"]
+         "A family-subsampled variant carries a finite-sample family-level guarantee",
+         "In high-entropy alloys, random-split misses peak between BCC and FCC VEC limits"]
+    c = confirm_stats()
+    h.append("Pre-registered test on five new tasks confirms both failure and remedy"
+             if c is not None and c["criteria_met"]["C1"] and c["criteria_met"]["C3"]
+             else "Benchmark: 6 datasets, 3 shift protocols, 17 interval methods, 10 seeds")
     for x in h:
         claim(len(x) <= 85, f"highlight <= 85 characters: {x} ({len(x)})")
     return h
