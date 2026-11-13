@@ -37,4 +37,14 @@ Branch: claude/autonomous-research-discovery-795xcu. All deliverables are under 
 - Remaining: Sections 9 (robustness, generalization incl. basemodel/randfolds/mondrian, sensitivity) and 10 (efficiency) text;
   reviews 5-10; final audit; cover letter; risk report; final DOCX/PDF.
 
-## STATUS: COMPLETE (2026-11-12). Nothing further to run; see REVIEW/final_audit.md section D for author-only items.
+## STATUS 2026-11-12: first complete version (READY). See REVIEW/final_audit.md section D for author-only items.
+
+## Upgrade round (2026-11-13), requested: "max level", targeting the main rejection risks
+- [x] Metallurgical analysis (Section 7.6): coverage by VEC regime, phase, alloy class, delta tertile (table_metallurgy.csv, fig13).
+- [x] Theory: Proposition 1 (family-subsampled FCP-S, finite-sample family-level guarantee via Barber et al. 2021 Thm 4);
+      proof in supplementary/theory_note.md (Supplementary Note S1).
+- [x] Manuscript restructured: secondary checks moved to Supplementary (28 pages, 9 figures, 7 tables).
+- [ ] Pre-registered confirmatory study on 5 NEW tasks (plan committed before any run: supplementary/confirmatory_plan.md),
+      stage `confirm` (340 runs, ~5 h). Resume with: `cd Target_Journal_Submission/code && bash scripts/resume_all.sh`.
+      Then: rebuild manuscript/supplementary/highlights/cover letter, package, REVIEW/review_11.md, update risk report.
+- [x] references re-verified (47/47; arXiv DOIs now checked against the arXiv API), Zhuo et al. 2018 added (band-gap data).

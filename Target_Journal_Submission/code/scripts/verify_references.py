@@ -17,10 +17,36 @@ DOIS = [
  "10.48550/arXiv.1904.06019", "10.48550/arXiv.1905.03222", "10.1038/s41524-025-01808-x",
  "10.1186/s13321-021-00511-5", "10.1038/s41598-022-09309-3",
  "10.1063/1.3587228", "10.1002/adem.200700240", "10.1016/j.intermet.2012.03.005",
+ "10.1021/acs.jpclett.8b00124",
 ]
 
 
+def get_arxiv(doi):
+    """arXiv DOIs (10.48550/...) are registered with DataCite, not Crossref: verify them against the arXiv API."""
+    import xml.etree.ElementTree as ET
+    aid = doi.split("arXiv.", 1)[1]
+    u = "https://export.arxiv.org/api/query?id_list=" + aid
+    ns = {"a": "http://www.w3.org/2005/Atom"}
+    err = None
+    for k in range(5):
+        try:
+            root = ET.fromstring(urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "citation-audit/0.1"}), timeout=60).read())
+            e = root.find("a:entry", ns)
+            if e is None or e.find("a:title", ns) is None:
+                return {"error": "arXiv id not found"}
+            au = [{"name": x.findtext("a:name", "", ns)} for x in e.findall("a:author", ns)]
+            return {"author": au, "issued": {"date-parts": [[int(e.findtext("a:published", "0000", ns)[:4])]]},
+                    "title": [" ".join(e.findtext("a:title", "", ns).split())], "container-title": ["arXiv"],
+                    "page": aid, "type": "posted-content (verified via arXiv API)"}
+        except Exception as ex:
+            err = str(ex)
+            time.sleep(2 ** (k + 1))
+    return {"error": err}
+
+
 def get(doi):
+    if doi.startswith("10.48550/arXiv."):
+        return get_arxiv(doi)
     u = "https://api.crossref.org/works/" + urllib.parse.quote(doi)
     err = None
     for k in range(5):

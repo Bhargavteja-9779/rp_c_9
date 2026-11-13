@@ -1,9 +1,11 @@
-"""Download the six public datasets used in the study into data/raw/.
+"""Download the public datasets (six main tasks + the confirmatory-study sources) used in the study into data/raw/.
 Sources (all public):
   - MPEA dataset (Borg et al., Sci. Data 7, 430 (2020)): GitHub CitrineInformatics/MPEA_dataset
   - SuperCon-derived superconductivity data (Hamidieh, Comput. Mater. Sci. 154, 346 (2018)): UCI ML repository id 464
   - matbench_steels (Dunn et al., npj Comput. Mater. 6, 138 (2020)), brgoch_superhard_training (Mansouri Tehrani et al.,
     JACS 140, 9844 (2018)) and expt_formation_enthalpy_kingsbury (Kingsbury et al., 2022), all via matminer.datasets.
+  - Confirmatory study (Section 9.5): steel_strength (Citrine steel data, via matminer) and matbench_expt_gap
+    (Zhuo et al., J. Phys. Chem. Lett. 9, 1668 (2018); Dunn et al. 2020), via matminer.datasets.
 """
 import os, sys, hashlib, urllib.request
 from pathlib import Path
@@ -13,7 +15,8 @@ URLS = {
     "MPEA_dataset.csv": "https://raw.githubusercontent.com/CitrineInformatics/MPEA_dataset/master/MPEA_dataset.csv",
     "superconductivty+data.zip": "https://archive.ics.uci.edu/static/public/464/superconductivty+data.zip",
 }
-MATMINER = ["matbench_steels", "brgoch_superhard_training", "expt_formation_enthalpy_kingsbury"]
+MATMINER = ["matbench_steels", "brgoch_superhard_training", "expt_formation_enthalpy_kingsbury",
+            "steel_strength", "matbench_expt_gap"]
 
 
 def sha256(p):

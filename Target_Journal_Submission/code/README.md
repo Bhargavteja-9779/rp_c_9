@@ -16,7 +16,7 @@ pip install -r requirements.txt          # or: conda env create -f environment.y
 ```bash
 python scripts/download_data.py
 ```
-This downloads the six public datasets into `data/raw/` and writes `SHA256SUMS.txt`:
+This downloads the public datasets into `data/raw/` and writes `SHA256SUMS.txt`:
 
 | Task key | Property | Source |
 |---|---|---|
@@ -26,12 +26,21 @@ This downloads the six public datasets into `data/raw/` and writes `SHA256SUMS.t
 | `expt_hf` | Experimental formation enthalpy | Kingsbury et al., *npj Comput. Mater.* 8 (2022) 195, via matminer |
 | `supercon_tc` | Superconducting Tc | Hamidieh, *Comput. Mater. Sci.* 154 (2018) 346; UCI ML repository id 464 (CC BY 4.0) |
 
+Confirmatory tasks (Section 9.5; not used to develop any method):
+
+| Task key | Property | Source |
+|---|---|---|
+| `mpea_uts`, `mpea_elong` | Ultimate tensile strength; elongation of MPEAs | Borg et al. (2020), same file as above |
+| `steel_uts` | Tensile strength of steels | matminer `steel_strength` (Citrine) |
+| `superhard_g` | Shear modulus | Mansouri Tehrani et al. (2018), via matminer |
+| `expt_gap` | Experimental band gap | Matbench `matbench_expt_gap` (Zhuo et al., *J. Phys. Chem. Lett.* 9 (2018) 1668) via matminer |
+
 Cleaning (`src/fcp/data/datasets.py`): identical inputs are merged by median target. Featurization and families: `src/fcp/preprocessing/features.py`. Processed tasks are cached in `data/processed/`.
 
 ## 3. Reproduce everything
 ```bash
 python run_all.py --mode quick   # ~1 min pipeline check, writes results_quick/ (NOT the paper's numbers)
-python run_all.py --mode full    # full study, roughly 12–15 h on 4 CPU cores; writes results/
+python run_all.py --mode full    # full study, roughly 16–20 h on 4 CPU cores (the confirm stage alone takes about 5 h); writes results/
 ```
 Stages can be run separately and are resumable, because each run is cached in `results/cache/`:
 ```bash
@@ -41,10 +50,13 @@ python run_all.py --mode full --stage robustness      # Exp 4: label noise, redu
 python run_all.py --mode full --stage generalization  # Exp 5: mis-specified family definition
 python run_all.py --mode full --stage sensitivity     # Exp 7: hyper-parameters
 python run_all.py --mode full --stage efficiency      # Exp 6: wall time / memory
-python run_all.py --mode full --stage basemodel       # Sec 9.5: FCP with random-forest members
-python run_all.py --mode full --stage randfolds       # Sec 9.6: random cluster-to-fold assignment
-python run_all.py --mode full --stage mondrian        # Sec 9.7: Mondrian (novelty-tertile) conformal baseline
+python run_all.py --mode full --stage basemodel       # Sec 9.4: FCP with random-forest members
+python run_all.py --mode full --stage randfolds       # Sec 9.6 / Supp.: random cluster-to-fold assignment
+python run_all.py --mode full --stage mondrian        # Sec 9.6 / Supp.: Mondrian (novelty-tertile) conformal baseline
 python run_all.py --mode full --stage temporal        # Sec 9.3: chronological MPEA test (train < 2019, test 2019)
+python run_all.py --mode full --stage rfsigma         # Sec 9.4: FCP-RFsigma (post hoc variant, random-forest spread as scale)
+python run_all.py --mode full --stage confirm         # Sec 9.5: pre-registered confirmatory study on 5 NEW tasks
+                                                      #   (plan fixed beforehand: ../supplementary/confirmatory_plan.md)
 python run_all.py --mode full --stage analysis        # statistics, tables, figures from cached runs
 ```
 Then build the manuscript, supplementary material, highlights and cover letter from the generated results
@@ -66,6 +78,7 @@ After an interruption, `scripts/resume_all.sh` relaunches all remaining stages; 
 | `results/raw_results.csv` | one row per task × protocol × seed × method × α (all metrics) |
 | `results/metrics.json`, `results/statistics.json` | summary metrics; hypothesis tests (Wilcoxon, Holm, effect sizes, bootstrap CIs) |
 | `results/{robustness,generalization,sensitivity,efficiency,basemodel,randfolds,mondrian,temporal}_results.csv` | Experiments 4–7 and review-driven experiments |
+| `results/confirm_results.csv`, `results/statistics_confirm.json` | pre-registered confirmatory study (criteria C1–C6, promotion decision) |
 | `results/tables/*.csv / *.md` | every manuscript table |
 | `results/figures/*.png / *.pdf` | every manuscript figure |
 | `results/logs/` | run log and hardware/config record |

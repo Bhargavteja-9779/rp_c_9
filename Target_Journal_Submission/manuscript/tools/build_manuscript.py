@@ -493,8 +493,9 @@ def confirm_stats():
     return json.load(open(p)) if p.exists() else None
 
 
-CTASK = {"mpea_uts": "MPEA tensile strength", "mpea_elong": "MPEA elongation", "steel_uts": "steel tensile strength",
-         "superhard_g": "shear modulus", "expt_gap": "experimental band gap"}
+CTASK = {"mpea_uts": "MPEA ultimate tensile strength [@borg2020]", "mpea_elong": "MPEA tensile elongation [@borg2020]",
+         "steel_uts": "steel tensile strength (Citrine steel data distributed with matminer [@ward2018])",
+         "superhard_g": "shear modulus [@tehrani2018]", "expt_gap": "experimental band gap [@zhuo2018]"}
 
 
 def confirm_section(V):
