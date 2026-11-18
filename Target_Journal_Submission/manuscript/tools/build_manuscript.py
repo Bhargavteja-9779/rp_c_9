@@ -455,7 +455,10 @@ def discussion(V):
             ("p", "**Choosing the family definition.** The family is the unit of novelty against which coverage is certified. "
                   "Chemical systems are natural for HEA/MPEA design campaigns that open new element combinations. Composition "
                   "clusters are natural when moving to distant regions of an existing system. Section 9.2 shows that calibrating on "
-                  "a finer definition than the actual shift costs coverage. Section 9.3 shows that FCP cannot correct shifts that "
+                  "a finer definition than the actual shift costs coverage. "
+                  + ("Section 9.6 shows that, once calibration and deployment use the same family concept, the exact threshold "
+                     "and cluster number do not change the conclusion. " if (familydef_summary() or {}).get("holds") else "")
+                  + "Section 9.3 shows that FCP cannot correct shifts that "
                   "are not family novelty at all, such as new processing routes. Practitioners should calibrate at the "
                   "level of novelty they intend to explore. With few families, they should prefer unweighted FCP, whose interval "
                   "stays finite, over FCP-W, whose interval correctly becomes unbounded."),
@@ -878,7 +881,7 @@ def highlights(V):
          "A family-subsampled variant carries a finite-sample family-level guarantee",
          "In high-entropy alloys, random-split misses peak between BCC and FCC VEC limits"]
     c = confirm_stats()
-    h.append("Pre-registered test on five new tasks confirms both failure and remedy"
+    h.append("Pre-registered replication on new properties and an independent material set"
              if c is not None and c["criteria_met"]["C1"] and c["criteria_met"]["C3"]
              else "Benchmark: 6 datasets, 3 shift protocols, 17 interval methods, 10 seeds")
     for x in h:

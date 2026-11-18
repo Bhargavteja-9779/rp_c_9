@@ -40,7 +40,7 @@ Cleaning (`src/fcp/data/datasets.py`): identical inputs are merged by median tar
 ## 3. Reproduce everything
 ```bash
 python run_all.py --mode quick   # ~1 min pipeline check, writes results_quick/ (NOT the paper's numbers)
-python run_all.py --mode full    # full study, roughly 16–20 h on 4 CPU cores (the confirm stage alone takes about 5 h); writes results/
+python run_all.py --mode full    # full study, roughly 18–22 h on 4 CPU cores (the confirm stage alone takes about 5 h); writes results/
 ```
 Stages can be run separately and are resumable, because each run is cached in `results/cache/`:
 ```bash
@@ -57,6 +57,8 @@ python run_all.py --mode full --stage temporal        # Sec 9.3: chronological M
 python run_all.py --mode full --stage rfsigma         # Sec 9.4: FCP-RFsigma (post hoc variant, random-forest spread as scale)
 python run_all.py --mode full --stage confirm         # Sec 9.5: pre-registered confirmatory study on 5 NEW tasks
                                                       #   (plan fixed beforehand: ../supplementary/confirmatory_plan.md)
+python run_all.py --mode full --stage fcps            # Sec 9.7: family-subsampled FCP-S (Proposition 1)
+python run_all.py --mode full --stage familydef       # Sec 9.6: alternative family definitions (0.5/2/5 at.%; k = 7/15/20)
 python run_all.py --mode full --stage analysis        # statistics, tables, figures from cached runs
 ```
 Then build the manuscript, supplementary material, highlights and cover letter from the generated results
@@ -79,6 +81,7 @@ After an interruption, `scripts/resume_all.sh` relaunches all remaining stages; 
 | `results/metrics.json`, `results/statistics.json` | summary metrics; hypothesis tests (Wilcoxon, Holm, effect sizes, bootstrap CIs) |
 | `results/{robustness,generalization,sensitivity,efficiency,basemodel,randfolds,mondrian,temporal}_results.csv` | Experiments 4–7 and review-driven experiments |
 | `results/confirm_results.csv`, `results/statistics_confirm.json` | pre-registered confirmatory study (criteria C1–C6, promotion decision) |
+| `results/fcps_results.csv`, `results/familydef_results.csv` (+ `statistics_*.json`) | FCP-S theory check; family-definition sensitivity |
 | `results/tables/*.csv / *.md` | every manuscript table |
 | `results/figures/*.png / *.pdf` | every manuscript figure |
 | `results/logs/` | run log and hardware/config record |
