@@ -3,7 +3,7 @@ Sources (all public):
   - MPEA dataset (Borg et al., Sci. Data 7, 430 (2020)): GitHub CitrineInformatics/MPEA_dataset
   - SuperCon-derived superconductivity data (Hamidieh, Comput. Mater. Sci. 154, 346 (2018)): UCI ML repository id 464
   - matbench_steels (Dunn et al., npj Comput. Mater. 6, 138 (2020)), brgoch_superhard_training (Mansouri Tehrani et al.,
-    JACS 140, 9844 (2018)) and expt_formation_enthalpy_kingsbury (Kingsbury et al., 2022), all via matminer.datasets.
+    JACS 140, 9844 (2018)) and expt_formation_enthalpy_kingsbury (Wang et al., Sci. Rep. 11, 15496 (2021)), all via matminer.datasets.
   - Confirmatory study (Section 9.5): steel_strength (Citrine steel data, via matminer) and matbench_expt_gap
     (Zhuo et al., J. Phys. Chem. Lett. 9, 1668 (2018); Dunn et al. 2020), via matminer.datasets.
 """

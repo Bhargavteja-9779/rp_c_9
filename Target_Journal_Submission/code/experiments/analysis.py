@@ -880,6 +880,43 @@ def fcps_analysis(out, cfg):
     (out / "statistics_fcps.json").write_text(json.dumps(res, indent=2, default=float))
 
 
+def familydef_analysis(df_main, out):
+    """Sensitivity to the family definition: chemical-system threshold (system protocol) and number of composition
+    clusters (cluster protocol). Default settings (1 at.%, k = 10) are taken from the main run with the same seeds."""
+    p = out / "familydef_results.csv"
+    if not p.exists():
+        return
+    f = pd.read_csv(p); f = f[f.alpha == 0.1]
+    meths = sorted(f.method.unique()); seeds = sorted(f.seed.unique())
+    ref = df_main[(df_main.alpha == 0.1) & df_main.method.isin(meths) & df_main.seed.isin(seeds)]
+    parts = []
+    for prot, setting, tasks in [("system", "thr0.01", sorted(f[f.protocol == "system"].task.unique())),
+                                 ("cluster", "k10", sorted(f[f.protocol == "cluster"].task.unique()))]:
+        r = ref[(ref.protocol == prot) & ref.task.isin(tasks)].copy(); r["setting"] = setting + " (default)"
+        parts.append(r)
+    allr = pd.concat([f] + parts)
+    cells = allr.groupby(["setting", "protocol", "task", "method"]).agg(
+        coverage=("coverage", "mean"), interval_score_sd=("interval_score_sd", "mean"), width_sd=("width_sd", "mean"),
+        n_families=("n_test_families", "mean")).reset_index()
+    cells.to_csv(out / "tables" / "table_familydef_cells.csv", index=False)
+    summ = cells.groupby(["setting", "protocol", "method"]).agg(
+        mean_coverage=("coverage", "mean"), min_task=("coverage", "min"),
+        mean_interval_score_sd=("interval_score_sd", "mean"), n_tasks=("task", "nunique")).reset_index()
+    summ.to_csv(out / "tables" / "table_familydef.csv", index=False); _md(summ, out / "tables" / "table_familydef.md")
+    res = {}
+    for st, g in cells.groupby("setting"):
+        P = g.pivot_table(index="task", columns="method", values="coverage")
+        Q = g.pivot_table(index="task", columns="method", values="interval_score_sd")
+        res[st] = {"FCP_mean_coverage": float(P["FCP"].mean()), "FCP_min_task": float(P["FCP"].min()),
+                   "FCP_beats_all_random_calibrated_on_shortfall_every_task": bool(
+                       all(((0.9 - P["FCP"]).clip(lower=0) <= (0.9 - P[m]).clip(lower=0)).all() for m in ["SCP", "CV+", "CQR"])),
+                   "random_calibrated_mean_coverage": {m: float(P[m].mean()) for m in ["SCP", "CV+", "CQR"]},
+                   "GSCP_mean_coverage": float(P["GSCP"].mean()), "RF-z_mean_coverage": float(P["RF-z"].mean()),
+                   "FCP-W_mean_coverage": float(P["FCP-W"].mean()),
+                   "FCP_IS_finite_mean": float(Q["FCP"].mean()), "RF-z_IS_mean": float(Q["RF-z"].mean())}
+    (out / "statistics_familydef.json").write_text(json.dumps(res, indent=2, default=float))
+
+
 def run(cfg, out):
     out = Path(out)
     _style()
@@ -903,6 +940,7 @@ def run(cfg, out):
     metallurgy_analysis(out, cfg)
     confirm_analysis(out)
     fcps_analysis(out, cfg)
+    familydef_analysis(df, out)
     for name in ["generalization_results.csv"]:
         p = out / name
         if p.exists():

@@ -1,14 +1,18 @@
 [
  {
+  "claim": "abstract: RF-z efficiency not significantly different",
+  "holds": true
+ },
+ {
   "claim": "abstract: mixed-VEC band worst for SCP and improved by FCP (YS)",
   "holds": true
  },
  {
-  "claim": "abstract temporal sentence supported by table_temporal",
+  "claim": "abstract: confirmatory failure and remedy reproduced",
   "holds": true
  },
  {
-  "claim": "abstract has 248 words (<= 250)",
+  "claim": "abstract has 227 words (<= 250)",
   "holds": true
  },
  {

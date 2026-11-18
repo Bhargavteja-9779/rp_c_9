@@ -208,6 +208,32 @@ def fcps(cfg, out, n_jobs):
     _save_rows(rows, out / "fcps_results.csv")
 
 
+FAMILYDEF = {"thresholds": [0.005, 0.02, 0.05], "k_clusters": [7, 15, 20],
+             "threshold_tasks": ["mpea_hv", "mpea_ys", "steel_ys", "supercon_tc"],   # compound tasks: families unchanged
+             "methods": ["SCP", "CQR", "GSCP", "RF-z", "CV+", "FCP", "FCP-W"], "seeds": [0, 1, 2, 3, 4]}
+
+
+def familydef(cfg, out, n_jobs):
+    """Reviewer request: sensitivity of the conclusions to the family definition (chemical-system threshold of
+    1 at.% and k = 10 composition clusters). The test shift and the calibration families change together."""
+    from joblib import Parallel, delayed
+    F = FAMILYDEF
+    seeds = [s for s in F["seeds"] if s in cfg["seeds"]]
+    ttasks = [t for t in F["threshold_tasks"] if t in cfg["tasks"]]
+    jobs = []
+    for thr in F["thresholds"]:
+        c = copy.deepcopy(cfg); c["methods"] = F["methods"]; c["family_threshold"] = thr
+        jobs += [(t, "system", s, c, f"thr{thr}") for t in ttasks for s in seeds]
+    for k in F["k_clusters"]:
+        c = copy.deepcopy(cfg); c["methods"] = F["methods"]; c["k_clusters"] = k
+        jobs += [(t, "cluster", s, c, f"k{k}") for t in cfg["tasks"] for s in seeds]
+    Parallel(n_jobs=n_jobs)(delayed(_one)("familydef", t, p, s, c, v, {}) for t, p, s, c, v in jobs)
+    rows = []
+    for t, p, s, c, v in jobs:
+        rows += [dict(r, setting=v) for r in R.metrics_rows(R.run_one("familydef", t, p, s, c, variant=v))]
+    _save_rows(rows, out / "familydef_results.csv")
+
+
 CONFIRM_TASKS = ["mpea_uts", "mpea_elong", "steel_uts", "superhard_g", "expt_gap"]
 
 

@@ -6,7 +6,7 @@ CITE_KEYS = {
     "dunn2023": "10.1080/01621459.2022.2060112", "barber2023": "10.1214/23-AOS2276", "papadopoulos2011": "10.1613/jair.3198",
     "angelopoulos2023": "10.1561/2200000101", "ward2016": "10.1038/npjcompumats.2016.28", "ward2018": "10.1016/j.commatsci.2018.05.018",
     "ong2013": "10.1016/j.commatsci.2012.10.028", "borg2020": "10.1038/s41597-020-00768-9", "hamidieh2018": "10.1016/j.commatsci.2018.07.052",
-    "dunn2020": "10.1038/s41524-020-00406-3", "tehrani2018": "10.1021/jacs.8b02717", "kingsbury2022": "10.1038/s41524-022-00881-w", "zhuo2018": "10.1021/acs.jpclett.8b00124",
+    "dunn2020": "10.1038/s41524-020-00406-3", "tehrani2018": "10.1021/jacs.8b02717", "wang2021": "10.1038/s41598-021-94550-5", "kim2017": "10.1038/sdata.2017.162", "zhuo2018": "10.1021/acs.jpclett.8b00124",
     "meredig2018": "10.1039/C8ME00012C", "breiman2001": "10.1023/A:1010933404324", "gneiting2007": "10.1198/016214506000001437",
     "tran2020": "10.1088/2632-2153/ab7e1a", "palmer2022": "10.1038/s41524-022-00794-8", "varivoda2023": "10.1063/5.0133528",
     "akdogan2026": "10.1021/acsomega.6c02607", "han2026": "10.3390/polym18192445", "omee2024": "10.1038/s41524-024-01316-4",
@@ -73,8 +73,9 @@ def intro(V):
         ("bullets", [
             "A calibration procedure, FCP / FCP-W, whose calibration step reproduces the deployment shift of alloy design "
             "(prediction for an unseen alloy family). It states its estimand explicitly (alloy-level vs family-level coverage) "
-            "and the finite-sample condition under which the family-level interval is finite. A family-subsampled variant "
-            "(FCP-S) has a finite-sample family-level coverage guarantee (Proposition 1; Section 4).",
+            "and the finite-sample condition under which the family-level interval is finite. A finite-sample family-level "
+            "coverage guarantee is proved for a family-subsampled variant (FCP-S; Proposition 1, Section 4). It does not "
+            "extend to the main FCP and FCP-W procedures, whose validity on unseen families is established empirically.",
             "A benchmark of interval coverage under alloy-family extrapolation: "
             f"{V['n_tasks']} tasks, 3 split protocols, {V['n_seeds']} outer-split seeds and 17 interval methods. It shows how far "
             "random-split calibration and model-based uncertainty fall below nominal coverage (Section 7).",
@@ -86,8 +87,8 @@ def intro(V):
             "and a promotion rule committed before any run (Section 9.5).",
             "Ablation, robustness, sensitivity and efficiency experiments that isolate which component matters and what it costs, "
             "together with an error analysis of the alloy families on which intervals still fail (Sections 8–11).",
-            "A fully reproducible code base in which every number, table and figure is regenerated from public data by a single "
-            "command.",
+            "A reproducible pipeline in which every number, table and figure is regenerated from public data; every "
+            "directional claim in the text is checked automatically against the results.",
         ]),
     ]
 
@@ -234,7 +235,9 @@ def method(V):
                                                                         {"frac": [["1 − K/G"], ["K + 1"]]}]}]),
         ("p", "(Proposition 1; proof in Supplementary Note S1). FCP-W replaces the single random draw by its expectation "
               "(weights 1/*n*_{g}), which is the pooled construction of Dunn et al. [@dunn2023]. The unweighted FCP targets "
-              "alloy-level coverage. Neither is literally covered by Proposition 1, so both are assessed empirically below, and FCP-S itself is evaluated in Section 9.6. "
+              "alloy-level coverage. **Proposition 1 does not establish an exact finite-sample guarantee for FCP or FCP-W**; "
+              "their coverage on unseen families is an empirical result (Sections 7–9), and FCP-S itself is evaluated in "
+              "Section 9.7. "
               "Proposition 1 also explains why random-split calibration fails: a randomly held-out calibration alloy shares its "
               "family with training alloys, so its score is not exchangeable with that of an alloy from a new family, and the "
               "coverage loss is bounded only by the distance between the two score distributions [@barber2023]."),
@@ -260,7 +263,7 @@ def setup(V):
               "processing route as additional inputs. One is the yield strength of 312 steels from Matbench [@dunn2020]. "
               "Three are inorganic-compound tasks, used to test generalization beyond alloys: the bulk modulus training set of "
               "Mansouri Tehrani et al. [@tehrani2018] (rows flagged as suspect removed), experimental formation enthalpies "
-              "compiled by Kingsbury et al. [@kingsbury2022], and superconducting critical temperatures from the SuperCon-derived "
+              "compiled by Wang et al. [@wang2021] primarily from Kim et al. [@kim2017], and superconducting critical temperatures from the SuperCon-derived "
               "dataset of Hamidieh [@hamidieh2018]. Identical inputs (same formula and, for MPEA tasks, same processing and test "
               "conditions) were merged by the median target before any split. The superconductor set was reduced to "
               f"{V['supercon_n']} compounds by sampling whole chemical systems with a fixed seed, to fit the computational "
@@ -333,7 +336,7 @@ def setup(V):
         ("p", f"Pre-specified settings: LightGBM with {V['lgbm_trees']} trees, learning rate {V['lgbm_lr']}, {V['lgbm_leaves']} leaves, "
               f"row and column subsampling {V['lgbm_sub']} and {V['lgbm_col']}, minimum 5 alloys per leaf, L2 penalty 1; *M* = {V['M']} members; φ = {V['phi']}; *K* = {V['K']} "
               f"inner folds; *k*_{{nn}} = {V['knn']}; {V['pcs']} principal components. None of these was tuned on test folds, and "
-              "their influence is examined in Section 9.6. All computations ran on CPUs (4 cores, no GPU) with Python, "
-              "scikit-learn [@pedregosa2011] and LightGBM. A single command (run_all.py) regenerates every number, table and "
-              "figure from the public data."),
+              "their influence is examined in Section 9.7. All computations ran on CPUs (4 cores, no GPU) with Python, "
+              "scikit-learn [@pedregosa2011] and LightGBM. A single scripted pipeline regenerates every number, table and "
+              "figure from the public data (code available on request)."),
     ]

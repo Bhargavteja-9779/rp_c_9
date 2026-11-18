@@ -23,7 +23,7 @@ This downloads the public datasets into `data/raw/` and writes `SHA256SUMS.txt`:
 | `mpea_hv`, `mpea_ys` | Vickers hardness; yield strength of multi-principal-element alloys | Borg et al., *Sci. Data* 7 (2020) 430, GitHub `CitrineInformatics/MPEA_dataset` |
 | `steel_ys` | Yield strength of steels | Matbench `matbench_steels` (Dunn et al., *npj Comput. Mater.* 6 (2020) 138) via matminer |
 | `superhard_k` | Bulk modulus | Mansouri Tehrani et al., *JACS* 140 (2018) 9844, via matminer |
-| `expt_hf` | Experimental formation enthalpy | Kingsbury et al., *npj Comput. Mater.* 8 (2022) 195, via matminer |
+| `expt_hf` | Experimental formation enthalpy | Wang et al., *Sci. Rep.* 11 (2021) 15496 (data mainly from Kim et al., *Sci. Data* 4 (2017) 170162), via matminer `expt_formation_enthalpy_kingsbury` |
 | `supercon_tc` | Superconducting Tc | Hamidieh, *Comput. Mater. Sci.* 154 (2018) 346; UCI ML repository id 464 (CC BY 4.0) |
 
 Confirmatory tasks (Section 9.5; not used to develop any method):

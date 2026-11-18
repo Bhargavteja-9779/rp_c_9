@@ -14,7 +14,7 @@ TASKS = {
     "steel_ys": ("Steel yield strength (matbench_steels)", "MPa"),
     "supercon_tc": ("Superconductor critical temperature", "K"),
     "superhard_k": ("Bulk modulus (Brgoch superhard set)", "GPa"),
-    "expt_hf": ("Experimental formation enthalpy (Kingsbury)", "eV/atom"),
+    "expt_hf": ("Experimental formation enthalpy (Wang et al. 2021)", "eV/atom"),
     # confirmatory tasks (pre-registered in supplementary/confirmatory_plan.md)
     "mpea_uts": ("MPEA ultimate tensile strength", "MPa"),
     "mpea_elong": ("MPEA elongation", "%"),

@@ -1,3 +1,4 @@
+import re
 """Builds the manuscript spec (JSON) from machine-generated results; node build_docx.js renders it to DOCX.
 
 All numbers are read from code/results (CSV/JSON). Directional claims in the text are verified by `claim()`;
@@ -330,7 +331,7 @@ def error_analysis(V):
 
 # ------------------------------------------------------------------------------------------- tables
 SRC = {"mpea_hv": "Borg et al. [@borg2020]", "mpea_ys": "Borg et al. [@borg2020]", "steel_ys": "Matbench [@dunn2020]",
-       "superhard_k": "Mansouri Tehrani et al. [@tehrani2018]", "expt_hf": "Kingsbury et al. [@kingsbury2022]",
+       "superhard_k": "Mansouri Tehrani et al. [@tehrani2018]", "expt_hf": "Wang et al. [@wang2021]",
        "supercon_tc": "Hamidieh [@hamidieh2018]"}
 UNIT = {"mpea_hv": "HV", "mpea_ys": "MPa", "steel_ys": "MPa", "superhard_k": "GPa", "expt_hf": "eV/atom", "supercon_tc": "K"}
 
@@ -512,10 +513,12 @@ def confirm_section(V):
     yn = lambda b: "met" if b else "not met"
     c5 = c["C5"]; c6 = c["C6"]
     txt = ("To test whether the conclusions, and the post hoc FCP-RFσ, hold beyond the data that shaped them, a confirmatory "
-           "study was pre-registered (hypotheses, success criteria and a promotion rule committed to the repository before any "
+           "study was pre-registered (hypotheses, success criteria and a promotion rule committed with a timestamp to the project's version-control history before any "
            "run; Supplementary Material) on five tasks never used in the exploratory work: "
-           + ", ".join(CTASK[t] for t in c["tasks"]) + ". Four of them are new properties of alloys or compounds already "
-           "present in Section 7; the band-gap set is an independent material class. The configuration was unchanged (10 seeds, "
+           + ", ".join(CTASK[t] for t in c["tasks"]) + ". **These are not five independent datasets.** Four are new properties of "
+           "material sets already used in Section 7 (the MPEA, steel and superhard-compound data, with overlapping alloys or "
+           "compounds), so they test replication across properties rather than across materials; only the band-gap set is an "
+           "independent material class. The configuration was unchanged (10 seeds, "
            f"three protocols; {c['n_cells']} new shift cells). "
            f"C1 (random-calibrated methods under-cover; one-sided Wilcoxon) was {yn(ok['C1'])}: SCP covered {q('system', 'SCP'):.3f} "
            f"and {q('cluster', 'SCP'):.3f} (p = {c['C1']['SCP']['p']:.4f}), CV+ {q('system', 'CV+'):.3f} and {q('cluster', 'CV+'):.3f} "
@@ -633,9 +636,10 @@ def CONCL_CONFIRM():
     claim(fs["FCP-S vs FCP-W interval_score (task x seed)"]["p"] > 0.05, "conclusion: no detectable efficiency loss of FCP-S")
     return (f"Both findings replicated in a pre-registered confirmatory study on five new tasks: random-split SCP covered "
             f"{q('system', 'SCP'):.3f} and {q('cluster', 'SCP'):.3f}, FCP {q('system', 'FCP'):.3f} and {q('cluster', 'FCP'):.3f}. "
-            f"A family-subsampled variant with a finite-sample family-level guarantee (Proposition 1) reached a family-level "
-            f"coverage of {fs['mean']['family_coverage']['FCP-S']:.3f} (FCP-W: {fs['mean']['family_coverage']['FCP-W']:.3f}) with no "
-            "detectable loss of efficiency.")
+            f"A family-subsampled variant, FCP-S, has a finite-sample family-level guarantee (Proposition 1) and reached a "
+            f"family-level coverage of {fs['mean']['family_coverage']['FCP-S']:.3f} (FCP-W: {fs['mean']['family_coverage']['FCP-W']:.3f}) "
+            "with no detectable loss of efficiency. The guarantee does not extend to the main FCP and FCP-W, whose validity "
+            "on unseen families is empirical.")
 
 
 def CONFIRM_LIMIT(V):
@@ -666,7 +670,7 @@ def limitations(V):
                 "Coverage is marginal over alloys (FCP) or over families (FCP-W), not conditional on an individual alloy. Families "
                 "with extreme properties remained under-covered (Section 11).",
                 "Under the cluster protocol only ten families exist per dataset. Family-level (FCP-W) statements at α = 0.1 are "
-                "then impossible (Eq. 10), and the outer partition of the balanced protocol is identical across seeds (Section 9.6).",
+                "then impossible (Eq. 10), and the outer partition of the balanced protocol is identical across seeds (Section 9.7).",
                 "All datasets are public compilations. MPEA entries from different publications differ in processing and testing "
                 "details that are only partly encoded, and inter-laboratory bias cannot be separated from model error.",
                 "Features are composition-based (plus processing and test conditions for MPEA). Microstructure, defect and "
@@ -678,11 +682,10 @@ def limitations(V):
                 "approximation (e.g. a pooled quantile of normalized scores) for databases with 10^{5} or more alloys.",
                 "No prospective validation was performed: no new alloy was synthesized and tested. The chronological test "
                 "(Section 9.3) is the closest available proxy.",
-                f"FCP-RFσ was formulated after the main results (Section 9.4); {CONFIRM_LIMIT(V)} The alloy-family threshold (1 at.%) and the number of composition clusters (10) were fixed "
-                "and not varied.",
+                f"FCP-RFσ was formulated after the main results (Section 9.4); {CONFIRM_LIMIT(V)} The family definitions were fixed in advance; alternative thresholds and cluster numbers are examined in Section 9.6, but other family concepts (e.g. crystal-structure or processing families) were not tested.",
                 f"In the superconductor data, {DUPS} compositions appear under more than one formula spelling. They cannot cross "
                 "folds in the family-holdout protocols, but can in the random protocol; excluding them changed random-protocol "
-                "coverage by at most 0.004 (code/scripts/audit_duplicate_spellings.py).",
+                "coverage by at most 0.004.",
                 "Hyper-parameters were fixed defaults and were not tuned per dataset. Tuning would raise point accuracy for every "
                 "method alike and is unlikely to change the calibration comparison, but this was not tested.",
             ])]
@@ -700,7 +703,9 @@ def conclusion(V):
                 "Family-calibrated conformal prediction (FCP), i.e. CV+ with family-grouped folds and a leakage-free, "
                 "novelty-aware scale model, restored mean coverage to "
                 f"{g('system', 'FCP'):.3f} and {g('cluster', 'FCP'):.3f}. It reduced the coverage shortfall relative to seven of "
-                "eight baselines and improved the interval score relative to six (12 dataset-protocol cells, Holm-corrected). In "
+                "eight baselines and improved the interval score relative to six (12 dataset-protocol cells, Holm-corrected). It "
+                "was not more efficient than uncalibrated random-forest tree-spread intervals (RF-z), whose interval score was "
+                f"slightly lower (p = {V['st']['tests']['H3_FCP_vs_baselines_interval_score']['results']['RF-z']['p']:.3f}). In "
                 "a lower-bound screen for high-performing alloys it cut false discoveries three- to four-fold relative to "
                 "split conformal prediction, at the cost of lower recall.",
                 CONCL_CONFIRM(),
@@ -709,7 +714,9 @@ def conclusion(V):
                 "Random-forest tree-spread intervals were an unexpectedly strong but uncalibrated competitor; their robustness "
                 "comes from systematic over-coverage in-distribution. Normalizing family-grouped CV+ by that tree spread (FCP-RFσ, "
                 "formulated post hoc) reached the same efficiency with calibrated coverage and is the best-performing calibrated "
-                "variant found here" + (", a finding that met all of its pre-registered criteria on five new tasks."
+                "variant found here" + (", a finding that met all of its pre-registered criteria on five new tasks, although "
+                                        "its efficiency advantage over FCP there was marginal (p = "
+                                        f"{confirm_stats()['C5']['p']:.3f}, five tasks)."
                                         if (confirm_stats() or {}).get("promoted") else "."),
                 "Remaining failures concentrate in families with extreme property values and, metallurgically, in multiphase "
                 "alloys and the VEC band between BCC- and FCC-stable compositions, where small composition changes alter the "
@@ -723,30 +730,52 @@ def conclusion(V):
             ]
 
 
+AUTHORS = [("P N Bhargav Teja", "a", False), ("Ragavan K", "a", True)]
+AFFIL = "[Department, Institution, City, Postal code, Country]"
+CORR_EMAIL = "[e-mail address of Ragavan K]"
+
+DATA_LINKS = [
+    ("MPEA database (Borg et al. [@borg2020]); tasks mpea_hv, mpea_ys, mpea_uts, mpea_elong",
+     "https://github.com/CitrineInformatics/MPEA_dataset"),
+    ("Steel yield strength, Matbench matbench_steels [@dunn2020]", "https://ml.materialsproject.org/projects/matbench_steels.json.gz"),
+    ("Steel tensile strength, Citrine steel data (matminer steel_strength) [@ward2018]", "https://ndownloader.figshare.com/files/13354691"),
+    ("Bulk and shear moduli, Mansouri Tehrani et al. [@tehrani2018] (matminer brgoch_superhard_training)",
+     "https://ndownloader.figshare.com/files/13858931"),
+    ("Experimental formation enthalpies, Wang et al. [@wang2021] (matminer expt_formation_enthalpy_kingsbury)",
+     "https://ndownloader.figshare.com/files/28232538"),
+    ("Superconducting critical temperatures, Hamidieh [@hamidieh2018] (UCI Machine Learning Repository, id 464)",
+     "https://archive.ics.uci.edu/dataset/464/superconductivty+data"),
+    ("Experimental band gaps, Matbench matbench_expt_gap [@zhuo2018;@dunn2020]",
+     "https://ml.materialsproject.org/projects/matbench_expt_gap.json.gz"),
+]
+
+
 def declarations(V):
     return [("h1", "CRediT authorship contribution statement"),
-            ("p", "[Author 1]: Conceptualization, Methodology, Software, Formal analysis, Investigation, Data curation, "
-                  "Visualization, Writing – original draft. [Author 2]: Supervision, Validation, Writing – review & editing. "
-                  "(To be completed by the authors.)"),
+            ("p", "**P N Bhargav Teja:** Conceptualization, Methodology, Software, Validation, Formal analysis, Investigation, "
+                  "Data curation, Visualization, Writing – original draft, Writing – review & editing. **Ragavan K:** Supervision."),
             ("h1", "Declaration of competing interest"),
             ("p", "The authors declare that they have no known competing financial interests or personal relationships that could "
                   "have appeared to influence the work reported in this paper."),
-            ("h1", "Data and code availability"),
-            ("p", "All six datasets are public (Table {{tab:datasets}}). The complete code is provided as supplementary material and will be "
-                  "deposited in a public repository with a DOI upon acceptance [repository URL to be inserted]. It includes data "
-                  "download, cleaning, featurization, all methods, the experiment driver (run_all.py), statistical analysis and "
-                  "figure/table generation. Every number in this article is regenerated by `python run_all.py --mode full`."),
+            ("h1", "Data availability"),
+            ("p", "All datasets analysed in this study are publicly available from the following sources:"),
+            ("bullets", [f"{name}: {url}" for name, url in DATA_LINKS]),
+            ("p", "The code used for data processing, modelling, evaluation and figure generation, together with the processed "
+                  "data and per-run results, will be made available from the corresponding author on reasonable request."),
             ("h1", "Declaration of generative AI and AI-assisted technologies in the writing process"),
-            ("p", "During the preparation of this work the author(s) used an AI assistant (Claude, Anthropic) to assist with code "
-                  "development, data analysis and drafting of the manuscript. After using this tool, the author(s) reviewed and "
-                  "edited the content as needed and take(s) full responsibility for the content of the published article."),
+            ("p", "During the preparation of this work the authors used an AI assistant (Claude, Anthropic) to assist with code "
+                  "development, data analysis and drafting of the manuscript. After using this tool, the authors reviewed and "
+                  "edited the content as needed and take full responsibility for the content of the published article."),
             ("h1", "Acknowledgements"),
-            ("p", "[To be completed by the authors.] The authors thank the creators of the MPEA, Matbench, SuperCon/UCI and matminer "
-                  "datasets for making their data public."),
+            ("p", "The authors thank the creators of the MPEA database, Matbench, matminer and the UCI Machine Learning Repository "
+                  "for making their data publicly available."),
             ("h1", "Funding"),
-            ("p", "[To be completed by the authors.]")]
-TITLE = ("Prediction intervals for alloys from unseen families: family-calibrated conformal prediction for "
-         "machine-learned alloy properties")
+            ("p", "This research did not receive any specific grant from funding agencies in the public, commercial, or "
+                  "not-for-profit sectors.")]
+
+
+TITLE = ("Reliable prediction intervals for discovering alloys in unexplored chemical families: family-calibrated "
+         "conformal prediction validated on alloy and inorganic-compound data")
 
 
 def temporal_sentence(V):
@@ -768,8 +797,36 @@ def abstract_metallurgy():
     mid, bcc, fcc = "6.87-8 (mixed)", "VEC<6.87 (BCC-favoured)", "VEC>=8 (FCC-favoured)"
     claim(q(mid, "SCP") < min(q(bcc, "SCP"), q(fcc, "SCP")) and q(mid, "FCP") > q(mid, "SCP") + 0.05,
           "abstract: mixed-VEC band worst for SCP and improved by FCP (YS)")
-    return (f"In multi-principal-element alloys, random-split intervals failed most between the BCC and FCC "
-            f"valence-electron-concentration thresholds (yield-strength coverage {q(mid, 'SCP'):.2f}; FCP {q(mid, 'FCP'):.2f}). ")
+    return (f"In MPEAs, random-split coverage was lowest between the BCC and FCC valence-electron-concentration "
+            f"thresholds (yield strength: {q(mid, 'SCP'):.2f}; FCP {q(mid, 'FCP'):.2f}). ")
+
+
+def familydef_stats():
+    p = RES / "statistics_familydef.json"
+    return json.load(open(p)) if p.exists() else None
+
+
+def familydef_summary():
+    """Range of FCP and random-calibrated coverage over the non-default family definitions."""
+    f = familydef_stats()
+    if f is None:
+        return None
+    alt = {k: v for k, v in f.items() if "default" not in k}
+    fcp = [v["FCP_mean_coverage"] for v in alt.values()]
+    rc = [x for v in alt.values() for x in v["random_calibrated_mean_coverage"].values()]
+    return {"fcp_lo": min(fcp), "fcp_hi": max(fcp), "rc_hi": max(rc), "rc_lo": min(rc),
+            "fcp_min_task": min(v["FCP_min_task"] for v in alt.values()),
+            "holds": min(fcp) >= 0.88 and min(fcp) > max(rc), "n": len(alt)}
+
+
+def abstract_familydef():
+    d = familydef_summary()
+    if d is None:
+        return ""
+    if d["holds"]:
+        return (f"Conclusions held under {d['n']} alternative family definitions (FCP {d['fcp_lo']:.2f}–{d['fcp_hi']:.2f}). ")
+    return (f"Under {d['n']} alternative family definitions FCP covered {d['fcp_lo']:.2f}–{d['fcp_hi']:.2f} and random-split "
+            f"methods {d['rc_lo']:.2f}–{d['rc_hi']:.2f}. ")
 
 
 def abstract_confirm():
@@ -779,42 +836,32 @@ def abstract_confirm():
     sm = pd.read_csv(TAB / "table_confirm_summary.csv").set_index(["protocol", "method"])
     q = lambda p, m: float(sm.loc[(p, m), "mean_coverage"])
     ok = c["criteria_met"]
-    out = ("A pre-registered confirmatory study on five new tasks "
-           + (f"reproduced both the failure (SCP {q('system', 'SCP'):.2f} and {q('cluster', 'SCP'):.2f}) and the remedy "
-              f"(FCP {q('system', 'FCP'):.2f} and {q('cluster', 'FCP'):.2f}). " if ok["C1"] and ok["C3"] else
-              f"gave SCP coverage {q('system', 'SCP'):.2f} and {q('cluster', 'SCP'):.2f} and FCP coverage "
-              f"{q('system', 'FCP'):.2f} and {q('cluster', 'FCP'):.2f}; not all pre-registered criteria were met. "))
-    if c["promoted"]:
-        out += ("Family-level calibration of random-forest tree spread, found post hoc, met its pre-registered criteria: "
-                "forest efficiency without in-distribution over-coverage. ")
-    else:
-        out += ("Family-level calibration of random-forest tree spread, found post hoc, failed some pre-registered criteria "
-                "and remains exploratory. ")
-    return out
+    claim(ok["C1"] and ok["C3"], "abstract: confirmatory failure and remedy reproduced")
+    return ("A pre-registered confirmatory study on five further tasks (four new properties of material sets already studied, "
+            f"one independent band-gap set) reproduced both the failure (random-split coverage {q('system', 'SCP'):.2f} and "
+            f"{q('cluster', 'SCP'):.2f}) and the remedy (FCP {q('system', 'FCP'):.2f} and {q('cluster', 'FCP'):.2f}). ")
 
 
 def abstract(V):
     g = V["g"]
-    conf = abstract_confirm()
-    a = (f"Machine-learning models are used to screen alloys from never-measured chemical systems, "
-         f"yet their uncertainty estimates are validated on randomly held-out alloys. We show that this practice fails under "
-         f"alloy-family extrapolation. Across {V['n_tasks']} public datasets (multi-principal-element alloy hardness and yield "
-         f"strength, steel yield strength, three inorganic-compound properties), nominal 90% conformal intervals calibrated "
-         f"on random splits covered only {rc_range(V, 'system')} of alloys from unseen "
-         f"chemical systems and {rc_range(V, 'cluster')} from unseen composition clusters. "
-         f"We propose family-calibrated conformal prediction (FCP): CV+ intervals whose calibration folds hold out whole alloy "
-         f"families, with scores normalized by a leakage-free scale built from family-bagged ensemble disagreement and "
-         f"compositional novelty. A family-subsampled variant has a finite-sample family-level coverage guarantee. "
-         f"In {V['n_runs']} runs (6 datasets × 3 split protocols × 10 seeds) against eight interval "
-         f"methods, FCP restored mean coverage to {g('system', 'FCP'):.3f} and {g('cluster', 'FCP'):.3f}, reducing the coverage "
-         f"shortfall relative to seven baselines and the interval score relative to six (Holm-corrected Wilcoxon tests). "
-         f"Family-grouped calibration is the decisive component. "
+    h3 = V["st"]["tests"]["H3_FCP_vs_baselines_interval_score"]["results"]
+    claim(h3["RF-z"]["p"] > 0.05 and h3["RF-z"]["median_diff"] > 0, "abstract: RF-z efficiency not significantly different")
+    a = (f"Machine-learning models are used to screen alloys from chemical systems that have never been made, yet their "
+         f"uncertainty estimates are validated on randomly held-out alloys. We show that this practice fails when predictions "
+         f"extrapolate to new material families. Across six public datasets (multi-principal-element alloy (MPEA) hardness and "
+         f"yield strength, steel yield strength, three inorganic-compound properties), nominal 90% conformal intervals calibrated "
+         f"on random splits covered only {rc_range(V, 'system')} of materials from unseen chemical systems and "
+         f"{rc_range(V, 'cluster')} from unseen composition clusters. We propose family-calibrated conformal prediction (FCP): "
+         f"CV+ intervals calibrated on whole held-out families, with scores normalized by a leakage-free scale from "
+         f"ensemble disagreement and compositional novelty. In {V['n_runs']} runs, FCP "
+         f"restored mean coverage to {g('system', 'FCP'):.3f} and {g('cluster', 'FCP'):.3f} and reduced the coverage shortfall "
+         f"relative to seven of eight baselines (Holm-corrected Wilcoxon tests). Random-forest tree-spread intervals were as "
+         f"efficient (interval score difference not significant, p = {h3['RF-z']['p']:.3f}) but over-covered in-distribution. "
          + abstract_metallurgy()
-         + (conf if conf else
-            "Uncalibrated random-forest tree-spread intervals were competitive under shift but over-covered in-distribution; "
-            "calibrating that spread at the family level (a post hoc variant) matched their efficiency while staying calibrated. ")
-         + temporal_sentence(V)
-         + "All results are reproducible from public data.")
+         + abstract_confirm()
+         + abstract_familydef()
+         + "A finite-sample family-level guarantee is proved only for a family-subsampled variant; FCP itself is validated "
+           "empirically. No method corrected a chronological shift caused by new processing routes.")
     n = len(a.split())
     claim(n <= 250, f"abstract has {n} words (<= 250)")
     return a
@@ -853,7 +900,7 @@ def design(V):
                   "*k*_{nn}. Exp. 8 (error analysis): per-family coverage against novelty, property extremity and family size. "
                   "Two experiments were added after the main results and are labelled as such: Exp. 9, a pre-registered "
                   "confirmatory study on five new tasks (Section 9.5; plan in the Supplementary Material), and Exp. 10, an "
-                  "evaluation of the family-subsampled FCP-S covered by Proposition 1 (Section 9.6).")]
+                  "evaluation of the family-subsampled FCP-S covered by Proposition 1 (Section 9.7).")]
 
 
 def build(V):
@@ -888,9 +935,9 @@ def build(V):
                 blocks.append(tb)
     # title page
     blocks += [{"type": "title", "text": TITLE},
-               {"type": "center", "runs": runs("[Author 1]^{a,*}, [Author 2]^{a}")},
-               {"type": "center", "runs": runs("^{a} [Department, Institution, City, Country]"), "size": 20},
-               {"type": "center", "runs": runs("^{*} Corresponding author: [e-mail address]"), "size": 20}]
+               {"type": "center", "runs": runs(", ".join(f"{n}^{{{a}{',*' if c else ''}}}" for n, a, c in AUTHORS))},
+               {"type": "center", "runs": runs(f"^{{a}} {AFFIL}"), "size": 20},
+               {"type": "center", "runs": runs(f"^{{*}} Corresponding author: Ragavan K, {CORR_EMAIL}"), "size": 20}]
     blocks.append({"type": "heading", "level": 1, "text": "Abstract"})
     blocks.append({"type": "para", "runs": runs(abstract(V))})
     blocks.append({"type": "label", "runs": runs("**Keywords:** " + "; ".join(KEYWORDS))})
@@ -947,8 +994,64 @@ NUMBERING = {}
 
 
 def SENS_HOOK(V):
-    """Sections 9.4-9.6 (appended to Section 9 by robustness_sections)."""
-    return basemodel_section(V) + confirm_section(V) + additional_checks(V)
+    """Sections 9.4-9.7 (appended to Section 9 by robustness_sections)."""
+    return basemodel_section(V) + confirm_section(V) + familydef_section(V) + additional_checks(V)
+
+
+FD_LABEL = {"thr0.005": "0.5 at.%", "thr0.01 (default)": "1 at.% (default)", "thr0.02": "2 at.%", "thr0.05": "5 at.%",
+            "k7": "k = 7", "k10 (default)": "k = 10 (default)", "k15": "k = 15", "k20": "k = 20"}
+
+
+def familydef_section(V):
+    tp = TAB / "table_familydef.csv"
+    d = familydef_summary()
+    if d is None or not tp.exists():
+        return []
+    t = pd.read_csv(tp).set_index(["setting", "method"])
+    cells = pd.read_csv(TAB / "table_familydef_cells.csv")
+    q = lambda st, m, k="mean_coverage": float(t.loc[(st, m), k])
+    thr = ["thr0.005", "thr0.01 (default)", "thr0.02", "thr0.05"]
+    ks = ["k7", "k10 (default)", "k15", "k20"]
+    alt = [x for x in thr + ks if "default" not in x]
+    rc = lambda st: [q(st, m) for m in ["SCP", "CV+", "CQR"]]
+    nfam = cells[cells.method == "FCP"].groupby(["setting", "task"]).n_families.mean()
+    st_lo = min(alt, key=lambda x: q(x, "FCP")); st_hi = max(alt, key=lambda x: q(x, "FCP"))
+    txt = ("The chemical-system threshold (1 at.%) and the number of composition clusters (10) were fixed in advance. Because "
+           "they define both the deployment shift and the calibration families, we repeated the evaluation with thresholds of "
+           "0.5, 2 and 5 at.% (unseen-system protocol) and with 7, 15 and 20 clusters (unseen-cluster protocol), five seeds each "
+           "(Table {tab:familydef}). The threshold changes the families only for alloys with minor additions: for the "
+           "stoichiometric compound tasks the families were identical at every threshold, so the threshold analysis uses the MPEA, "
+           f"steel and superconductor tasks (steel: {nfam[('thr0.005', 'steel_ys')]:.0f} systems at 0.5 at.% and "
+           f"{nfam[('thr0.05', 'steel_ys')]:.0f} at 5 at.%). Across the six alternative definitions, FCP's mean coverage ranged "
+           f"from {d['fcp_lo']:.3f} ({FD_LABEL[st_lo]}) to {d['fcp_hi']:.3f} ({FD_LABEL[st_hi]}), with a worst single task of "
+           f"{d['fcp_min_task']:.3f}, while SCP, CV+ and CQR ranged from {d['rc_lo']:.3f} to {d['rc_hi']:.3f}. ")
+    if d["holds"]:
+        txt += ("The main conclusion is therefore not an artefact of the chosen family definition: random-split calibration "
+                "under-covered and family-grouped calibration restored coverage near the nominal level at every threshold and "
+                "cluster number tested. ")
+    else:
+        bad = [FD_LABEL[x] for x in alt if q(x, "FCP") < 0.88 or q(x, "FCP") <= max(rc(x))]
+        txt += ("The conclusion did not hold for every definition: FCP fell below 0.88, or did not exceed the random-calibrated "
+                "methods, for " + ", ".join(bad) + ". ")
+    gs = {x: q(x, "GSCP") for x in ks}
+    txt += (f"The cheaper family-held-out split (GSCP) covered {min(gs.values()):.3f}–{max(gs.values()):.3f} over the cluster "
+            "settings. FCP-W was unbounded whenever fewer than nine training families remained (seven clusters, and the 5 at.% "
+            "steel systems), as Eq. (10) requires.")
+    E = [("h2", "9.6. Sensitivity to the family definition"), ("p", txt), ("table_familydef", None)]
+    meths = ["SCP", "CV+", "CQR", "GSCP", "RF-z", "FCP", "FCP-W"]
+    rows = []
+    for st in thr + ks:
+        if (st, "FCP") in t.index:
+            rows.append([FD_LABEL[st], "system" if st.startswith("thr") else "cluster"] +
+                        [f3(q(st, m)) for m in meths])
+    TB["table_familydef"] = {"type": "table", "font_size": 15,
+        "caption": runs("**Table {{tab:familydef}}.** Mean coverage at α = 0.1 under alternative family definitions (seeds 0–4). "
+                        "Threshold: minimum atomic fraction for an element to define the chemical system (MPEA hardness and yield "
+                        "strength, steel yield strength, superconductor Tc; unseen-system protocol). k: number of composition "
+                        "clusters (all six tasks; unseen-cluster protocol). Per-task values in the Supplementary Material."),
+        "header": ["Family definition", "Protocol"] + meths, "rows": rows,
+        "col_widths": [0.2, 0.11] + [0.0986] * 7}
+    return E
 
 
 def additional_checks(V):
@@ -964,7 +1067,7 @@ def additional_checks(V):
     mo = pd.read_csv(TAB / "table_mondrian.csv").set_index(["protocol", "method"])
     mq = lambda p, m, k="mean_coverage": float(mo.loc[(p, m), k])
     claim(mq("cluster", "MCP") < mq("cluster", "FCP") - 0.03 and mq("cluster", "MCP") >= mq("cluster", "SCP"), "Mondrian between SCP and FCP")
-    return [("h2", "9.6. Additional checks"),
+    return [("h2", "9.7. Additional checks"),
             ("p", ("Four" if (RES / "statistics_fcps.json").exists() else "Three") + " further checks are summarized here; full results are in the Supplementary Material. (i) **Sensitivity.** "
                   "Varying the number of folds (*K* ∈ {3, 10}), ensemble members (*M* ∈ {3, 12}), family fraction (φ ∈ {0.5, 0.9}) "
                   f"and *k*_{{nn}} ∈ {{1, 15}} one at a time kept FCP's coverage between {g['cov'].min():.3f} and {g['cov'].max():.3f} "
@@ -1253,13 +1356,16 @@ def computational(V):
         e = ep.set_index(["task", "method"])
         E[-1] = (E[-1][0], E[-1][1] + f" Measured in isolated processes, the peak resident memory of FCP was "
                  f"{e.xs('FCP', level='method').peak_rss_mb.max():.0f} MB, against {e.xs('GP', level='method').peak_rss_mb.max():.0f} MB "
-                 "for the GP (Supplementary Fig. {SFIG['efficiency']}).")
+                 f"for the GP (Supplementary Fig. {SFIG['efficiency']}).")
     return E
 
 
 if __name__ == "__main__":
     V = load()
     spec, bib = build(V)
+    leftovers = re.findall(r"\{[A-Za-z_][^}]{0,40}\}", json.dumps([b for b in spec["blocks"] if b["type"] != "equation"],
+                                                                     ensure_ascii=False))
+    assert not leftovers, f"unformatted placeholders in manuscript text: {leftovers[:5]}"
     (HERE / "spec.json").write_text(json.dumps(spec, ensure_ascii=False))
     (HERE.parent / "highlights.txt").write_text("\n".join(highlights(V)) + "\n")
     uniq = list({c["claim"]: c for c in CLAIMS}.values())

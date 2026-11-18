@@ -36,6 +36,13 @@ def load_task(name, cfg):
         # recompute composition clusters on the retained subset so that k clusters exist
         from fcp.preprocessing.features import cluster_families
         t["fam_cluster"] = cluster_families(t["frac"], k=cfg["k_clusters"])
+    elif cfg["k_clusters"] != 10:  # processed tasks are cached with k = 10 (family-definition sensitivity, stage familydef)
+        from fcp.preprocessing.features import cluster_families
+        t = dict(t, fam_cluster=cluster_families(t["frac"], k=cfg["k_clusters"]))
+    thr = cfg.get("family_threshold", 0.01)
+    if thr != 0.01:  # alternative chemical-system threshold (stage familydef)
+        el = t["elements"]
+        t = dict(t, fam_system=np.array(["-".join(sorted(e for e, v in zip(el, row) if v >= thr)) for row in t["frac"]]))
     return t
 
 
