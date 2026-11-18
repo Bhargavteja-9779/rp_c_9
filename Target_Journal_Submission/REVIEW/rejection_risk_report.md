@@ -10,7 +10,7 @@ Target journal: *Journal of Materials Research and Technology* (Elsevier). Risk 
 | 4 | **Statistics**: few independent units | Task-level efficiency is not significant vs CV+ (p = 0.094) or CQR (p = 0.062). Pre-registered confirmation on 5 new tasks: C1–C3 met (p_Holm = 0.0078); C5 met narrowly (p = 0.049). | Moderate → low–moderate | Analyses reported at cell, protocol and task level; Holm correction; n_eff; bootstrap CIs; claims worded to the weakest supporting level. | Mitigated |
 | 5 | **Reproducibility** | Fresh clone, tests, quick run and bit-exact reproduction of a published run (max difference 4.4e-16). | Low | One-command pipeline, resumable cache, pinned versions, data checksums. | Fixed. A repository DOI is still needed (author action). |
 | 6 | **Baselines**: claims of weakened baselines | GP capped at 800; CQR shares hyper-parameters; no tuning. | Low–moderate | Deviations documented (Section 5.4). The strongest baseline (RF-z) gets its own section and a constructive follow-up. | Mitigated |
-| 7 | **Generalization** | Mis-specified family definition (0.814); temporal hardness failure (all methods). | Moderate | Reported in Sections 9.2–9.3, Abstract and Conclusions as the boundary of the method, with a practical rule for choosing the family level. | Disclosed |
+| 7 | **Generalization** | Mis-specified family definition (0.814); temporal hardness failure (all methods). Family-definition sensitivity (Section 9.6): conclusion unchanged for 0.5–5 at.% and k = 7–20 (FCP 0.889–0.930). | Moderate | Reported in Sections 9.2–9.3, Abstract and Conclusions as the boundary of the method, with a practical rule for choosing the family level. | Disclosed |
 | 8 | **Writing**: length (31 pp., 9 figures, 8 tables) | Secondary checks condensed (Section 9.6); 4 figures moved to the Supplementary Material. | Low–moderate | Each section maps to a research question. | Mitigated |
 | 9 | **Journal formatting** | Elsevier YPYW accepts any consistent format at first submission. Abstract 246 words, separate highlights file (5 × ≤ 85 characters), graphical abstract ≥ 1328 × 531 px, keywords, declarations, numbered references with DOIs, line and page numbers. | Low | Live Guide for Authors to be re-checked by the authors (ScienceDirect was not machine-readable from this environment). | Mostly fixed |
 | 10 | **Citations** | 50 references; 47 DOIs verified (Crossref; arXiv DOIs via the arXiv API); remaining items are books/software without DOIs or verified separately. | Low | Preprints are cited only for what they report; peer-reviewed alternatives are cited alongside. | Fixed |
@@ -24,6 +24,9 @@ JMR&T's 67-day "submission to acceptance" is a publisher-reported **average**, s
 
 ## Round 11 ("max level") summary
 See `review_11.md`. The confirmatory study, Proposition 1 with its empirical check (FCP-S), and the metallurgical section address the risks most likely to cause rejection. Two pipeline errors found during the upgrade were fixed and audited (missing Sections 9.4–9.6 in an intermediate build; quick-mode cache path). **Rejection remains possible.** The most likely outcomes are major or minor revision, and a desk rejection on scope cannot be excluded.
+
+## Round 12 (faculty review)
+See `review_12_professor_response.md`. All five points are addressed, point 5 with a new experiment. Title, theory scope, efficiency wording and the independence of the confirmatory tasks are now explicit.
 
 ## Phase 42 self-decision
 

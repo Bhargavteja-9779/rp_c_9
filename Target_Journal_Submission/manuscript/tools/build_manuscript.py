@@ -827,7 +827,7 @@ def abstract_familydef():
     if d is None:
         return ""
     if d["holds"]:
-        return (f"Conclusions held under {d['n']} alternative family definitions (FCP {d['fcp_lo']:.2f}–{d['fcp_hi']:.2f}). ")
+        return (f"Conclusions held under {['zero','one','two','three','four','five','six','seven','eight'][d['n']]} alternative family definitions (FCP {d['fcp_lo']:.2f}–{d['fcp_hi']:.2f}). ")
     return (f"Under {d['n']} alternative family definitions FCP covered {d['fcp_lo']:.2f}–{d['fcp_hi']:.2f} and random-split "
             f"methods {d['rc_lo']:.2f}–{d['rc_hi']:.2f}. ")
 
@@ -876,7 +876,7 @@ KEYWORDS = ["Alloy design", "High-entropy alloys", "Machine learning", "Uncertai
 
 def highlights(V):
     g = V["g"]
-    h = [f"Random-split 90% conformal intervals cover only {min(g(p, m) for p in ['system', 'cluster'] for m in RC) * 100:.0f}–{max(g(p, m) for p in ['system', 'cluster'] for m in RC) * 100:.0f}% of new-family alloys",
+    h = [f"Random-split 90% conformal intervals cover only {min(g(p, m) for p in ['system', 'cluster'] for m in RC) * 100:.0f}–{max(g(p, m) for p in ['system', 'cluster'] for m in RC) * 100:.0f}% of new-family materials",
          "Family-grouped CV+ calibration restores mean coverage near 90% for new families",
          "A family-subsampled variant carries a finite-sample family-level guarantee",
          "In high-entropy alloys, random-split misses peak between BCC and FCC VEC limits"]
@@ -1028,6 +1028,11 @@ def familydef_section(V):
            f"{nfam[('thr0.05', 'steel_ys')]:.0f} at 5 at.%). Across the six alternative definitions, FCP's mean coverage ranged "
            f"from {d['fcp_lo']:.3f} ({FD_LABEL[st_lo]}) to {d['fcp_hi']:.3f} ({FD_LABEL[st_hi]}), with a worst single task of "
            f"{d['fcp_min_task']:.3f}, while SCP, CV+ and CQR ranged from {d['rc_lo']:.3f} to {d['rc_hi']:.3f}. ")
+    fds = familydef_stats()
+    every = all(v["FCP_beats_all_random_calibrated_on_shortfall_every_task"] for k, v in fds.items() if "default" not in k)
+    if every:
+        txt += ("In every task under every alternative definition, FCP's coverage shortfall was no larger than that of SCP, "
+                "CV+ and CQR. ")
     if d["holds"]:
         txt += ("The main conclusion is therefore not an artefact of the chosen family definition: random-split calibration "
                 "under-covered and family-grouped calibration restored coverage near the nominal level at every threshold and "
@@ -1039,7 +1044,8 @@ def familydef_section(V):
     gs = {x: q(x, "GSCP") for x in ks}
     txt += (f"The cheaper family-held-out split (GSCP) covered {min(gs.values()):.3f}–{max(gs.values()):.3f} over the cluster "
             "settings. FCP-W was unbounded whenever fewer than nine training families remained (seven clusters, and the 5 at.% "
-            "steel systems), as Eq. (10) requires.")
+            "steel systems), as Eq. (10) requires; with only nine steel systems at 5 at.%, GSCP's two-family calibration split "
+            "also produced unbounded intervals.")
     E = [("h2", "9.6. Sensitivity to the family definition"), ("p", txt), ("table_familydef", None)]
     meths = ["SCP", "CV+", "CQR", "GSCP", "RF-z", "FCP", "FCP-W"]
     rows = []

@@ -60,3 +60,9 @@ Every change made after seeing results is listed here with its hypothesis and ev
 - **Pipeline errors found and fixed:**
   1. Sections 9.4–9.6 were dropped from an intermediate build by an empty hook.
   2. Quick-mode joblib workers wrote to the full-run cache. Audit: no full-run entry was affected.
+
+## Iteration 4 — Faculty review (Round 12)
+- **Family-definition sensitivity (stage `familydef`):** thresholds of 0.5, 2 and 5 at.% and k = 7, 15 and 20, seeds 0–4; requested by the reviewer, not pre-registered.
+  - FCP covered 0.889–0.930; SCP, CV+ and CQR covered 0.687–0.850.
+  - FCP's shortfall was no larger than that of the random-calibrated methods in every task and setting.
+- **Citation correction:** the formation-enthalpy data are now attributed to Wang et al. 2021 and Kim et al. 2017.

@@ -1,0 +1,122 @@
+{
+  "k10 (default)": {
+    "FCP_mean_coverage": 0.8990609087059069,
+    "FCP_min_task": 0.8489143998003493,
+    "FCP_beats_all_random_calibrated_on_shortfall_every_task": true,
+    "random_calibrated_mean_coverage": {
+      "SCP": 0.7169112092642499,
+      "CV+": 0.74252046081283,
+      "CQR": 0.746944745464552
+    },
+    "GSCP_mean_coverage": 0.8182009451018869,
+    "RF-z_mean_coverage": 0.9140700563965565,
+    "FCP-W_mean_coverage": 0.9986837093493671,
+    "FCP_IS_finite_mean": 3.4627655927903316,
+    "RF-z_IS_mean": 2.6969260538220308
+  },
+  "k15": {
+    "FCP_mean_coverage": 0.9075215845924873,
+    "FCP_min_task": 0.8597953581232843,
+    "FCP_beats_all_random_calibrated_on_shortfall_every_task": true,
+    "random_calibrated_mean_coverage": {
+      "SCP": 0.7506829037560546,
+      "CV+": 0.764109165150419,
+      "CQR": 0.7539142248136512
+    },
+    "GSCP_mean_coverage": 0.8511239190986551,
+    "RF-z_mean_coverage": 0.904573545801186,
+    "FCP-W_mean_coverage": 0.9577771177159705,
+    "FCP_IS_finite_mean": 3.3997510627061946,
+    "RF-z_IS_mean": 2.770678851348349
+  },
+  "k20": {
+    "FCP_mean_coverage": 0.9012009653191421,
+    "FCP_min_task": 0.8710070257611241,
+    "FCP_beats_all_random_calibrated_on_shortfall_every_task": true,
+    "random_calibrated_mean_coverage": {
+      "SCP": 0.7517919762236837,
+      "CV+": 0.7644308050620459,
+      "CQR": 0.7537478474057813
+    },
+    "GSCP_mean_coverage": 0.8500045022585772,
+    "RF-z_mean_coverage": 0.9090589284702438,
+    "FCP-W_mean_coverage": 0.9377659505986634,
+    "FCP_IS_finite_mean": 3.395027528073952,
+    "RF-z_IS_mean": 2.562444344820348
+  },
+  "k7": {
+    "FCP_mean_coverage": 0.8888077619006468,
+    "FCP_min_task": 0.8490641377589219,
+    "FCP_beats_all_random_calibrated_on_shortfall_every_task": true,
+    "random_calibrated_mean_coverage": {
+      "SCP": 0.6869081208300751,
+      "CV+": 0.7160893377924803,
+      "CQR": 0.717873728503699
+    },
+    "GSCP_mean_coverage": 0.8147502041373698,
+    "RF-z_mean_coverage": 0.867749109218456,
+    "FCP-W_mean_coverage": 1.0,
+    "FCP_IS_finite_mean": 3.9039930567803847,
+    "RF-z_IS_mean": 3.2808146585768974
+  },
+  "thr0.005": {
+    "FCP_mean_coverage": 0.9295667648631213,
+    "FCP_min_task": 0.9205263157894737,
+    "FCP_beats_all_random_calibrated_on_shortfall_every_task": true,
+    "random_calibrated_mean_coverage": {
+      "SCP": 0.8279212797292507,
+      "CV+": 0.850147597374145,
+      "CQR": 0.8356151832057976
+    },
+    "GSCP_mean_coverage": 0.8921567768382389,
+    "RF-z_mean_coverage": 0.9309042137322744,
+    "FCP-W_mean_coverage": 0.9291116752207377,
+    "FCP_IS_finite_mean": 2.4137697879451485,
+    "RF-z_IS_mean": 2.337857432354129
+  },
+  "thr0.01 (default)": {
+    "FCP_mean_coverage": 0.9243674185896678,
+    "FCP_min_task": 0.9147435897435898,
+    "FCP_beats_all_random_calibrated_on_shortfall_every_task": true,
+    "random_calibrated_mean_coverage": {
+      "SCP": 0.8348524565892035,
+      "CV+": 0.8507213304134646,
+      "CQR": 0.8349311625156528
+    },
+    "GSCP_mean_coverage": 0.8879307521339558,
+    "RF-z_mean_coverage": 0.9350252371272001,
+    "FCP-W_mean_coverage": 0.9327572386512168,
+    "FCP_IS_finite_mean": 2.473270245150681,
+    "RF-z_IS_mean": 2.3462501353688783
+  },
+  "thr0.02": {
+    "FCP_mean_coverage": 0.9256675539465853,
+    "FCP_min_task": 0.9126315789473685,
+    "FCP_beats_all_random_calibrated_on_shortfall_every_task": true,
+    "random_calibrated_mean_coverage": {
+      "SCP": 0.8078774883188868,
+      "CV+": 0.8291051235344282,
+      "CQR": 0.8220989701129391
+    },
+    "GSCP_mean_coverage": 0.8921641835183105,
+    "RF-z_mean_coverage": 0.9268514458977859,
+    "FCP-W_mean_coverage": 0.9296662785974747,
+    "FCP_IS_finite_mean": 2.632769030567604,
+    "RF-z_IS_mean": 2.4616840177080017
+  },
+  "thr0.05": {
+    "FCP_mean_coverage": 0.9138737435074438,
+    "FCP_min_task": 0.8935897435897436,
+    "FCP_beats_all_random_calibrated_on_shortfall_every_task": true,
+    "random_calibrated_mean_coverage": {
+      "SCP": 0.8198780693166177,
+      "CV+": 0.8346109780295843,
+      "CQR": 0.8386824183690686
+    },
+    "GSCP_mean_coverage": 0.8872613660742823,
+    "RF-z_mean_coverage": 0.9226693282997547,
+    "FCP-W_mean_coverage": 0.9381494958583245,
+    "FCP_IS_finite_mean": 2.951646849571433,
+    "RF-z_IS_mean": 2.799170857356221
+  }
+}

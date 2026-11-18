@@ -48,3 +48,9 @@ Branch: claude/autonomous-research-discovery-795xcu. All deliverables are under 
 - [x] FCP-S (Proposition 1) implemented and evaluated (stage `fcps`): family coverage 0.922, all tasks above the bound.
 - [x] Review round 11 (REVIEW/review_11.md), risk report, final audit, iteration log, figure map; deliverables rebuilt.
 - [x] references re-verified (47/47; arXiv DOIs now checked against the arXiv API), Zhuo et al. 2018 added (band-gap data).
+
+## Faculty review round (2026-11-18)
+- [x] Title broadened; Proposition 1 scope explicit; RF-z efficiency caveat; confirmatory independence explicit.
+- [x] Family-definition sensitivity (stage `familydef`, 150 runs): conclusion unchanged.
+- [x] Authors (P N Bhargav Teja; Ragavan K, corresponding), CRediT, no funding, no competing interests, dataset links, code on request.
+- [x] Submission zip: Target_Journal_Submission/JMRT_submission_package.zip (manuscript/tools/make_submission_zip.py).
